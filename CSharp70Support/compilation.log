@@ -1,0 +1,128 @@
+********************************************************************************
+*                      Friday, April 14, 2017 10:19:27 AM                      *
+********************************************************************************
+CSharpCompilerWrapper.exe version: 2.0.3.30
+Platform: Windows
+Target assembly: Assembly-CSharp.dll
+Project directory: D:\desktop\yoyoAction
+Target profile directory: D:\Program Files\Unity5-6-0\Editor\Data\Mono\lib\mono\unity
+Unity 'Data' or 'Frameworks' directory: D:/Program Files/Unity5-6-0/Editor/Data
+Compiler: Microsoft C# 7.0
+
+- Compilation -----------------------------------------------
+
+Process: D:\desktop\yoyoAction\CSharp70Support\Roslyn\csc.exe
+Arguments: -nostdlib+ -noconfig -nologo -r:"D:\Program Files\Unity5-6-0\Editor\Data\Mono\lib\mono\unity\mscorlib.dll" -r:"D:\Program Files\Unity5-6-0\Editor\Data\Mono\lib\mono\unity\System.dll" -r:"D:\Program Files\Unity5-6-0\Editor\Data\Mono\lib\mono\unity\System.Core.dll" -r:"D:\Program Files\Unity5-6-0\Editor\Data\Mono\lib\mono\unity\System.Xml.dll" @Temp/UnityTempFile-c1e645c72453d8c419466aecbe44cd89 
+Exit code: 0
+Elapsed time: 1.47 sec
+
+- Compiler output (0 lines):
+
+- Compiler errors (4 lines):
+0: Assets\Rope\RopeSimulate.cs(185,10): warning CS1030: #warning: 'fixme'
+1: Assets\Rope\RopeSimulate.cs(17,17): warning CS0649: Field 'RopeSimulate.ignoreMask' is never assigned to, and will always have its default value
+2: Assets\Rope\RopeSimulate.cs(14,17): warning CS0649: Field 'RopeSimulate.takeupTime' is never assigned to, and will always have its default value 0
+3: Assets\Rope\RopeSimulate.cs(11,17): warning CS0649: Field 'RopeSimulate.checkDistance' is never assigned to, and will always have its default value 0
+
+- PDB to MDB conversion --------------------------------------
+
+Process: D:\desktop\yoyoAction\CSharp70Support\Roslyn\pdb2mdb.exe
+Arguments: Temp\Assembly-CSharp.dll
+Exit code: 0
+Elapsed time: 0.20 sec
+
+- pdb2mdb.exe output (0 lines):
+********************************************************************************
+*                      Friday, April 14, 2017 10:19:30 AM                      *
+********************************************************************************
+CSharpCompilerWrapper.exe version: 2.0.3.30
+Platform: Windows
+Target assembly: Assembly-CSharp-Editor.dll
+Project directory: D:\desktop\yoyoAction
+Target profile directory: D:\Program Files\Unity5-6-0\Editor\Data\MonoBleedingEdge\lib\mono\2.0-api
+Unity 'Data' or 'Frameworks' directory: D:/Program Files/Unity5-6-0/Editor/Data
+Compiler: Microsoft C# 7.0
+
+- Compilation -----------------------------------------------
+
+Process: D:\desktop\yoyoAction\CSharp70Support\Roslyn\csc.exe
+Arguments: -nostdlib+ -noconfig -nologo -r:"D:\Program Files\Unity5-6-0\Editor\Data\MonoBleedingEdge\lib\mono\2.0-api\mscorlib.dll" -r:"D:\Program Files\Unity5-6-0\Editor\Data\MonoBleedingEdge\lib\mono\2.0-api\System.dll" -r:"D:\Program Files\Unity5-6-0\Editor\Data\MonoBleedingEdge\lib\mono\2.0-api\System.Core.dll" -r:"D:\Program Files\Unity5-6-0\Editor\Data\MonoBleedingEdge\lib\mono\2.0-api\System.Xml.dll" @Temp/UnityTempFile-bc22b3af017936448869d95c6a6a962f 
+Exit code: 0
+Elapsed time: 0.68 sec
+
+- Compiler output (0 lines):
+
+- Compiler errors (0 lines):
+
+- PDB to MDB conversion --------------------------------------
+
+Process: D:\desktop\yoyoAction\CSharp70Support\Roslyn\pdb2mdb.exe
+Arguments: Temp\Assembly-CSharp-Editor.dll
+Exit code: 0
+Elapsed time: 0.10 sec
+
+- pdb2mdb.exe output (0 lines):
+********************************************************************************
+*                      Friday, April 14, 2017 10:21:43 AM                      *
+********************************************************************************
+CSharpCompilerWrapper.exe version: 2.0.3.30
+Platform: Windows
+Target assembly: Assembly-CSharp.dll
+Project directory: D:\desktop\yoyoAction
+Target profile directory: D:\Program Files\Unity5-6-0\Editor\Data\Mono\lib\mono\unity
+Unity 'Data' or 'Frameworks' directory: D:/Program Files/Unity5-6-0/Editor/Data
+Compiler: Microsoft C# 7.0
+
+- Compilation -----------------------------------------------
+
+Process: D:\desktop\yoyoAction\CSharp70Support\Roslyn\csc.exe
+Arguments: -nostdlib+ -noconfig -nologo -r:"D:\Program Files\Unity5-6-0\Editor\Data\Mono\lib\mono\unity\mscorlib.dll" -r:"D:\Program Files\Unity5-6-0\Editor\Data\Mono\lib\mono\unity\System.dll" -r:"D:\Program Files\Unity5-6-0\Editor\Data\Mono\lib\mono\unity\System.Core.dll" -r:"D:\Program Files\Unity5-6-0\Editor\Data\Mono\lib\mono\unity\System.Xml.dll" @Temp/UnityTempFile-23a835859348a2d4abaccd33d26dcafb 
+Exit code: 0
+Elapsed time: 1.10 sec
+
+- Compiler output (0 lines):
+
+- Compiler errors (4 lines):
+0: Assets\Rope\RopeSimulate.cs(185,10): warning CS1030: #warning: 'fixme'
+1: Assets\Rope\RopeSimulate.cs(14,17): warning CS0649: Field 'RopeSimulate.takeupTime' is never assigned to, and will always have its default value 0
+2: Assets\Rope\RopeSimulate.cs(11,17): warning CS0649: Field 'RopeSimulate.checkDistance' is never assigned to, and will always have its default value 0
+3: Assets\Rope\RopeSimulate.cs(17,17): warning CS0649: Field 'RopeSimulate.ignoreMask' is never assigned to, and will always have its default value
+
+- PDB to MDB conversion --------------------------------------
+
+Process: D:\desktop\yoyoAction\CSharp70Support\Roslyn\pdb2mdb.exe
+Arguments: Temp\Assembly-CSharp.dll
+Exit code: 0
+Elapsed time: 0.13 sec
+
+- pdb2mdb.exe output (0 lines):
+********************************************************************************
+*                      Friday, April 14, 2017 10:21:45 AM                      *
+********************************************************************************
+CSharpCompilerWrapper.exe version: 2.0.3.30
+Platform: Windows
+Target assembly: Assembly-CSharp-Editor.dll
+Project directory: D:\desktop\yoyoAction
+Target profile directory: D:\Program Files\Unity5-6-0\Editor\Data\MonoBleedingEdge\lib\mono\2.0-api
+Unity 'Data' or 'Frameworks' directory: D:/Program Files/Unity5-6-0/Editor/Data
+Compiler: Microsoft C# 7.0
+
+- Compilation -----------------------------------------------
+
+Process: D:\desktop\yoyoAction\CSharp70Support\Roslyn\csc.exe
+Arguments: -nostdlib+ -noconfig -nologo -r:"D:\Program Files\Unity5-6-0\Editor\Data\MonoBleedingEdge\lib\mono\2.0-api\mscorlib.dll" -r:"D:\Program Files\Unity5-6-0\Editor\Data\MonoBleedingEdge\lib\mono\2.0-api\System.dll" -r:"D:\Program Files\Unity5-6-0\Editor\Data\MonoBleedingEdge\lib\mono\2.0-api\System.Core.dll" -r:"D:\Program Files\Unity5-6-0\Editor\Data\MonoBleedingEdge\lib\mono\2.0-api\System.Xml.dll" @Temp/UnityTempFile-cb81fe4107e5d9a4988d08eedbcf7114 
+Exit code: 0
+Elapsed time: 0.57 sec
+
+- Compiler output (0 lines):
+
+- Compiler errors (0 lines):
+
+- PDB to MDB conversion --------------------------------------
+
+Process: D:\desktop\yoyoAction\CSharp70Support\Roslyn\pdb2mdb.exe
+Arguments: Temp\Assembly-CSharp-Editor.dll
+Exit code: 0
+Elapsed time: 0.08 sec
+
+- pdb2mdb.exe output (0 lines):
