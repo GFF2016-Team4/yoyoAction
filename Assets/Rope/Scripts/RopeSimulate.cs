@@ -39,14 +39,15 @@ public class RopeSimulate : MonoBehaviour
     void Awake()
     {
         //初期化
-        rope.ReCalcDistance();
         listLineDraw = GetComponent<ListLineDraw>();
     }
 
     IEnumerator Start()
     {
+        rope.ReCalcDistance();
+        
         //loop
-        while(true)
+        while (true)
         {
             RopeUpdate();
             yield return null;
@@ -173,6 +174,8 @@ public class RopeSimulate : MonoBehaviour
         //Destroy(rope.rigOrigin.GetComponent<SyncObject>());
 
         rope.rigOrigin.transform.rotation = Quaternion.LookRotation(-rope.direction);
+
+        StartCoroutine(TakeUp(sync));
     }
 
     private IEnumerator TakeUp(Transform sync)
