@@ -18,6 +18,7 @@ public class RopeSimulate : MonoBehaviour
     LayerMask   ignoreMask;
 #pragma warning restore 0649
 
+    // ロープの描画
     private ListLineDraw listLineDraw;
 
     private bool isSimulationEnd = false;
@@ -134,8 +135,16 @@ public class RopeSimulate : MonoBehaviour
         return distance <= checkDistance;
     }
 
-    public void SimulationStart() => rope.tailKinematic = false;
-    public void SimulationStop()  => rope.tailKinematic = true;
+    public void SimulationStart()
+    {
+        rope.tailKinematic = false;
+        rope.ReCalcDistance();
+    }
+
+    public void SimulationStop()
+    {
+        rope.tailKinematic = true;
+    }
 
     public void SimulationEnd(Transform sync)
     {
