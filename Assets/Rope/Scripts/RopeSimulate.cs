@@ -25,6 +25,10 @@ public class RopeSimulate : MonoBehaviour
 
     private const float ignoreDistance = 0.2f;
 
+    /// <summary>シミュレート中か</summary>
+    public bool isSimulate => !rope.tailKinematic;
+
+
     public Vector3 originPosition
     {
         get { return rope.rigOrigin.position; }
@@ -56,9 +60,14 @@ public class RopeSimulate : MonoBehaviour
 
     public void Initialize(Vector3 origin, Vector3 tail)
     {
+        bool simulate = isSimulate;
+        if (simulate) SimulationStop();
+
         rope.originPosition = origin;
         rope.tailPosition   = tail;
         rope.ReCalcDistance();
+
+        if (simulate) SimulationStart();
     }
 
     void RopeUpdate()
