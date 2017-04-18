@@ -76,14 +76,17 @@ public struct Rope
     }
 
     ///<summary>現在の振り子運動の基点の設定</summary>
-    public void SetRigOrigin(RopeNode newOrigin, RopeNode parent, RopeNode child)
+    public void SetRigOrigin(RopeNode newOrigin, RopeNode parent, RopeNode child, bool reCalcDistance = true)
     {
         if(parent != null) { parent.SetChild (newOrigin); }
         if(child  != null) { child .SetParent(newOrigin); }
 
         rigOrigin = newOrigin;
 
-        ReCalcDistance();
+        if (reCalcDistance)
+        {
+            ReCalcDistance();
+        }
     }
 
     ///<summary>振り子運動の基点を新しく追加</summary>
@@ -105,7 +108,9 @@ public struct Rope
     {
         Object.Destroy(rigOrigin.gameObject);
 
-        SetRigOrigin(prevRigOrigin, prevRigOrigin.parent, tail);
+        SetRigOrigin(prevRigOrigin, prevRigOrigin.parent, tail, false);
+
+        tail.springJoint.minDistance = rigOrigin.childDisntace;
     }
 
     ///<summary>ロープの先頭を返す</summary>
@@ -118,5 +123,6 @@ public struct Rope
     public void ReCalcDistance()
     {
         tail.springJoint.minDistance = length;
+        rigOrigin.childDisntace      = length;
     }
 }

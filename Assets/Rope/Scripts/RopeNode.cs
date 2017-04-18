@@ -4,8 +4,9 @@
 public class RopeNode : MonoBehaviour
 {
     public RopeNode parent;
-
     public RopeNode child;
+
+    public float childDisntace;
 
     public new Rigidbody      rigidbody      { get; private set; }
     public     SpringJoint    springJoint    { get; private set; }
