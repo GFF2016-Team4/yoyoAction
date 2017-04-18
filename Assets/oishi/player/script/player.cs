@@ -1,13 +1,25 @@
 ﻿using UnityEngine;
 using System;
+using UniRx;
+using UniRx.Triggers;
 
 public class player : MonoBehaviour
 {
     CharacterController m_chara;
+    RopeSimulate ropeSimulate;
 
+    [Header("isGround判定の変更を何フレーム固定するか")]
+    public int rockFrameTime = 5;
+    [Header("移動速度")]
     public float speed;
+    [Header("ジャンプ力")]
     public float jumpPower;
+    [Header("重力")]
     public float gravity;
+    //public float direction = 1.0f;
+    private bool _isGrounded;
+    public bool IsGrounded { get { return _isGrounded; } }
+
 
     public Camera Pcamera;
 
@@ -15,37 +27,41 @@ public class player : MonoBehaviour
     private GameObject CopyRope = null;
     private GameObject originRope = null;
     private GameObject tailRope = null;
+    [Header("(テスト用)ロープ先端の位置")]
     public GameObject target;
-
-    public float direction = 1.0f;
 
     Vector3 moveDirection = Vector3.zero;
     Vector3 NormalizeDirection;
     Vector3 Center;
-    Vector3 tempPos;
-
     RaycastHit hit;
 
-    RopeSimulate ropeSimulate;
 
     void Start()
     {
+        //ropeSimulate = GetComponent<RopeSimulate>();
         m_chara = GetComponent<CharacterController>();
-        ropeSimulate = GetComponent<RopeSimulate>();
-        Center = new Vector3(Screen.width / 2, Screen.height / 2, 0);
+        //Center = new Vector3(Screen.width / 2, Screen.height / 2, 0);
+
+        //isGroundの値が変化してからrockFrameTime以内の変更を無視
+        m_chara.ObserveEveryValueChanged(x => x.isGrounded)
+               .ThrottleFrame(rockFrameTime)
+               .Subscribe(x =>
+               {
+                   _isGrounded = x;
+                   Debug.Log("change");
+               });
+
+
     }
 
     void Update()
     {
-        Debug.Log("CopyRope:" + CopyRope);
-        //Debug.Log(originRope);
-        //Debug.Log(tailRope);
-
         if (CopyRope == null)
         {
             //地面に接している時
-            if (m_chara.isGrounded)
+            if (IsGrounded)
             {
+                //カメラの向きに移動
                 moveDirection = Quaternion.Euler(0, Pcamera.transform.localEulerAngles.y, 0) * new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
                 moveDirection = transform.TransformDirection(moveDirection);
 
@@ -54,27 +70,37 @@ public class player : MonoBehaviour
 
                 moveDirection *= speed;
 
+                //スペースキーでジャンプ
                 if (Input.GetButton("Jump")) moveDirection.y = jumpPower;
             }
             moveDirection.y -= gravity * Time.deltaTime;
             m_chara.Move(moveDirection * Time.deltaTime);
 
-            if (Input.GetKeyDown(KeyCode.G))
+
+            //テスト用
+            //targetオブジェクトと自身の位置でロープを生成
+            if (Input.GetKeyDown(KeyCode.F))
             {
                 CopyRope = Instantiate(Rope, transform.position, Quaternion.identity);
-                originRope = CopyRope.transform.FindChild("Origin").gameObject;
-                tailRope = CopyRope.transform.FindChild("Tail").gameObject;
 
                 ropeSimulate = CopyRope.GetComponent<RopeSimulate>();
+
                 //初期化           引数(origin,tail) 
-                ropeSimulate.Initialize(target.transform.position, m_chara.transform.position);
+                ropeSimulate.Initialize(target.transform.position, transform.position);
                 //ropeSimulate.SimulationStop();
             }
 
         }
         else
         {
-            m_chara.transform.position = tailRope.transform.position;
+            //ロープ削除
+            if (Input.GetKeyDown(KeyCode.J))
+            {
+                Destroy(CopyRope);
+            }
+
+            //ロープの末尾と位置を同期
+            transform.position = ropeSimulate.tailPosition;
         }
     }
 }

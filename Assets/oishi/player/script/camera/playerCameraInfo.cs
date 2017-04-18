@@ -34,7 +34,7 @@ public class playerCameraInfo : MonoBehaviour
     }
 
     //Item1:forward, Item2:right
-    public Tuple<Vector3, Vector3> GetCameraAxis()
+    public (Vector3 forward, Vector3 right) GetCameraAxis()
     {
         Vector3 right = playerCamera.transform.right;
         Vector3 forward = playerCamera.transform.forward;
@@ -46,7 +46,7 @@ public class playerCameraInfo : MonoBehaviour
         right.Normalize();
         forward.Normalize();
 
-        return new Tuple<Vector3, Vector3>(forward, right);
+        return (forward, right);
     }
 
     public Vector3 GetInputVelocity()
@@ -54,8 +54,8 @@ public class playerCameraInfo : MonoBehaviour
         var axis = GetCameraAxis();
 
         Vector3 velocity;
-        velocity = axis.Item1 * Input.GetAxis("Vertical");
-        velocity += axis.Item2 * Input.GetAxis("Horizontal");
+        velocity = axis.forward * Input.GetAxis("Vertical");
+        velocity += axis.right * Input.GetAxis("Horizontal");
         return velocity; //正規化はしない
     }
 }
