@@ -110,7 +110,14 @@ public struct Rope
 
         SetRigOrigin(prevRigOrigin, prevRigOrigin.parent, tail, false);
 
-        tail.springJoint.minDistance = rigOrigin.childDisntace;
+        if (rigOrigin.childDisntace.HasValue)
+        {
+            tail.springJoint.minDistance = rigOrigin.childDisntace.Value;
+        }
+        else
+        {
+            tail.springJoint.minDistance = length;
+        }
     }
 
     ///<summary>ロープの先頭を返す</summary>
@@ -124,5 +131,14 @@ public struct Rope
     {
         tail.springJoint.minDistance = length;
         rigOrigin.childDisntace      = length;
+    }
+
+    public void ResetDistance()
+    {
+        RopeNode node = rigOrigin;
+        while (!node.isRoot)
+        {
+            node.childDisntace = null;
+        }
     }
 }

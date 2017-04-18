@@ -65,9 +65,12 @@ public class RopeSimulate : MonoBehaviour
 
         rope.originPosition = origin;
         rope.tailPosition   = tail;
+        rope.ResetDistance();
         rope.ReCalcDistance();
 
         if (simulate) SimulationStart();
+
+        
     }
 
     void RopeUpdate()
@@ -148,6 +151,7 @@ public class RopeSimulate : MonoBehaviour
     public void SimulationStart()
     {
         rope.tailKinematic = false;
+        rope.ResetDistance();
         rope.ReCalcDistance();
     }
 
