@@ -31,7 +31,8 @@ public class RopeSimulate : MonoBehaviour
 
     public Vector3 originPosition
     {
-        get { return rope.rigOrigin.position; }
+        get { return rope.rigOrigin.position;  }
+        set { rope.rigOrigin.position = value; }
     }
 
     public Vector3 tailPosition
@@ -69,8 +70,6 @@ public class RopeSimulate : MonoBehaviour
         rope.ReCalcDistance();
 
         if (simulate) SimulationStart();
-
-        
     }
 
     void RopeUpdate()
