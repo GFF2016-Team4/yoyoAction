@@ -1,25 +1,22 @@
 ﻿using UnityEngine;
 using System;
 using UniRx;
-using UniRx.Triggers;
 
 public class player : MonoBehaviour
 {
     CharacterController m_chara;
     RopeSimulate ropeSimulate;
+    checkGround check;
 
-    [Header("isGround判定の変更を何フレーム固定するか")]
-    public int rockFrameTime = 5;
     [Header("移動速度")]
     public float speed;
+    [Header("移動時の下方向補正")]
+    public float uPower = -0.5f;
     [Header("ジャンプ力")]
     public float jumpPower;
     [Header("重力")]
     public float gravity;
     //public float direction = 1.0f;
-    private bool _isGrounded;
-    public bool IsGrounded { get { return _isGrounded; } }
-
 
     public Camera Pcamera;
 
@@ -38,20 +35,9 @@ public class player : MonoBehaviour
 
     void Start()
     {
-        //ropeSimulate = GetComponent<RopeSimulate>();
         m_chara = GetComponent<CharacterController>();
+        check = GetComponent<checkGround>();
         //Center = new Vector3(Screen.width / 2, Screen.height / 2, 0);
-
-        //isGroundの値が変化してからrockFrameTime以内の変更を無視
-        m_chara.ObserveEveryValueChanged(x => x.isGrounded)
-               .ThrottleFrame(rockFrameTime)
-               .Subscribe(x =>
-               {
-                   _isGrounded = x;
-                   Debug.Log("change");
-               });
-
-
     }
 
     void Update()
@@ -59,10 +45,11 @@ public class player : MonoBehaviour
         if (CopyRope == null)
         {
             //地面に接している時
-            if (IsGrounded)
+            if (check.IsGrounded)
             {
                 //カメラの向きに移動
-                moveDirection = Quaternion.Euler(0, Pcamera.transform.localEulerAngles.y, 0) * new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+                moveDirection = Quaternion.Euler(0, Pcamera.transform.localEulerAngles.y, 0) * 
+                                new Vector3(Input.GetAxis("Horizontal"), -0.5f, Input.GetAxis("Vertical"));
                 moveDirection = transform.TransformDirection(moveDirection);
 
                 //向いてる方向ベクトルの正規化
@@ -75,7 +62,6 @@ public class player : MonoBehaviour
             }
             moveDirection.y -= gravity * Time.deltaTime;
             m_chara.Move(moveDirection * Time.deltaTime);
-
 
             //テスト用
             //targetオブジェクトと自身の位置でロープを生成
