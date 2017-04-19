@@ -184,11 +184,11 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 204009073}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 6.4, y: 0.100000024, z: -24.196457}
+  m_LocalPosition: {x: -3.2599998, y: -1.41, z: -27.106457}
   m_LocalScale: {x: 50.170635, y: 1.0179256, z: 1}
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_Father: {fileID: 1164084951}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &528531384
 GameObject:
@@ -472,7 +472,7 @@ GameObject:
   - component: {fileID: 959962063}
   - component: {fileID: 959962062}
   - component: {fileID: 959962061}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: yuka (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -485,12 +485,12 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 959962059}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.9300003, y: -19.91, z: -0.21}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 8.73, y: -31.890001, z: 5.09}
   m_LocalScale: {x: 3.5336404, y: 3.5336404, z: 3.5336404}
   m_Children: []
-  m_Father: {fileID: 1164084951}
-  m_RootOrder: 3
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &959962061
 MeshRenderer:
@@ -567,15 +567,15 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1164084950}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 9.66, y: 1.51, z: 2.91}
+  m_LocalPosition: {x: 9.66, y: 1.51, z: 22.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1354213247}
   - {fileID: 581760105}
   - {fileID: 548236642}
-  - {fileID: 959962060}
+  - {fileID: 204009077}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1339219234
 GameObject:
@@ -658,11 +658,11 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1339219234}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 6.15, y: 4.1, z: 7.5}
+  m_LocalPosition: {x: 6.15, y: -25.98, z: 7.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1339219239
 MonoBehaviour:
@@ -687,10 +687,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fec8216fe54fb634a8cb5105c67f35c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 3
+  speed: 5
   uPower: -1
   jumpPower: 8
   gravity: 30
+  direction: 0.5
   Pcamera: {fileID: 528531388}
   Rope: {fileID: 1289387211531950, guid: 0e100c211a197ba49a4599cd941affaa, type: 2}
   target: {fileID: 204009073}
@@ -708,7 +709,7 @@ CharacterController:
   m_Radius: 0.5
   m_SlopeLimit: 90
   m_StepOffset: 0.3
-  m_SkinWidth: 0.08
+  m_SkinWidth: 0.0001
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &1339219242
@@ -740,7 +741,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!23 &1354213244
 MeshRenderer:
   m_ObjectHideFlags: 0
