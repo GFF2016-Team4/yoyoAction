@@ -16,7 +16,7 @@ public class player : MonoBehaviour
     public float jumpPower;
     [Header("重力")]
     public float gravity;
-    //public float direction = 1.0f;
+    public float direction = 1.0f;
 
     public Camera Pcamera;
 
@@ -28,8 +28,9 @@ public class player : MonoBehaviour
     public GameObject target;
 
     Vector3 moveDirection = Vector3.zero;
-    Vector3 NormalizeDirection;
+    //Vector3 NormalizeDirection;
     Vector3 Center;
+    Vector3 correction;
     RaycastHit hit;
 
 
@@ -37,23 +38,26 @@ public class player : MonoBehaviour
     {
         m_chara = GetComponent<CharacterController>();
         check = GetComponent<checkGround>();
-        //Center = new Vector3(Screen.width / 2, Screen.height / 2, 0);
+        //Center = new Vector3(Screen.width / 2, Screen.height / 2, 0); 
+        correction = new Vector3(0, direction, 0);
+
     }
 
     void Update()
     {
+
         if (CopyRope == null)
         {
             //地面に接している時
             if (check.IsGrounded)
             {
                 //カメラの向きに移動
-                moveDirection = Quaternion.Euler(0, Pcamera.transform.localEulerAngles.y, 0) * 
+                moveDirection = Quaternion.Euler(0, Pcamera.transform.localEulerAngles.y, 0) *
                                 new Vector3(Input.GetAxis("Horizontal"), -0.5f, Input.GetAxis("Vertical"));
                 moveDirection = transform.TransformDirection(moveDirection);
 
                 //向いてる方向ベクトルの正規化
-                NormalizeDirection = moveDirection.normalized;
+                //NormalizeDirection = moveDirection.normalized;
 
                 moveDirection *= speed;
 
@@ -67,15 +71,13 @@ public class player : MonoBehaviour
             //targetオブジェクトと自身の位置でロープを生成
             if (Input.GetKeyDown(KeyCode.F))
             {
-                CopyRope = Instantiate(Rope, transform.position, Quaternion.identity);
-
+                CopyRope = Instantiate(Rope, target.transform.position, Quaternion.identity);
                 ropeSimulate = CopyRope.GetComponent<RopeSimulate>();
 
                 //初期化           引数(origin,tail) 
                 ropeSimulate.Initialize(target.transform.position, transform.position);
                 //ropeSimulate.SimulationStop();
             }
-
         }
         else
         {
@@ -84,6 +86,10 @@ public class player : MonoBehaviour
             {
                 Destroy(CopyRope);
             }
+
+            //ロープの基準点とtargetを同期
+            //ropeSimulate.originPosition = target.transform.position;
+            CopyRope.transform.position = target.transform.position;
 
             //ロープの末尾と位置を同期
             transform.position = ropeSimulate.tailPosition;
