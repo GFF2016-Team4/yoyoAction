@@ -28,7 +28,7 @@ public class RopeSimulate : MonoBehaviour
     /// <summary>シミュレート中か</summary>
     public bool isSimulate => !rope.tailKinematic;
 
-
+    
     public Vector3 originPosition
     {
         get { return rope.rigOrigin.position;  }

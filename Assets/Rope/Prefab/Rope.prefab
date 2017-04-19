@@ -156,7 +156,7 @@ MonoBehaviour:
   takeupTime: 0.5
   ignoreMask:
     serializedVersion: 2
-    m_Bits: 4294967035
+    m_Bits: 4294966523
 --- !u!114 &114457750187815014
 MonoBehaviour:
   m_ObjectHideFlags: 1
