@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Ball
   - Cube
+  - MoveObject/Lift
   layers:
   - Default
   - TransparentFX

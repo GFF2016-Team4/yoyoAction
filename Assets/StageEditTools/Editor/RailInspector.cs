@@ -1,14 +1,14 @@
 ﻿using UnityEngine;
 using UnityEditor;
 
-[CustomEditor(typeof(Rail))]
+[CustomEditor(typeof(RailCreator))]
 public class RailInspector : Editor
 {
-    private Rail rail;
+    private RailCreator rail;
 
     private void OnSceneGUI()
     {
-        rail = target as Rail;
+        rail = target as RailCreator;
 
         //線を描画
         for (int i = 0; i < rail.points.Length - 1; i++)
@@ -37,7 +37,7 @@ public class RailInspector : Editor
 
     public override void OnInspectorGUI()
     {
-        rail = target as Rail;
+        rail = target as RailCreator;
 
         DrawPointsInspector();
 

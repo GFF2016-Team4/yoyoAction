@@ -23,8 +23,8 @@ GameObject:
   - component: {fileID: 65630465747868134}
   - component: {fileID: 23119226783819518}
   m_Layer: 0
-  m_Name: rail
-  m_TagString: Untagged
+  m_Name: railCreator
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

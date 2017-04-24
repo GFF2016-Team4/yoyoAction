@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-public class Rail : MonoBehaviour
+public class RailCreator : MonoBehaviour
 {
     public Vector3[] points;
     public string    railName = "Rail";
