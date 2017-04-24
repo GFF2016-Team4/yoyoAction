@@ -24,12 +24,10 @@ public class Lift : MonoBehaviour
     void OnValidate()
     {
         transform.position = startPoint;
-
-#if UNITY_EDITOR
+        
 #pragma warning disable CS0618
         MoveRestart();
 #pragma warning restore CS0618
-#endif
     }
 
     void Start()
@@ -39,7 +37,6 @@ public class Lift : MonoBehaviour
         //(ExecuteInEditModeはオブジェクトの位置とstartPointを同期させるためにつけている)
         if (!EditorApplication.isPlaying) return;
 #endif
-        //startPoint = transform.position;
         StartCoroutine(MoveLift());
     }
 
