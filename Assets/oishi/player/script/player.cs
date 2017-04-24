@@ -30,7 +30,7 @@ public class player : MonoBehaviour
     Vector3 moveDirection = Vector3.zero;
     //Vector3 NormalizeDirection;
     Vector3 Center;
-    Vector3 correction;
+    //Vector3 correction;
     RaycastHit hit;
 
 
@@ -39,7 +39,7 @@ public class player : MonoBehaviour
         m_chara = GetComponent<CharacterController>();
         check = GetComponent<checkGround>();
         //Center = new Vector3(Screen.width / 2, Screen.height / 2, 0); 
-        correction = new Vector3(0, direction, 0);
+       // correction = new Vector3(0, direction, 0);
 
     }
 
