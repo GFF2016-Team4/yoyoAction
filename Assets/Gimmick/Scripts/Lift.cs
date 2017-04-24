@@ -39,7 +39,7 @@ public class Lift : MonoBehaviour
         //(ExecuteInEditModeはオブジェクトの位置とstartPointを同期させるためにつけている)
         if (!EditorApplication.isPlaying) return;
 #endif
-        startPoint = transform.position;
+        //startPoint = transform.position;
         StartCoroutine(MoveLift());
     }
 
@@ -55,15 +55,6 @@ public class Lift : MonoBehaviour
             yield return new WaitForSeconds(stayTime);
         }
     }
-
-#if UNITY_EDITOR
-    void Update()
-    {
-        //オブジェクトの位置を変えた時 同期しないことを防ぐため
-        if (!EditorApplication.isPlaying) { startPoint = transform.position;}
-    }
-
-#endif
 
     /// <summary>リフトをstartPointからもう一度 動かす</summary>
     [Obsolete("Unity Editor以外では動きません")]
