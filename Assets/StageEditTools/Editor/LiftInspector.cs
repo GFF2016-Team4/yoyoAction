@@ -20,17 +20,10 @@ public class LiftInspector : Editor
         }
         else
         {
-            if (lift.startPoint != lift.transform.position)
-            {
-                Undo.RecordObject(lift, "Move Point");
-                EditorUtility.SetDirty(lift);
-                lift.startPoint = lift.transform.localPosition;
-            }
+            if (IsChangeStartPoint()) ChangeStartPoint();
         }
-
-
+        
         ShowHandle(ref lift.endPoint);
-
         DrawLine();
     }
 
@@ -42,6 +35,7 @@ public class LiftInspector : Editor
 
         if (!EditorGUI.EndChangeCheck()) return;
 
+        //変更
         Undo.RecordObject(lift, "Move Point");
         EditorUtility.SetDirty(lift);
         point = handlePoint;
@@ -49,8 +43,18 @@ public class LiftInspector : Editor
 #pragma warning disable CS0618
             lift.MoveRestart();
 #pragma warning restore CS0618
+    }
 
-        return;
+    bool IsChangeStartPoint()
+    {
+        return lift.startPoint != lift.transform.position;
+    }
+
+    void ChangeStartPoint()
+    {
+        Undo.RecordObject(lift, "Move Point");
+        EditorUtility.SetDirty(lift);
+        lift.startPoint = lift.transform.localPosition;
     }
 
     void DrawLine()
@@ -58,10 +62,10 @@ public class LiftInspector : Editor
         Handles.color = Color.white;
         Handles.DrawLine(lift.startPoint, lift.endPoint);
 
-        Handles.color = new Color(1.0f, 0.0f, 0.0f, 0.5f);
+        Handles.color = new Color(1.0f, 0.0f, 0.0f, 0.5f); //red
         Handles.SphereHandleCap(0, lift.startPoint, Quaternion.identity, 0.5f, EventType.Repaint);
 
-        Handles.color = new Color(0.0f, 1.0f, 0.0f, 0.5f);
+        Handles.color = new Color(0.0f, 1.0f, 0.0f, 0.5f); //green
         Handles.SphereHandleCap(0, lift.endPoint,   Quaternion.identity, 0.5f, EventType.Repaint);
     }
 }
