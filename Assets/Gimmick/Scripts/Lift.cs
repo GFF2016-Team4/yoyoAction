@@ -25,7 +25,10 @@ public class Lift : MonoBehaviour
         transform.position = startPoint;
 
 #if UNITY_EDITOR
-        MoveRestart();
+        if (EditorApplication.isPlaying)
+        {
+            MoveRestart();
+        }
 #endif
     }
 
