@@ -40,11 +40,9 @@ public class LiftInspector : Editor
         EditorUtility.SetDirty(lift);
         point = handlePoint;
 
-        //停止中に動かないようにする
-        if (EditorApplication.isPlaying)
-        {
+#pragma warning disable CS0618
             lift.MoveRestart();
-        }
+#pragma warning restore CS0618
     }
 
     void DrawLine()

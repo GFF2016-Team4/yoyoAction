@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -25,10 +26,9 @@ public class Lift : MonoBehaviour
         transform.position = startPoint;
 
 #if UNITY_EDITOR
-        if (EditorApplication.isPlaying)
-        {
-            MoveRestart();
-        }
+#pragma warning disable CS0618
+        MoveRestart();
+#pragma warning restore CS0618
 #endif
     }
 
@@ -62,13 +62,21 @@ public class Lift : MonoBehaviour
         //オブジェクトの位置を変えた時 同期しないことを防ぐため
         if (!EditorApplication.isPlaying) { startPoint = transform.position;}
     }
+
 #endif
 
     /// <summary>リフトをstartPointからもう一度 動かす</summary>
+    [Obsolete("Unity Editor以外では動きません")]
     public void MoveRestart()
     {
-        StopAllCoroutines();
-        StartCoroutine(MoveLift());
+#if UNITY_EDITOR
+        //停止中に動かないようにする
+        if (EditorApplication.isPlaying)
+        {
+            StopAllCoroutines();
+            StartCoroutine(MoveLift());
+        }
+#endif
     }
 
     /// <summary>リフト同期用</summary>
