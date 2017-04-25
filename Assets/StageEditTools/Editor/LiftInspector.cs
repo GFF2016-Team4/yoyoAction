@@ -11,7 +11,14 @@ public class LiftInspector : Editor
     {
         lift = target as Lift;
 
-        Tools.hidden = EditorApplication.isPlaying;
+        if (Tools.current == Tool.Move)
+        {
+            Tools.hidden = EditorApplication.isPlaying;
+        }
+        else
+        {
+            Tools.hidden = false;
+        }
 
         //停止中はオブジェクトの座標と同期するので描画しない
         if (EditorApplication.isPlaying)
