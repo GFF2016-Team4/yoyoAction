@@ -7,7 +7,6 @@ using System;
 using UnityEditor;
 #endif
 
-[ExecuteInEditMode]
 public class Lift : MonoBehaviour
 {
     [Header("リフトの始点はオブジェクトの位置で決まる")]
@@ -18,7 +17,10 @@ public class Lift : MonoBehaviour
     [Header("リフトの終点")]
     public Vector3 endPoint;
 
+    [Header("停止時間")]
     public float   stayTime;
+
+    [Header("移動する時間(秒)")]
     public float   moveSecond;
 
     void OnValidate()
@@ -32,17 +34,13 @@ public class Lift : MonoBehaviour
 
     void Start()
     {
-#if UNITY_EDITOR
-        //ExecuteInEditModeを付けていると停止中でも勝手に動いてしまうので、停止中に動かないようにする
-        //(ExecuteInEditModeはオブジェクトの位置とstartPointを同期させるためにつけている)
-        if (!EditorApplication.isPlaying) return;
-#endif
         StartCoroutine(MoveLift());
     }
 
     /// <summary> リフトを動かします</summary>
     IEnumerator MoveLift()
     {
+        //往復を繰り返す
         while (true)
         {
             yield return Move(startPoint, endPoint);
@@ -67,19 +65,14 @@ public class Lift : MonoBehaviour
 #endif
     }
 
-    /// <summary>リフト同期用</summary>
-    Coroutine WaitForMoveLift(Vector3 start, Vector3 end)
-    {
-        return StartCoroutine(Move(start, end));
-    }
-
     /// <summary>リフトをstratからendまで動かす</summary>
     IEnumerator Move(Vector3 start, Vector3 end)
     {
         transform.position = start;
-
+        
         for (float time = 0.0f; time < moveSecond; time += Time.deltaTime)
         {
+            //0~1の範囲に変換
             float t = time / moveSecond;
             transform.position = Vector3.Lerp(start, end, t);
             yield return null;
