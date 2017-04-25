@@ -289,7 +289,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 293531900}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 6.138288, y: 0.003369689, z: 0.056300282}
+  m_LocalPosition: {x: 10.64, y: 0.003369689, z: 0.056300282}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 794262759}
@@ -321,7 +321,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 684949790}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.43, y: -0.014644384, z: 0.05390668}
+  m_LocalPosition: {x: -1.43, y: -0.014644384, z: 0.05630028}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 794262759}
@@ -340,7 +340,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 1f0f7df41767500459e7d453b3e825a4, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -366,7 +366,7 @@ SphereCollider:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 684949790}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
@@ -437,7 +437,7 @@ GameObject:
   - component: {fileID: 1190379333}
   m_Layer: 0
   m_Name: RailWire
-  m_TagString: Untagged
+  m_TagString: Rail
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -501,8 +501,8 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1190379332}
   m_LocalRotation: {x: -0, y: -0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 2.35, y: -0.004644394, z: 0.051398188}
-  m_LocalScale: {x: 0.16425222, y: 3.5956879, z: 0.16425219}
+  m_LocalPosition: {x: 4.54, y: -0, z: 0.051398188}
+  m_LocalScale: {x: 0.34775615, y: 5.87666, z: 0.34775588}
   m_Children: []
   m_Father: {fileID: 794262759}
   m_RootOrder: 1
@@ -516,7 +516,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4124540530041230, guid: 000bb88c8007c2048a14e59ac6840038, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -2.69
+      value: -6.3
       objectReference: {fileID: 0}
     - target: {fileID: 4124540530041230, guid: 000bb88c8007c2048a14e59ac6840038, type: 2}
       propertyPath: m_LocalPosition.y
@@ -546,8 +546,7 @@ Prefab:
       propertyPath: m_RootOrder
       value: 4
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 54494753992638384, guid: 000bb88c8007c2048a14e59ac6840038, type: 2}
+    m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 000bb88c8007c2048a14e59ac6840038, type: 2}
   m_IsPrefabParent: 0
 --- !u!1 &1672596349
