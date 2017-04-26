@@ -59,7 +59,15 @@ public class RopeSimulate : MonoBehaviour
         }
     }
 
+#if UNITY_EDITOR
+    [System.Obsolete("InitPosition(Vector3 origin, Vector3 tail)を使用してください")]
     public void Initialize(Vector3 origin, Vector3 tail)
+    {
+        InitPosition(origin, tail);
+    }
+#endif
+
+    public void InitPosition(Vector3 origin, Vector3 tail)
     {
         bool simulate = isSimulate;
         if (simulate) SimulationStop();
