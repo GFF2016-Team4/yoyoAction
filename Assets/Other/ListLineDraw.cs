@@ -7,6 +7,12 @@ public class ListLineDraw : MonoBehaviour
     [SerializeField, Tooltip("登録されているTransformを表示\n デバッグ用")]
     List<Transform> drawList;
 
+    [SerializeField]
+    uint maxLine = 1000;
+
+    //使いまわし
+    Vector3[] linePositions;
+
     LineRenderer lineRenderer;
 
     [SerializeField]
@@ -19,7 +25,8 @@ public class ListLineDraw : MonoBehaviour
 
     void Awake()
     {
-        lineRenderer = GetComponent<LineRenderer>();
+        lineRenderer  = GetComponent<LineRenderer>();
+        linePositions = new Vector3[maxLine+1];
     }
 
     void Start()
@@ -45,6 +52,7 @@ public class ListLineDraw : MonoBehaviour
     public void AddDrawList(Transform addTransform)
     {
         drawList.Add(addTransform);
+        Debug.Assert(linePositions.Length <= drawList.Count);
         FixVertexCount();
     }
 
@@ -55,12 +63,14 @@ public class ListLineDraw : MonoBehaviour
     public void AddDrawList(List<Transform> AddList)
     {
         drawList.AddRange(AddList);
+        Debug.Assert(linePositions.Length <= drawList.Count);
         FixVertexCount();
     }
 
     public void Insert(int index, Transform trans)
     {
         drawList.Insert(index, trans);
+        Debug.Assert(linePositions.Length <= drawList.Count);
         FixVertexCount();
     }
 
@@ -80,17 +90,17 @@ public class ListLineDraw : MonoBehaviour
     /// <param name="removeList">削除をするオブジェクトリスト</param>
     public void RemoveDrawList(List<Transform> removeList)
     {
-        foreach(Transform drawTransform in drawList)
+        for(int i = 0; i < drawList.Count; i++)
         {
-            foreach(Transform removeTransform in removeList)
+            for(int j = 0; j < removeList.Count; j++)
             {
-                if(drawTransform != removeTransform) continue;
-                drawList.Remove(removeTransform);
-                removeList.Remove(removeTransform);
-                FixVertexCount();
+                if(drawList[i] != removeList[j]) continue;
+                drawList  .Remove(removeList[j]);
+                removeList.Remove(removeList[j]);
                 break;
             }
         }
+        FixVertexCount();
     }
 
     /// <summary>
@@ -129,16 +139,17 @@ public class ListLineDraw : MonoBehaviour
     void Draw()
     {
         if(!isDraw) return;
-
-        Vector3[] linePositions = new Vector3[drawList.Count];
-
+        
         //アクティブだったオブジェクトの最後尾
         Transform lastActiveChild = transform;
 
         //linePositionsのカウント
         int count = 0;
-        foreach(Transform child in drawList)
+
+        for(int i = 0; i < drawList.Count; i++)
         {
+            Transform child = drawList[i];
+
             if(!child.gameObject.activeSelf) continue;
             //追加
             linePositions[count] = child.position;

@@ -18,11 +18,14 @@ public class Lift : MonoBehaviour
     public Vector3 endPoint;
 
     [Header("停止時間")]
-    public float   stayTime;
+    [SerializeField]
+    private float stayTime;
 
     [Header("移動する時間(秒)")]
     public float   moveSecond;
 
+    WaitForSeconds wait;
+    
     void OnValidate()
     {
         transform.position = startPoint;
@@ -35,19 +38,20 @@ public class Lift : MonoBehaviour
     void Start()
     {
         StartCoroutine(MoveLift());
+        wait = new WaitForSeconds(stayTime);
     }
 
     /// <summary> リフトを動かします</summary>
     IEnumerator MoveLift()
-    {
+    {        
         //往復を繰り返す
         while (true)
         {
             yield return Move(startPoint, endPoint);
-            yield return new WaitForSeconds(stayTime);
+            yield return wait;
 
             yield return Move(endPoint, startPoint);
-            yield return new WaitForSeconds(stayTime);
+            yield return wait;
         }
     }
 
@@ -79,5 +83,16 @@ public class Lift : MonoBehaviour
         }
 
         transform.position = end;
+    }
+
+    float GetStayTime() 
+    { 
+        return stayTime; 
+    }
+
+    void ApplyStayTime(float time)
+    {
+        stayTime = time;
+        wait = new WaitForSeconds(stayTime);
     }
 }

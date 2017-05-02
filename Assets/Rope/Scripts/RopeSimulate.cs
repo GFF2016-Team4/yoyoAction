@@ -25,6 +25,9 @@ public class RopeSimulate : MonoBehaviour
 
     private const float ignoreDistance = 0.2f;
 
+    //使いまわし
+    private Ray ray;
+
     /// <summary>シミュレート中か</summary>
     public bool isSimulate => !rope.tailKinematic;
 
@@ -119,11 +122,8 @@ public class RopeSimulate : MonoBehaviour
         if(!CheckRange(prevOrigin.position, rigOrigin.position)) return false;
 
         //障害物に当たってない -> 削除しないと不自然
-        Ray ray = new Ray()
-        {
-            origin    =  rope.tailPosition,
-            direction = -rope.tailPosition + prevOrigin.position
-        };
+        ray.origin =  rope.tailPosition;
+        ray.direction = -rope.tailPosition + prevOrigin.position;
 
         float maxDistance = Vector3.Distance(rope.tailPosition, prevOrigin.position);
         maxDistance -= ignoreDistance;

@@ -63,6 +63,13 @@ public class RailInspector : Editor
         }
     }
 
+    //削除ボタン用
+    GUILayoutOption[] option = new GUILayoutOption[]
+    {
+        GUILayout.Width(15), 
+        GUILayout.Height(15)
+    };
+
     private void DrawPointsInspector()
     {
         GUILayout.Label("Selected Point");
@@ -71,13 +78,6 @@ public class RailInspector : Editor
         for (int i = 0; i < rail.points.Length; i++)
         {
             EditorGUILayout.BeginHorizontal();
-
-                //削除ボタン用
-                GUILayoutOption[] option = new GUILayoutOption[]
-                {
-                    GUILayout.Width(15), 
-                    GUILayout.Height(15)
-                };
 
                 //削除ボタン
                 if (GUILayout.Button("-", option))
@@ -95,6 +95,7 @@ public class RailInspector : Editor
                     EditorUtility.SetDirty(rail);
                     rail.points[i] = pos;
                 }
+
             EditorGUILayout.EndHorizontal();
         }
     }
