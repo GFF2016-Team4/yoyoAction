@@ -6,6 +6,7 @@ public class YoyoController : MonoBehaviour
 {
     [SerializeField, Header("プレイヤー")]
     public Transform m_Player;
+
     [SerializeField, Header("最小ヨーヨー間隔")]
     public float m_SpaceDisMin = 0.6f;
     [SerializeField, Header("最大ヨーヨー間隔")]
@@ -42,6 +43,8 @@ public class YoyoController : MonoBehaviour
     {
         m_Left = transform.FindChild("Left").gameObject;
         m_Right = transform.FindChild("Right").gameObject;
+        
+        m_Player = transform.Find("Player");
 
         m_Rigidbody = transform.GetComponent<Rigidbody>();
         m_Rail = FindObjectOfType<RailController>().GetComponent<RailController>();
@@ -52,6 +55,7 @@ public class YoyoController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Debug.Log(m_Rail.GetState());
         //間隔を計算
         m_Space = (float)((int)Vector3.Distance(m_Left.transform.position, m_Right.transform.position));
 
@@ -61,35 +65,18 @@ public class YoyoController : MonoBehaviour
             m_IsHorizontal = !m_IsHorizontal;
         }
 
-        //仮移動
-        transform.Translate(Input.GetAxis("Horizontal") * Time.deltaTime * 5, 0, Input.GetAxis("Vertical") * Time.deltaTime * 5);
-
         //ヨーヨー移動制御
-        if (Input.GetMouseButton(0))
+        if(Input.GetKey(KeyCode.F))
         {
-            if (m_IsCollised == false)
-            {
-                m_Rigidbody.AddForce(transform.forward * m_Speed, ForceMode.Force);
-                StartCoroutine(YoyoOpen());
-            }
-            else
-            {
-                m_Rigidbody.constraints = RigidbodyConstraints.FreezePosition;
-            }
+            StartCoroutine(YoyoOpen());
         }
         else
         {
-            m_Rigidbody.constraints = RigidbodyConstraints.None;
-            m_Rigidbody.velocity = Vector3.zero;
             m_IsRailMoving = false;
             m_IsCollised = false;
 
             StartCoroutine(YoyoClose());
-            StartCoroutine(YoyoReturn());
         }
-
-        //Debug.Log(m_IsCollised);
-        Debug.Log(transform.rotation.eulerAngles);
 
         if (m_IsCollised && m_TargetCollider.tag == "Rail")
         {
@@ -124,9 +111,11 @@ public class YoyoController : MonoBehaviour
             //加速
             m_Rigidbody.AddForce(transform.forward * m_SpeedFactor * m_Speed, ForceMode.VelocityChange);
         }
-
         RaycastHit hit;
-        if (Physics.Raycast(transform.Find("Left").transform.position, -transform.Find("Left").transform.up, out hit, m_SpaceDisMax))
+        Debug.Log("sphereCast" + Physics.SphereCast(transform.Find("Left").transform.position, 0.5f, -transform.Find("Left").transform.up, out hit, m_SpaceDisMax));
+
+        //RaycastHit hit;
+        if (Physics.SphereCast(transform.Find("Left").transform.position, 0.5f, -transform.Find("Left").transform.up, out hit, m_SpaceDisMax))
         {
             //レールとの判定
             if (hit.collider.tag == "Rail")
@@ -140,7 +129,7 @@ public class YoyoController : MonoBehaviour
             }
         }
 
-        Debug.DrawRay(transform.Find("Left").transform.position, -transform.Find("Left").transform.up * m_SpaceDisMax, Color.cyan);
+        Debug.DrawLine(transform.Find("Left").transform.position, -transform.Find("Left").transform.forward * m_SpaceDisMax, Color.cyan);
 
         //Debug.Log("Local: " + transform.position);
     }
@@ -259,12 +248,6 @@ public class YoyoController : MonoBehaviour
 
     IEnumerator YoyoReturn()
     {
-        //元の場所に戻る
-        if (transform.position.x != m_PosPrototype.x)
-        {
-            transform.Translate(Vector3.forward * Time.deltaTime * m_Speed);
-        }
-
         //大きさを戻す
         if (this.transform.localScale.x > m_ScalePrototype.x)
         {
@@ -274,11 +257,6 @@ public class YoyoController : MonoBehaviour
                 this.transform.localScale = m_ScalePrototype;
             }
         }
-        //場所を戻す
-        if (transform.position.x != m_PosPrototype.x)
-        {
-            transform.position = m_PosPrototype;
-        }
         //向きを戻す
         if (transform.rotation.x != m_RotPrototype.x)
         {
@@ -286,13 +264,12 @@ public class YoyoController : MonoBehaviour
         }
 
         m_IsOpened = false;
-        //m_TargetCollider = null;
 
         yield return null;
     }
 
     public bool IsCollised()
     {
-        return m_IsCollised;
+        return m_IsCollised; 
     }
 }

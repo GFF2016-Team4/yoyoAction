@@ -33,7 +33,7 @@ public class ShotGripper : MonoBehaviour
     {
         //生成した時にプレイヤーと接触して微妙に位置がずれるため
         //最初はオフ
-        GetComponent<SphereCollider>().enabled = false;
+        //GetComponent<SphereCollider>().enabled = false;
         //弾を飛ばす
         ShotBullet();
         //ropeSimulate.SimulationStop();
@@ -64,11 +64,13 @@ public class ShotGripper : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             MoveToPlayerPosition_(transform.position);
+            ropeSimulate.SimulationEnd(target.transform);
         }
         //ロープの巻き取り(プレイヤーが移動)
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
             MoveToOriginRope_(getPlayerPosition);
+            ropeSimulate.SimulationEnd(transform);
         }
     }
     public void ShotBullet()
@@ -124,13 +126,13 @@ public class ShotGripper : MonoBehaviour
     IEnumerator MoveToPlayerPosition(Vector3 current)
     {
         //プレイヤーと接触して位置がずれるためoffにする
-        GetComponent<SphereCollider>().enabled = false;
-        for (float i = 0.0f; i < 1f; i += Time.deltaTime)
+        //GetComponent<SphereCollider>().enabled = false;
+        for (float i = 0.0f; i < 0.5f; i += Time.deltaTime)
         {
-            float t = i / 1f;
+            float t = i / 0.5f;
 
             transform.position = Vector3.Lerp(current, getPlayerPosition, t);
-            ropeSimulate.originPosition = transform.position;
+            //ropeSimulate.originPosition = transform.position;
 
             yield return null;
         }
@@ -150,12 +152,12 @@ public class ShotGripper : MonoBehaviour
     IEnumerator MoveToOriginRope(Vector3 current)
     {
         //プレイヤーと接触して位置がずれるためoffにする
-        GetComponent<SphereCollider>().enabled = false;
+        //GetComponent<SphereCollider>().enabled = false;
         Vector3 pf = player.transform.forward.normalized;
 
-        for (float i = 0.0f; i < 1f; i += Time.deltaTime)
+        for (float i = 0.0f; i < 0.5f; i += Time.deltaTime)
         {
-            float t = i / 1f;
+            float t = i / 0.5f;
             //                                                                     プレイヤーの半径分マイナス
             player.transform.position = Vector3.Lerp(current, ropeSimulate.originPosition - pf * 0.5f, t);
 
@@ -167,6 +169,7 @@ public class ShotGripper : MonoBehaviour
         player.transform.position = ropeSimulate.originPosition - pf * 0.5f;
         IsBullet = true;
 
+        Destroy(gameObject);
     }
 
     //------------------------同じような事書いてるので要修正-------------------------------

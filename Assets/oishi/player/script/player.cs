@@ -29,6 +29,7 @@ public class Player : MonoBehaviour
     public Camera CameraBox;
     public Camera Pcamera;
     public GameObject Bullet;
+
     private GameObject CopyBullet = null;
 
     Vector3 moveDirection = Vector3.zero;
@@ -141,11 +142,13 @@ public class Player : MonoBehaviour
                 if (Input.GetKeyDown(KeyCode.F))
                 {
                     //弾の生成
-                    CopyBullet = Instantiate(Bullet, transform.position, Quaternion.identity);
+                    CopyBullet = Instantiate(Bullet, transform.position, CameraBox.transform.rotation);
+                    //Bullet.GetComponent<Rigidbody>().AddForce(Bullet.transform.forward * 10);
                 }
             }
             Debug.DrawRay(ray.origin, Camera.main.transform.forward * 100, Color.red);
         }
+
     }
 
     //加速度変更

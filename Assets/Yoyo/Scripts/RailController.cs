@@ -14,7 +14,6 @@ public class RailController : MonoBehaviour {
     [HideInInspector]
     public bool m_IsOblique;
 
-
     private string m_State;
 
     // Use this for initialization
