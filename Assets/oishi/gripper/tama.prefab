@@ -94,6 +94,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Rope: {fileID: 1289387211531950, guid: 0e100c211a197ba49a4599cd941affaa, type: 2}
+  CopyRope: {fileID: 0}
 --- !u!135 &135838120807472702
 SphereCollider:
   m_ObjectHideFlags: 1

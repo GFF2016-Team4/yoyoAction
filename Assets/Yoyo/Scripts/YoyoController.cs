@@ -4,14 +4,18 @@ using UnityEngine;
 
 public class YoyoController : MonoBehaviour
 {
-    [SerializeField, Header("プレイヤーの手元")]
-    public Transform m_HandOrigin;
+    [SerializeField, Header("プレイヤー")]
+    public Transform m_Player;
     [SerializeField, Header("最小ヨーヨー間隔")]
     public float m_SpaceDisMin = 0.6f;
     [SerializeField, Header("最大ヨーヨー間隔")]
     public float m_SpaceDisMax = 3.0f;
     [SerializeField, Header("投げ出す距離")]
     public float m_ThrowDis;
+    [SerializeField, Header("速度")]
+    public float m_Speed =10f;
+    [SerializeField, Header("加速倍率")]
+    public float m_SpeedFactor = 2f;
 
     private float m_Space;                      //ヨーヨーの間隔
     private Vector3 m_ScalePrototype;           //ヨーヨーの大きさ(原型)
@@ -26,6 +30,7 @@ public class YoyoController : MonoBehaviour
 
     private Collider m_TargetCollider;
     private Rigidbody m_Rigidbody;
+    private RailController m_Rail;
 
     private bool m_IsOpened = false;            //開いたか?
     private bool m_IsCollised = false;          //当たったか?
@@ -39,6 +44,7 @@ public class YoyoController : MonoBehaviour
         m_Right = transform.FindChild("Right").gameObject;
 
         m_Rigidbody = transform.GetComponent<Rigidbody>();
+        m_Rail = FindObjectOfType<RailController>().GetComponent<RailController>();
         //手元の大きさと場所を取得
         GetPrototypeAttribute();
     }
@@ -52,24 +58,23 @@ public class YoyoController : MonoBehaviour
         //ヨーヨーの回転制御
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            this.transform.Rotate(Vector3.forward, 90);
             m_IsHorizontal = !m_IsHorizontal;
         }
 
+        //仮移動
+        transform.Translate(Input.GetAxis("Horizontal") * Time.deltaTime * 5, 0, Input.GetAxis("Vertical") * Time.deltaTime * 5);
+
         //ヨーヨー移動制御
-        if (Input.GetMouseButton(1))
+        if (Input.GetMouseButton(0))
         {
             if (m_IsCollised == false)
             {
-                m_Rigidbody.velocity = transform.forward * 10;
-                if (!m_IsRailMoving)
-                {
-                    YoyoOpen();
-                }
+                m_Rigidbody.AddForce(transform.forward * m_Speed, ForceMode.Force);
+                StartCoroutine(YoyoOpen());
             }
             else
             {
-                m_Rigidbody.constraints = RigidbodyConstraints.FreezeAll;
+                m_Rigidbody.constraints = RigidbodyConstraints.FreezePosition;
             }
         }
         else
@@ -78,81 +83,145 @@ public class YoyoController : MonoBehaviour
             m_Rigidbody.velocity = Vector3.zero;
             m_IsRailMoving = false;
             m_IsCollised = false;
-            //if (m_Space >= m_SpaceDisMax && !m_IsRailMoving)
-            //{
-            //    YoyoOpen();
-            //}
-            YoyoReturn();
+
+            StartCoroutine(YoyoClose());
+            StartCoroutine(YoyoReturn());
         }
 
-        //縦でレールを挟んだら移動
-        if (m_IsCollised && m_TargetCollider.tag == "Ball" && !m_IsHorizontal)
+        //Debug.Log(m_IsCollised);
+        Debug.Log(transform.rotation.eulerAngles);
+
+        if (m_IsCollised && m_TargetCollider.tag == "Rail")
         {
-            YoyoClose();
-            m_IsRailMoving = true;
+            StartCoroutine(YoyoClose());
             m_Rigidbody.constraints = RigidbodyConstraints.None;
-            transform.LookAt(m_TargetCollider.transform.parent.FindChild("Cube").transform);
 
-            if ((transform.position.x - m_TargetCollider.transform.parent.FindChild("Cube").transform.position.x) != 0)
+            //縦でレールを挟んだら移動
+            if (m_Rail.GetState() == "後" && !m_IsRailMoving && m_IsHorizontal)
             {
-                Debug.Log(transform.position);
-                transform.position += (transform.forward * Time.deltaTime * 2);
+                transform.SetPositionAndRotation(this.transform.position, m_TargetCollider.transform.parent.transform.rotation);
+                m_IsRailMoving = true;
             }
-            else
+            else if(m_Rail.GetState() == "前" && !m_IsRailMoving && m_IsHorizontal)
             {
-                m_IsRailMoving = false;
-                YoyoReturn();
+                transform.SetPositionAndRotation(this.transform.position, Quaternion.Inverse(m_TargetCollider.transform.parent.transform.rotation));
+                m_IsRailMoving = true;
             }
-        }
 
-        //横で鉄骨とかを挟んでターザン移動
-        if (m_IsCollised && m_TargetCollider.tag == "Cube" && m_IsHorizontal)
-        {
-            YoyoClose();
-            m_Rigidbody.constraints = RigidbodyConstraints.FreezePosition;
+            //横でレールを挟んでワイヤーアクション
+            else if (m_Rail.GetState() == "左" && !m_IsRailMoving && !m_IsHorizontal)
+            {
+                m_IsRailMoving = true;
+            }
+            else if (m_Rail.GetState() == "右" && !m_IsRailMoving && !m_IsHorizontal)
+            {
+                m_IsRailMoving = true;
+            }
 
-            m_Rigidbody.useGravity = true;
+            //斜めで二分の一の速度で移動しつつワイヤーアクション
+            //else if(m_Rail.GetState() == "")
+
+            //加速
+            m_Rigidbody.AddForce(transform.forward * m_SpeedFactor * m_Speed, ForceMode.VelocityChange);
         }
 
         RaycastHit hit;
         if (Physics.Raycast(transform.Find("Left").transform.position, -transform.Find("Left").transform.up, out hit, m_SpaceDisMax))
         {
-            if (hit.collider.tag == "Ball")
+            //レールとの判定
+            if (hit.collider.tag == "Rail")
             {
                 m_IsCollised = true;
                 m_TargetCollider = hit.collider;
             }
-            else if (hit.collider.tag == "Cube")
-            {
-                m_IsCollised = true;
-                m_TargetCollider = hit.collider;
-            }
-            //else if(hit.collider.tag == "Rail")
-            //{
-            //    m_IsCollised = true;
-            //    m_TargetCollider = hit.collider;
-            //}
             else
             {
                 m_IsCollised = false;
             }
         }
 
-        Debug.DrawRay(transform.Find("Left").transform.position, -transform.Find("Left").transform.up * 3, Color.red);
+        Debug.DrawRay(transform.Find("Left").transform.position, -transform.Find("Left").transform.up * m_SpaceDisMax, Color.cyan);
 
-        Debug.Log(m_Space);
+        //Debug.Log("Local: " + transform.position);
     }
 
     private void GetPrototypeAttribute()
     {
+        if (m_Player)
+            m_PosPrototype = m_Player.transform.position;
+        else
+            m_PosPrototype = this.transform.position;
+
         m_ScalePrototype = this.transform.localScale;
-        //m_PosPrototype = m_HandOrigin.transform.position;
-        m_PosPrototype = this.transform.position;
         m_RotPrototype = this.transform.rotation;
     }
 
-    //ヨーヨーの開き処理
-    private void YoyoOpen()
+    ////ヨーヨーの開き処理
+    //private void YoyoOpen()
+    //{
+    //    //開く
+    //    if (m_Space < m_SpaceDisMax)
+    //    {
+    //        m_Left.transform.position += this.transform.right * -m_SeparationSpeed;
+    //        m_Right.transform.position += this.transform.right * m_SeparationSpeed;
+    //    }
+    //    if (m_Space > m_SpaceDisMax)
+    //    {
+    //        m_Space = m_SpaceDisMax;
+    //    }
+
+    //    //拡大
+    //    //this.transform.localScale += new Vector3(m_ScaleNum * Time.deltaTime, m_ScaleNum * Time.deltaTime, m_ScaleNum * Time.deltaTime);
+    //}
+
+    ////ヨーヨーの閉じ処理
+    //private void YoyoClose()
+    //{
+    //    //閉じる
+    //    if (m_Space > m_SpaceDisMin)
+    //    {
+    //        m_Left.transform.position += this.transform.right * m_SeparationSpeed;
+    //        m_Right.transform.position += this.transform.right * -m_SeparationSpeed;
+    //    }
+    //    if (m_Space < m_SpaceDisMin)
+    //    {
+    //        m_Space = m_SpaceDisMin;
+    //    }
+    //}
+
+    //private void YoyoReturn()
+    //{
+    //    //元の場所に戻る
+    //    //if (transform.position.x != m_PosPrototype.x && m_IsOpened)
+    //    //{
+    //    //    transform.Translate(Vector3.forward * -m_ThrowDis * Time.deltaTime * 5f);
+    //    //}
+
+    //    //大きさを戻す
+    //    if (this.transform.localScale.x > m_ScalePrototype.x)
+    //    {
+    //        this.transform.localScale -= new Vector3(m_ScaleNum * Time.deltaTime, m_ScaleNum * Time.deltaTime, m_ScaleNum * Time.deltaTime);
+    //        if (this.transform.localScale.x < m_ScalePrototype.x)
+    //        {
+    //            this.transform.localScale = m_ScalePrototype;
+    //        }
+    //    }
+    //    //場所を戻す
+    //    if (transform.position.x != m_PosPrototype.x)
+    //    {
+    //        transform.position = m_PosPrototype;
+    //    }
+    //    //向きを戻す
+    //    if (transform.rotation.x != m_RotPrototype.x)
+    //    {
+    //        transform.rotation = m_RotPrototype;
+    //    }
+
+    //    m_IsOpened = false;
+    //    //m_TargetCollider = null;
+    //}
+
+    IEnumerator YoyoOpen()
     {
         //開く
         if (m_Space < m_SpaceDisMax)
@@ -168,10 +237,11 @@ public class YoyoController : MonoBehaviour
         //拡大
         //this.transform.localScale += new Vector3(m_ScaleNum * Time.deltaTime, m_ScaleNum * Time.deltaTime, m_ScaleNum * Time.deltaTime);
 
+        yield return null;
     }
 
     //ヨーヨーの閉じ処理
-    private void YoyoClose()
+    IEnumerator YoyoClose()
     {
         //閉じる
         if (m_Space > m_SpaceDisMin)
@@ -183,14 +253,16 @@ public class YoyoController : MonoBehaviour
         {
             m_Space = m_SpaceDisMin;
         }
+
+        yield return null;
     }
 
-    private void YoyoReturn()
+    IEnumerator YoyoReturn()
     {
         //元の場所に戻る
-        if (transform.position.x != m_PosPrototype.x && m_IsOpened)
+        if (transform.position.x != m_PosPrototype.x)
         {
-            transform.Translate(Vector3.forward * -m_ThrowDis * Time.deltaTime * 5f);
+            transform.Translate(Vector3.forward * Time.deltaTime * m_Speed);
         }
 
         //大きさを戻す
@@ -215,16 +287,8 @@ public class YoyoController : MonoBehaviour
 
         m_IsOpened = false;
         //m_TargetCollider = null;
-    }
 
-    public void OnTriggerEnter(Collider other)
-    {
-
-    }
-
-    public void OnTriggerExit(Collider other)
-    {
-
+        yield return null;
     }
 
     public bool IsCollised()
