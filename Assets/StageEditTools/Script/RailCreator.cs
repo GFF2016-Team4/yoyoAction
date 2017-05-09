@@ -12,9 +12,9 @@ public class RailCreator : MonoBehaviour
     void Reset()
     {
         points = new Vector3[] {
-            new Vector3(1f, 0f, 0f),
-            new Vector3(2f, 0f, 0f),
-            new Vector3(3f, 0f, 0f)
+            new Vector3(1.0f, 0.0f, 0.0f),
+            new Vector3(2.0f, 0.0f, 0.0f),
+            new Vector3(3.0f, 0.0f, 0.0f)
         };
     }
 
@@ -41,8 +41,10 @@ public class RailCreator : MonoBehaviour
             return;
         }
 
-        GameObject railParent = new GameObject();
-        railParent.name = railName;
+        GameObject railParent = new GameObject()
+        {
+            name = railName
+        };
 
         for (int i = 0; i < points.Length-1; i++)
         {

@@ -26,8 +26,9 @@ public class FireSparks : MonoBehaviour
     void Update()
     {
         float speed = Vector3.Distance(transform.position, prevPos);
+        speed *= rate;
 
-        module.rateOverDistance = Random.Range(speed*rate - randomRange, speed*rate + randomRange); 
+        module.rateOverDistance = Random.Range(speed - randomRange, speed + randomRange); 
         prevPos = transform.position;
     }
 }

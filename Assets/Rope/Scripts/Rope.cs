@@ -139,6 +139,7 @@ public struct Rope
         while (!node.isRoot)
         {
             node.childDisntace = null;
+            node = node.parent;
         }
     }
 }

@@ -6,11 +6,17 @@ using System.Collections.Generic;
 [CustomEditor(typeof(Lift))]
 public class LiftInspector : Editor
 {
-    Lift lift;
+    private Lift lift;
+    private Quaternion handleRotate = new Quaternion(0, 0, 0, 1);
+
+    private Color lineColor       = new Color(1.0f, 1.0f, 1.0f, 1.0f); //white
+    private Color lineColorPoint1 = new Color(1.0f, 0.0f, 0.0f, 0.5f); //red
+    private Color lineColorPoint2 = new Color(0.0f, 1.0f, 0.0f, 0.5f); //green 
+
     void OnSceneGUI()
     {
         lift = target as Lift;
-
+        
         bool isPlaying = EditorApplication.isPlaying;
         Tools.hidden = (Tools.current == Tool.Move) ? isPlaying : false;
 
@@ -31,8 +37,7 @@ public class LiftInspector : Editor
     void ShowHandle(ref Vector3 point)
     {
         EditorGUI.BeginChangeCheck();
-        Vector3 handlePoint;
-        handlePoint = Handles.DoPositionHandle(point, Quaternion.identity);
+        Vector3 handlePoint = Handles.DoPositionHandle(point, handleRotate);
 
         if (!EditorGUI.EndChangeCheck()) return;
 
@@ -60,13 +65,13 @@ public class LiftInspector : Editor
 
     void DrawLine()
     {
-        Handles.color = Color.white;
+        Handles.color = lineColor;
         Handles.DrawLine(lift.startPoint, lift.endPoint);
 
-        Handles.color = new Color(1.0f, 0.0f, 0.0f, 0.5f); //red
-        Handles.SphereHandleCap(0, lift.startPoint, Quaternion.identity, 0.5f, EventType.Repaint);
+        Handles.color = lineColorPoint1;
+        Handles.SphereHandleCap(0, lift.startPoint, handleRotate, 0.5f, EventType.Repaint);
 
-        Handles.color = new Color(0.0f, 1.0f, 0.0f, 0.5f); //green
-        Handles.SphereHandleCap(0, lift.endPoint,   Quaternion.identity, 0.5f, EventType.Repaint);
+        Handles.color = lineColorPoint2;
+        Handles.SphereHandleCap(0, lift.endPoint,   handleRotate, 0.5f, EventType.Repaint);
     }
 }

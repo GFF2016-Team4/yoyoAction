@@ -6,6 +6,10 @@ public class RailInspector : Editor
 {
     private RailCreator rail;
 
+    private Quaternion handleRotate = Quaternion.identity;
+
+    private Color lineColor = Color.white;
+
     private void OnSceneGUI()
     {
         rail = target as RailCreator;
@@ -16,7 +20,7 @@ public class RailInspector : Editor
             Vector3 p0 = ShowPoint(i);
             Vector3 p1 = ShowPoint(i+1);
 
-            Handles.color = Color.white;
+            Handles.color = lineColor;
             Handles.DrawLine(p0, p1);
         }
     }
@@ -25,7 +29,7 @@ public class RailInspector : Editor
     {
         Vector3 point = rail.points[index];
         EditorGUI.BeginChangeCheck();
-        point = Handles.DoPositionHandle(point, Quaternion.identity);
+        point = Handles.DoPositionHandle(point, handleRotate);
         if (EditorGUI.EndChangeCheck())
         {
             Undo.RecordObject(rail, "Move Point");
@@ -86,7 +90,7 @@ public class RailInspector : Editor
                     rail.RemovePoint(i);
                     EditorUtility.SetDirty(rail);
                 }
-
+  
                 Vector3 pos = rail.points[i];
                 pos = EditorGUILayout.Vector3Field("Position", pos);
                 if (pos != rail.points[i])
