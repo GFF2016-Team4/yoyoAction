@@ -6,7 +6,6 @@ public class RailController : MonoBehaviour {
 
     [SerializeField]
     public Transform m_Player;
-
     [HideInInspector]
     public bool m_IsAccel = false;
     [HideInInspector]

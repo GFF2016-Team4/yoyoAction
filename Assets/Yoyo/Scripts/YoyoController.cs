@@ -115,20 +115,16 @@ public class YoyoController : MonoBehaviour
 
             if (m_TargetCollider.tag == "Rail" && m_Rail.GetState() == "前")
             {
-                //transform.rotation = new Quaternion(-m_TargetCollider.transform.forward.x, -m_TargetCollider.transform.forward.y, -m_TargetCollider.transform.forward.z, 0f);
                 MoveToRailgoal_(transform.position, m_TargetCollider.transform.parent.GetChild(3).transform.GetChild(0).transform.position);
 
                 ropeOrigin.GetComponent<SphereCollider>().enabled = true;
             }
             else if(m_TargetCollider.tag == "Rail" && m_Rail.GetState() == "後")
             {
-                //transform.rotation = new Quaternion(m_TargetCollider.transform.forward.x, m_TargetCollider.transform.forward.y, m_TargetCollider.transform.forward.z, 0f);
                 MoveToRailgoal_(transform.position, m_TargetCollider.transform.parent.GetChild(3).transform.GetChild(1).transform.position);
 
                 ropeOrigin.GetComponent<SphereCollider>().enabled = true;
             }
-
-            //MoveToTarget_(transform.position, m_TargetCollider.transform.forward);
         }
         //ロープの巻き取り(ロープが移動)
         if (Input.GetKeyDown(KeyCode.Alpha2))
@@ -167,38 +163,6 @@ public class YoyoController : MonoBehaviour
             m_IsCollised = false;
 
             StartCoroutine(YoyoClose());
-        }
-
-        if (m_IsCollised && m_TargetCollider.tag == "Rail")
-        {
-            //m_Rigidbody.constraints = RigidbodyConstraints.None;
-
-            ////縦でレールを挟んだら移動
-            //if (m_Rail.GetState() == "後" && !m_IsRailMoving && m_IsHorizontal)
-            //{
-            //    transform.SetPositionAndRotation(this.transform.position, m_TargetCollider.transform.parent.transform.rotation);
-            //    m_IsRailMoving = true;
-            //}
-            //else if(m_Rail.GetState() == "前" && !m_IsRailMoving && m_IsHorizontal)
-            //{
-            //    transform.SetPositionAndRotation(this.transform.position, Quaternion.Inverse(m_TargetCollider.transform.parent.transform.rotation));
-            //    m_IsRailMoving = true;
-            //}
-            
-            ////横でレールを挟んでワイヤーアクション
-            //else if (m_Rail.GetState() == "左" && !m_IsRailMoving && !m_IsHorizontal)
-            //{
-            //    m_IsRailMoving = true;
-            //}
-            //else if (m_Rail.GetState() == "右" && !m_IsRailMoving && !m_IsHorizontal)
-            //{
-            //    m_IsRailMoving = true;
-            //}
-
-            //加速
-            //m_Rigidbody.AddForce(transform.forward * m_SpeedFactor * m_Speed, ForceMode.VelocityChange);
-
-            //transform.Translate(transform.forward);
         }
 
         //Debug.Log(m_Rail.GetState());
@@ -355,71 +319,6 @@ public class YoyoController : MonoBehaviour
         m_ScalePrototype = this.transform.localScale;
         m_RotPrototype = this.transform.rotation;
     }
-
-    ////ヨーヨーの開き処理
-    //private void YoyoOpen()
-    //{
-    //    //開く
-    //    if (m_Space < m_SpaceDisMax)
-    //    {
-    //        m_Left.transform.position += this.transform.right * -m_SeparationSpeed;
-    //        m_Right.transform.position += this.transform.right * m_SeparationSpeed;
-    //    }
-    //    if (m_Space > m_SpaceDisMax)
-    //    {
-    //        m_Space = m_SpaceDisMax;
-    //    }
-
-    //    //拡大
-    //    //this.transform.localScale += new Vector3(m_ScaleNum * Time.deltaTime, m_ScaleNum * Time.deltaTime, m_ScaleNum * Time.deltaTime);
-    //}
-
-    ////ヨーヨーの閉じ処理
-    //private void YoyoClose()
-    //{
-    //    //閉じる
-    //    if (m_Space > m_SpaceDisMin)
-    //    {
-    //        m_Left.transform.position += this.transform.right * m_SeparationSpeed;
-    //        m_Right.transform.position += this.transform.right * -m_SeparationSpeed;
-    //    }
-    //    if (m_Space < m_SpaceDisMin)
-    //    {
-    //        m_Space = m_SpaceDisMin;
-    //    }
-    //}
-
-    //private void YoyoReturn()
-    //{
-    //    //元の場所に戻る
-    //    //if (transform.position.x != m_PosPrototype.x && m_IsOpened)
-    //    //{
-    //    //    transform.Translate(Vector3.forward * -m_ThrowDis * Time.deltaTime * 5f);
-    //    //}
-
-    //    //大きさを戻す
-    //    if (this.transform.localScale.x > m_ScalePrototype.x)
-    //    {
-    //        this.transform.localScale -= new Vector3(m_ScaleNum * Time.deltaTime, m_ScaleNum * Time.deltaTime, m_ScaleNum * Time.deltaTime);
-    //        if (this.transform.localScale.x < m_ScalePrototype.x)
-    //        {
-    //            this.transform.localScale = m_ScalePrototype;
-    //        }
-    //    }
-    //    //場所を戻す
-    //    if (transform.position.x != m_PosPrototype.x)
-    //    {
-    //        transform.position = m_PosPrototype;
-    //    }
-    //    //向きを戻す
-    //    if (transform.rotation.x != m_RotPrototype.x)
-    //    {
-    //        transform.rotation = m_RotPrototype;
-    //    }
-
-    //    m_IsOpened = false;
-    //    //m_TargetCollider = null;
-    //}
 
     IEnumerator YoyoOpen()
     {
