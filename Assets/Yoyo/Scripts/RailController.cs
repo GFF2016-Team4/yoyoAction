@@ -5,7 +5,7 @@ using UnityEngine;
 public class RailController : MonoBehaviour {
 
     [SerializeField]
-    public Transform m_Gripper;
+    public Transform m_Player;
 
     [HideInInspector]
     public bool m_IsAccel = false;
@@ -24,7 +24,7 @@ public class RailController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         //グリッパーとオブジェクトの角度
-        Vector3 relative = transform.InverseTransformPoint(m_Gripper.position);
+        Vector3 relative = transform.InverseTransformPoint(m_Player.position);
         float angle = Mathf.Atan2(relative.x, relative.z) * Mathf.Rad2Deg;
 
         if(angle > 60 && angle <120)    //前

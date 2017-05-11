@@ -21,7 +21,6 @@ GameObject:
   - component: {fileID: 4124540530041230}
   - component: {fileID: 114394200135492676}
   - component: {fileID: 54956403265378080}
-  - component: {fileID: 114626997002776330}
   m_Layer: 0
   m_Name: Yoyo
   m_TagString: Player
@@ -74,7 +73,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1422482410064534}
   m_LocalRotation: {x: -0, y: 0.70012456, z: -0, w: -0.7140207}
-  m_LocalPosition: {x: 50.34, y: 13.32, z: 5.7}
+  m_LocalPosition: {x: 27.268648, y: 7.78619, z: 9.083711}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4792950373884156}
@@ -270,22 +269,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fbae1b7460bd9a49b12342dfdb1dfb1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Player: {fileID: 0}
   m_SpaceDisMin: 0.6
   m_SpaceDisMax: 3
   m_ThrowDis: 15
   m_Speed: 10
   m_SpeedFactor: 2
---- !u!114 &114626997002776330
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1422482410064534}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7678d0001beeb6c42b8223247fd97e5d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
   Rope: {fileID: 1289387211531950, guid: 0e100c211a197ba49a4599cd941affaa, type: 2}
   CopyRope: {fileID: 0}

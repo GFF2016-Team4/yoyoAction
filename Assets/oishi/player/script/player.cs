@@ -139,6 +139,7 @@ public class Player : MonoBehaviour
             var isHit = Physics.Raycast(ray, out hitShot, distance, layerMask);
             if (isHit)
             {
+                Debug.Log(hitShot.collider.name);
                 if (Input.GetKeyDown(KeyCode.F))
                 {
                     //弾の生成
