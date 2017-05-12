@@ -141,6 +141,12 @@ public struct Rope
         rigOrigin.childDisntace      = length;
     }
 
+    public void ReCalcDistance(float maxDistance)
+    {
+        tail.springJoint.minDistance = Mathf.Min(length, maxDistance);
+        rigOrigin.childDisntace      = Mathf.Min(length, maxDistance);
+    }
+
     public void ResetDistance()
     {
         RopeNode node = rigOrigin;
