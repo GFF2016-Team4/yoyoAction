@@ -1,78 +1,67 @@
-﻿using UnityEngine;
-using System;
-using UniRx;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
-public class playerCamera : MonoBehaviour
-{
-    [Tooltip("注目するオブジェクト")]
-    public Transform target;
-
-    [Tooltip("ターゲットとの距離")]
-    public float distance = 1.0f;
-
-    [Tooltip("オフセット")]
-    public Vector3 offset;
-
-    [Tooltip("回転スピード")]
+public class cameraMoveSample : MonoBehaviour {
+    public Transform player;
     public Vector2 rotationSpeed = new Vector2(120.0f, 120.0f);
-
-    [Tooltip("カメラの上下回転の限界")]
-    public float cameraLimitUp = 30f;
-
-    [Tooltip("カメラの上下回転の限界")]
-    public float cameraLimitDown = -30f;
-
-    CursorLockMode mode = CursorLockMode.None;
-
-    private float variable;
-
-    public float mystery;
+    Vector2 rotate;
 
     [Header("空のオブジェクト")]
     public Transform empty;
     public float smoothing = 10f;
-
     [Header("Playerとの距離")]
     public float km = 3f;
-
     [Header("カメラの感度")]
     public float mouseSpeed = 3f;
 
-    Vector2 rotate;
-    public void Start()
-    {
+    [Tooltip("カメラの上下回転の限界")]
+    private float cameraLimitUp = 30f;
+
+    [Tooltip("カメラの上下回転の限界")]
+    private float cameraLimitDown = -30f;
+
+    CursorLockMode mode = CursorLockMode.None;
+
+    [Tooltip("オフセット")]
+    public Vector3 offset;
+
+    [Tooltip("ターゲットとの距離")]
+    public float distance = 1.0f;
+
+    // Use this for initialization
+    void Start () {
         LockCursor();
 
-        transform.forward = target.forward;
+        transform.forward = player.forward;
         transform.position = transform.forward * distance + offset;
     }
 
+    // Update is called once per frame
     void LateUpdate()
     {
         ChangeCursorState();
 
-        
         rotate.x = Input.GetAxis("Horizontal2") * -rotationSpeed.x * Time.deltaTime / mouseSpeed;
         rotate.y = Input.GetAxis("Vertical2") * rotationSpeed.y * Time.deltaTime / mouseSpeed;
 
         //回転
-        empty.RotateAround(target.position, Vector3.up, rotate.x);
-        empty.RotateAround(target.position, transform.right, rotate.y);
-
+        empty.RotateAround(player.position, Vector3.up, rotate.x);
+        empty.RotateAround(player.position, transform.right, rotate.y);
 
         transform.position = Vector3.Lerp(
             transform.position, empty.position, smoothing * Time.deltaTime);
 
-        transform.LookAt(target);
+        transform.LookAt(player);
 
         transform.position = (
-            transform.position - target.position).normalized * km + target.position;
+            transform.position - player.position).normalized * km + player.position;
 
         //FixedAngle();
 
         Ray ray = new Ray()
         {
-            origin = target.position + offset,
+            origin = player.position + offset,
             direction = -transform.forward
         };
 
@@ -85,12 +74,9 @@ public class playerCamera : MonoBehaviour
         }
         else
         {
-            Vector3 position = target.position;       //初期化
+            Vector3 position = player.position;       //初期化
             position -= transform.forward * distance; //ターゲットの後ろに下がって見やすいように
             position += offset;                       //オフセット値
-
-            //座標の変更
-            //transform.position = position;
         }
     }
 
