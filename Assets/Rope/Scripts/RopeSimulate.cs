@@ -12,7 +12,7 @@ public class RopeSimulate : MonoBehaviour
     float       checkDistance;
 
     [SerializeField]
-    float       takeupTime;
+    float       takeupSpeed;
 
     [SerializeField]
     LayerMask   ignoreMask;
@@ -167,10 +167,15 @@ public class RopeSimulate : MonoBehaviour
         rope.tailKinematic = true;
     }
 
+    [System.Obsolete("エラーになります")]
     public void SimulationEnd(Transform sync)
     {
-        if(isSimulationEnd) return;
+        Debug.Log("is end?");
+
+        if (isSimulationEnd) return;
         isSimulationEnd = true;
+
+        Debug.Log("end");
 
         StopAllCoroutines();
         SimulationStop();
@@ -203,17 +208,26 @@ public class RopeSimulate : MonoBehaviour
         //巻き取りの開始
         Vector3 startPos = rope.originPosition;
 
-        //SoundManager.Instance.PlaySE(AUDIO.SE_ropeRoll);
-        for(float time = takeupTime; time > 0.0f; time -= Time.deltaTime)
+        float distance = Vector3.Distance(rope.tailPosition, rope.originPosition);
+        if (distance == 0.0f)
+        {
+            Debug.Log("return");
+            yield break;
+        }
+
+        while (Vector3.Distance(rope.tailPosition, rope.originPosition) > 0.3f)
         {
             rope.tailPosition = sync.position;
 
             Vector3 tail = rope.tailPosition;
-            float   t    = 1 - (time / takeupTime);
-            rope.originPosition = Vector3.Lerp(startPos, tail, t);
+            Vector3 origin = rope.originPosition;
+            rope.originPosition = Vector3.MoveTowards(origin, tail, takeupSpeed);
 
             yield return null;
         }
+
+        Debug.Log("ok");
+
         //SoundManager.Instance.StopSE();
         Destroy(gameObject);
     }

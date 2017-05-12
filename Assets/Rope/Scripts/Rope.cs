@@ -92,7 +92,15 @@ public struct Rope
     ///<summary>振り子運動の基点を新しく追加</summary>
     public RopeNode AddRigOrigin(Vector3 createPoint)
     {
-        Transform newRigOrigin = Object.Instantiate(rigOrigin.transform);
+#if UNITY_EDITOR
+        Transform parent = rigOrigin.transform.parent;
+        if (parent.childCount > 1000)
+        {
+            Debug.LogError("ロープ内のオブジェクト数が1000を超えました 一時停止をします\n.\n.\n.");
+            UnityEditor.EditorApplication.isPaused = true;
+        }
+#endif
+            Transform newRigOrigin = Object.Instantiate(rigOrigin.transform);
         RopeNode  newOrigin    = newRigOrigin.GetComponent<RopeNode>();
 
         newOrigin.position = createPoint;

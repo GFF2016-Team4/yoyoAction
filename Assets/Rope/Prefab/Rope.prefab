@@ -153,7 +153,7 @@ MonoBehaviour:
     tail: {fileID: 114845174768293218}
     rigOrigin: {fileID: 114777688579671246}
   checkDistance: 1
-  takeupTime: 0.5
+  takeupSpeed: 10
   ignoreMask:
     serializedVersion: 2
     m_Bits: 4294966523
@@ -171,6 +171,7 @@ MonoBehaviour:
   drawList:
   - {fileID: 4461682107613472}
   - {fileID: 4037000931629794}
+  maxLine: 1000
   isDraw: 1
 --- !u!114 &114777688579671246
 MonoBehaviour:
