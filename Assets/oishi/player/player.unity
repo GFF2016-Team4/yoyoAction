@@ -117,11 +117,11 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4424699226996910, guid: ee880f2b589315141bb24591a9cbc0c7, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -80.07
+      value: -10
       objectReference: {fileID: 0}
     - target: {fileID: 4424699226996910, guid: ee880f2b589315141bb24591a9cbc0c7, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 48.47
+      value: 21.8
       objectReference: {fileID: 0}
     - target: {fileID: 4424699226996910, guid: ee880f2b589315141bb24591a9cbc0c7, type: 2}
       propertyPath: m_LocalPosition.z
@@ -162,6 +162,46 @@ Prefab:
       propertyPath: target
       value: 
       objectReference: {fileID: 204009073}
+    - target: {fileID: 114443277136867276, guid: ee880f2b589315141bb24591a9cbc0c7,
+        type: 2}
+      propertyPath: inertia
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114443277136867276, guid: ee880f2b589315141bb24591a9cbc0c7,
+        type: 2}
+      propertyPath: jumpTime
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 114063495358839742, guid: ee880f2b589315141bb24591a9cbc0c7,
+        type: 2}
+      propertyPath: rockFrameTime
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 114443277136867276, guid: ee880f2b589315141bb24591a9cbc0c7,
+        type: 2}
+      propertyPath: Pcamera
+      value: 
+      objectReference: {fileID: 528531388}
+    - target: {fileID: 114443277136867276, guid: ee880f2b589315141bb24591a9cbc0c7,
+        type: 2}
+      propertyPath: DownhillAccel
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 114443277136867276, guid: ee880f2b589315141bb24591a9cbc0c7,
+        type: 2}
+      propertyPath: GroundAccel
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114443277136867276, guid: ee880f2b589315141bb24591a9cbc0c7,
+        type: 2}
+      propertyPath: UphillAccel
+      value: -2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114443277136867276, guid: ee880f2b589315141bb24591a9cbc0c7,
+        type: 2}
+      propertyPath: StopAccel
+      value: -4
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ee880f2b589315141bb24591a9cbc0c7, type: 2}
   m_IsPrefabParent: 0

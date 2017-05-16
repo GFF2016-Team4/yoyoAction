@@ -10,9 +10,14 @@ public class Player : MonoBehaviour
 
     [Header("移動速度")]
     public float speed;
-    private float speedTemp;
-    [Header("移動時の下方向補正")]
-    public float uPower = -0.5f;
+    [Header("加速(下り坂)")]
+    public float DownhillAccel;
+    [Header("加速(地面)")]
+    public float GroundAccel;
+    [Header("減速(上り坂)")]
+    public float UphillAccel;
+    [Header("減速(停止時)")]
+    public float StopAccel;
     [Header("ジャンプ力")]
     public float jumpPower;
     [Header("ジャンプ時間")]
@@ -26,37 +31,34 @@ public class Player : MonoBehaviour
     [Header("ロープを伸ばせる距離")]
     public float distance;
 
+    [Header("TPS視点用カメラ")]
     public Camera CameraBox;
+    [Header("肩越し視点用カメラ")]
     public Camera Pcamera;
     public GameObject Bullet;
 
     private GameObject CopyBullet = null;
 
     Vector3 moveDirection = Vector3.zero;
-    //Vector3 NormalizeDirection;
+    Vector3 moveDirectionY = Vector3.zero;
     Vector3 Center;
-    Vector3 Accel;
-    Vector3 movePos;
-    //Vector3 correction;
+    Vector3 groundAngle;
+
     RaycastHit hit;
     public RaycastHit hitShot;
     bool isJump;
     float timer;
     int layerMask;
 
-
     void Start()
     {
         characterController = GetComponent<CharacterController>();
         check = GetComponent<checkGround>();
         jumpTemp = jumpPower;
-        speedTemp = speed;
         isJump = false;
         Center = new Vector3(Screen.width / 2, Screen.height / 2, 0);
         layerMask = LayerMask.GetMask("Player");
         layerMask = ~layerMask;
-
-        // correction = new Vector3(0, direction, 0);
 
     }
     void Update()
@@ -66,107 +68,94 @@ public class Player : MonoBehaviour
         {
             isJump = false;
             jumpTimer = 0.0f;
+            moveDirectionY.y = 0.0f;
             //カメラの向きに移動
-            float dx = Input.GetAxis("Horizontal");
-            float dz = Input.GetAxis("Vertical");
-            moveDirection = Quaternion.Euler(0, CameraBox.transform.localEulerAngles.y, 0) *
-                            new Vector3(dx, uPower, dz);
-            moveDirection = transform.TransformDirection(moveDirection);
+            float dx = Input.GetAxisRaw("Horizontal");
+            float dz = Input.GetAxisRaw("Vertical");
 
-            //向いてる方向ベクトルの正規化
-            //NormalizeDirection = moveDirection.normalized;
+            Vector3 inputVelocity = new Vector3(dx, 0, dz);
 
-            //移動速度処理
-            //加速力ある時は加速
-            moveDirection *= speed;
+            Physics.Raycast(transform.position, Vector3.down, out hit);
+            groundAngle = Vector3.ProjectOnPlane(moveDirection.normalized, hit.normal);
 
-            //坂道判定
-            if (Physics.Raycast(transform.position, Vector3.down, out hit))
+            if (inputVelocity.magnitude >= 0.8f)
             {
+                moveDirection = inputVelocity.normalized;
+                //坂道判定
                 //坂の角度
                 //float angle = Vector3.Angle(hit.normal, Vector3.up);
-                Accel = Vector3.ProjectOnPlane(moveDirection.normalized, hit.normal);
 
                 //坂道での速度処理
-                //下り坂 + 移動入力有(加速)
-                if (Accel.y <= -0.1f && (dx != 0 || dz != 0))
+                //下り坂 + 移動中(加速)
+                if (groundAngle.y <= -0.1f)
                 {
-                    AccelAdd(2);
+                    AccelAdd(DownhillAccel);
+                    Debug.Log("下り坂");
                 }
-                //上り坂 or 平面 + 移動入力有
-                else if (speed >= speedTemp && (dx != 0 || dz != 0))
+                //平面 + 移動中(加速)
+                if (Mathf.Abs(groundAngle.y) <= 0.1f)
                 {
-                    speed -= (Time.deltaTime * 5);
-                }
-                //上り坂 or 平面 + 移動入力無
-                else if (speed >= speedTemp && (dx == 0 && dz == 0))
-                {
-                    speed = speedTemp;
+                    AccelAdd(GroundAccel);
+                    Debug.Log("平面");
                 }
             }
+            else AccelAdd(StopAccel);
+            //上り坂 + 移動中(減速)
+            if (groundAngle.y >= 0.1f)
+            {
+                AccelAdd(UphillAccel);
+                Debug.Log("上り坂");
+            }
 
-        }
-        //スペースキーでジャンプ
-        if (Input.GetButton("Jump") && isJump == false && jumpTime >= jumpTimer)
-        {
-            jumpPower += Time.deltaTime;
-            jumpTimer += Time.deltaTime;
-            moveDirection.y = jumpPower;
+            speed = Math.Max(speed, 0);
+            //スペースキーでジャンプ
+            if (Input.GetButton("Jump") && isJump == false && jumpTime >= jumpTimer)
+            {
+                jumpPower += Time.deltaTime;
+                jumpTimer += Time.deltaTime;
+                moveDirection.y = jumpPower;
 
-            if (jumpTime <= jumpTimer)
+                if (jumpTime <= jumpTimer)
+                {
+                    isJump = true;
+                    jumpPower = jumpTemp;
+                    moveDirection.y *= inertia;
+                }
+            }
+            //スペースキーを離す、上昇中
+            if (Input.GetButtonUp("Jump") && jumpTime >= jumpTimer && moveDirection.y >= 0.0f)
             {
                 isJump = true;
                 jumpPower = jumpTemp;
                 moveDirection.y *= inertia;
             }
-        }
-        //スペースキーを離す、上昇中
-        if (Input.GetButtonUp("Jump") && jumpTime >= jumpTimer && moveDirection.y >= 0.0f)
-        {
-            isJump = true;
-            jumpPower = jumpTemp;
-            moveDirection.y *= inertia;
-        }
 
-        moveDirection.y -= gravity * Time.deltaTime;
-        characterController.Move(moveDirection * Time.deltaTime);
-
-
-        //グリッパーを射出してない場合
-        if (CopyBullet == null)
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Center);
-            var isHit = Physics.Raycast(ray, out hitShot, distance, layerMask);
-            if (isHit)
+            //グリッパーを射出してない場合
+            if (CopyBullet == null)
             {
-                Debug.Log(hitShot.collider.name);
-                if (Input.GetKeyDown(KeyCode.F))
+                Ray ray = Camera.main.ScreenPointToRay(Center);
+                var isHit = Physics.Raycast(ray, out hitShot, distance, layerMask);
+                if (isHit)
                 {
-                    //弾の生成
-                    CopyBullet = Instantiate(Bullet, transform.position, CameraBox.transform.rotation);
-                    //Bullet.GetComponent<Rigidbody>().AddForce(Bullet.transform.forward * 10);
+                    Debug.Log(hitShot.collider.name);
+                    if (Input.GetKeyDown(KeyCode.F))
+                    {
+                        //弾の生成
+                        CopyBullet = Instantiate(Bullet, transform.position, CameraBox.transform.rotation);
+                    }
                 }
+                Debug.DrawRay(ray.origin, Camera.main.transform.forward * 100, Color.red);
             }
-            Debug.DrawRay(ray.origin, Camera.main.transform.forward * 100, Color.red);
+
         }
-
+        moveDirectionY.y -= gravity * Time.deltaTime;
+        characterController.Move((moveDirection * speed + moveDirectionY) * Time.deltaTime);
     }
-
     //加速度変更
-    public void AccelAdd(int value)
+    public void AccelAdd(float value)
     {
-        speed += (value * Time.deltaTime * 3);
+        speed += (value * Time.deltaTime);
     }
-    //public bool IsShpereHit()
-    //{
-    //    Ray ray = Camera.main.ScreenPointToRay(Center);
-
-    //    //基点、半径、方向、hitした情報、距離、例外判定
-    //    var sphereHit = (Physics.SphereCast(transform.position, 2, Pcamera.transform.forward, out hit, Mathf.Infinity, layerMask));
-
-    //    if (sphereHit) return true;
-    //    else return false;
-    //}
 
     public Vector3 HitPoint
     {
