@@ -29,13 +29,18 @@ public class Player : MonoBehaviour
     [Header("ジャンプ慣性の力")]
     public float inertia;
     [Header("ロープを伸ばせる距離")]
-    public float distance;
+    public float Ropedistance;
 
     [Header("TPS視点用カメラ")]
     public Camera CameraBox;
     [Header("肩越し視点用カメラ")]
     public Camera Pcamera;
     public GameObject Bullet;
+
+    //*--------------------------
+    [Header("円運動の基準点オブジェクト")]
+    public Transform obj;
+    //--------------------------*
 
     private GameObject CopyBullet = null;
 
@@ -48,7 +53,16 @@ public class Player : MonoBehaviour
     public RaycastHit hitShot;
     bool isJump;
     float timer;
+    //*--------------------------
+    float distance;
+    float absD;
+    //--------------------------*
     int layerMask;
+
+    //*--------------------------
+    bool rotate = false;
+    bool isAround = false;
+    //--------------------------*
 
     void Start()
     {
@@ -63,8 +77,44 @@ public class Player : MonoBehaviour
     }
     void Update()
     {
+        #region　打ち付けたオブジェクトを基準として回転処理（１度コメントアウト）
+        /*
+        Vector3 p1 = transform.position - obj.transform.position;
+        Vector3 p2 = transform.right;
+
+        p1.y = 0;
+        p2.y = 0;
+
+        Vector3 P2 = Vector3.Normalize(p2);
+
+        distance = Vector3.Dot(p1, p2);
+        absD = Mathf.Abs(distance);
+
+        if (p1.magnitude < 5.0f && rotate == false && isAround == false)
+        {
+            rotate = true;
+            isAround = true;
+            SpeedAdd(1);
+        }
+        if (rotate == true)
+        {
+            moveDirection = Vector3.zero;
+            Quaternion rotation = Quaternion.LookRotation(p1);
+            transform.rotation = rotation;
+            transform.RotateAround(obj.transform.position, Vector3.up, speed);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Y) && rotate == true)
+        {
+            rotate = false;
+            moveDirection = transform.right;
+            moveDirection *= speed;
+            SpeedAdd(1);
+        }
+        */
+        #endregion
         //地面に接している時
-        if (check.IsGrounded)
+        if (check.IsGrounded /*&& p1.magnitude > 5.0f*/)
         {
             isJump = false;
             jumpTimer = 0.0f;
@@ -158,6 +208,10 @@ public class Player : MonoBehaviour
         speed += (value * Time.deltaTime);
     }
 
+    public void SpeedAdd(float value)
+    {
+        speed += value;
+    }
     public Vector3 HitPoint
     {
         get { return hitShot.point; }
