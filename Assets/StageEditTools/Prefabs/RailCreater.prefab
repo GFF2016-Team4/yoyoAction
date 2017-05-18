@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4394349332791826}
   - component: {fileID: 114592884443936936}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: RailCreater
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -52,13 +52,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   points:
-  - {x: -2.4006557, y: 0, z: -6.695961}
-  - {x: 4.801674, y: 0, z: 2.701828}
-  - {x: 10.350801, y: 0, z: 0}
-  - {x: 11.350801, y: 0, z: 9.933897}
-  - {x: 17.26849, y: 0, z: 6.371338}
-  - {x: 23.699627, y: 0, z: 0}
-  - {x: 29.398117, y: 0, z: 5.0083866}
-  railName: Rails
-  createObject: {fileID: 1408388395148352, guid: 4caa2a5e214f7c44e950a8e72e53c069,
-    type: 2}
+  - {x: 1, y: 0, z: 0}
+  - {x: 2, y: 0, z: 0}
+  - {x: 3, y: 0, z: 0}
+  railName: Rail
+  createObject: {fileID: 0}
