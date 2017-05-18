@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
 
-public class checkGround : MonoBehaviour
+public class CheckGround : MonoBehaviour
 {
     [Header("isGround判定の変更を何フレーム固定するか")]
     public int rockFrameTime = 5;
