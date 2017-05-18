@@ -236,4 +236,23 @@ public class RopeSimulate : MonoBehaviour
     {
         rope.tail.rigidbody.AddForce(force, forceMode);
     }
+
+    /// <summary> ロープ全体を移動 </summary>
+    /// <param name="position">移動量</param>
+    public void Translate(Vector3 position)
+    {
+#if UNITY_EDITOR
+        if (isSimulate)
+        {
+            Debug.Log("物理挙動中に動かします\n" +
+                      "意図しない動きになるかもしれません");
+        }
+#endif
+        RopeNode node = rope.tail;
+        while (!node.isRoot)
+        {
+            node.position += position;
+            node = node.parent;
+        }
+    }
 }
