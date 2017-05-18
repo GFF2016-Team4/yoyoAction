@@ -17,19 +17,16 @@ public class playerCamera : MonoBehaviour
     public Vector2 rotationSpeed = new Vector2(120.0f, 120.0f);
 
     [Tooltip("カメラの上下回転の限界")]
-    public float cameraLimitUp = 30f;
+    float cameraLimitUp = 30f;
 
     [Tooltip("カメラの上下回転の限界")]
-    public float cameraLimitDown = -30f;
+    float cameraLimitDown = -30f;
 
     CursorLockMode mode = CursorLockMode.None;
 
-    private float variable;
+    Transform empty;
 
-    public float mystery;
-
-    [Header("空のオブジェクト")]
-    public Transform empty;
+    [Tooltip("ヌルヌル度")]
     public float smoothing = 10f;
 
     [Header("Playerとの距離")]
@@ -45,12 +42,13 @@ public class playerCamera : MonoBehaviour
 
         transform.forward = target.forward;
         transform.position = transform.forward * distance + offset;
+
+        empty = new GameObject().transform;
     }
 
     void LateUpdate()
     {
         ChangeCursorState();
-
         
         rotate.x = Input.GetAxis("Horizontal2") * -rotationSpeed.x * Time.deltaTime / mouseSpeed;
         rotate.y = Input.GetAxis("Vertical2") * rotationSpeed.y * Time.deltaTime / mouseSpeed;
@@ -59,6 +57,9 @@ public class playerCamera : MonoBehaviour
         empty.RotateAround(target.position, Vector3.up, rotate.x);
         empty.RotateAround(target.position, transform.right, rotate.y);
 
+        Vector2 rot = transform.eulerAngles;
+        rot.x = Mathf.Clamp(rotate.x, -30, 30);
+        transform.eulerAngles = rot;
 
         transform.position = Vector3.Lerp(
             transform.position, empty.position, smoothing * Time.deltaTime);
@@ -68,7 +69,8 @@ public class playerCamera : MonoBehaviour
         transform.position = (
             transform.position - target.position).normalized * km + target.position;
 
-        //FixedAngle();
+        
+        FixedAngle();
 
         Ray ray = new Ray()
         {
@@ -122,22 +124,22 @@ public class playerCamera : MonoBehaviour
         Cursor.visible = true;
     }
 
-    //void FixedAngle()
-    //{
-    //    Vector3 angle = transform.eulerAngles;
+    void FixedAngle()
+    {
+        Vector3 angle = transform.eulerAngles;
 
-    //    if (Input.GetButtonDown("ResetCamera"))
-    //    {
-    //        angle.x = 0;
-    //    }
-    //    else if (angle.x >= 180)
-    //    {
-    //        //angleは取得時に0～360の値になるため
-    //        angle.x -= 360;
-    //    }
-    //    //上限値・下限値を設定してカメラが変な挙動をしないように
-    //    angle.x = Mathf.Clamp(angle.x, cameraLimitDown, cameraLimitUp);
-    //    angle.z = 0;
-    //    transform.eulerAngles = angle;
-    //}
+        if (Input.GetButtonDown("ResetCamera"))
+        {
+            angle.x = 0;
+        }
+        else if (angle.x >= 180)
+        {
+            //angleは取得時に0～360の値になるため
+            angle.x -= 360;
+        }
+        //上限値・下限値を設定してカメラが変な挙動をしないように
+        angle.x = Mathf.Clamp(angle.x, cameraLimitDown, cameraLimitUp);
+        angle.z = 0;
+        transform.eulerAngles = angle;
+    }
 }
