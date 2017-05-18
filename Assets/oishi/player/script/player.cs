@@ -80,7 +80,8 @@ public class Player : MonoBehaviour
 
             if (inputVelocity.magnitude >= 0.8f)
             {
-                moveDirection = inputVelocity.normalized;
+                moveDirection = Quaternion.Euler(0, CameraBox.transform.localEulerAngles.y, 0) * inputVelocity.normalized;
+                moveDirection = transform.TransformDirection(moveDirection);
                 //坂道判定
                 //坂の角度
                 //float angle = Vector3.Angle(hit.normal, Vector3.up);
