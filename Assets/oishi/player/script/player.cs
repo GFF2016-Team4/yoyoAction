@@ -3,9 +3,12 @@
 [RequireComponent(typeof(CheckGround), typeof(CharacterController))]
 class Player : MonoBehaviour
 {
-    CheckGround         checkGround;
+    CheckGround checkGround;
     CharacterController characterController;
 
+    public GameObject a;
+    [Header("加速(回転)")]
+    public float RotateAcceleration;
     [Header("加速(地面)")]
     public float GroundAcceleration;
     [Header("加速(下り坂)")]
@@ -29,17 +32,19 @@ class Player : MonoBehaviour
     public GameObject bulletPrefab;
 
     Vector2 ScreenCenter;
-    
-    float   nowPlayerSpeed;
+
+    float nowPlayerSpeed;
     Vector3 moveDirection;
 
-    float   nowGravityPower;
+    float nowGravityPower;
 
     Vector2 inputVelocity;
 
     private RaycastHit hitShot;
 
     private GameObject bulletInst = null;
+
+    bool isRotate;
 
     void Start()
     {
@@ -61,7 +66,6 @@ class Player : MonoBehaviour
 
         nowGravityPower -= gravity * Time.deltaTime;
         Vector3 translate = moveDirection * nowPlayerSpeed;
-        
         translate.y = nowGravityPower;
         characterController.Move(translate * Time.deltaTime);
     }
@@ -129,12 +133,12 @@ class Player : MonoBehaviour
             nowGravityPower += jumpPower;
         }
 
-        if (Input.GetKeyDown(KeyCode.F))
+        if (Input.GetMouseButtonDown(1))
         {
             ShootBullet();
         }
     }
-    
+
     void AirMove()
     {
         //スペースキーを離す、上昇中
@@ -158,6 +162,42 @@ class Player : MonoBehaviour
         Debug.DrawRay(ray.origin, Camera.main.transform.forward * 100, Color.red);
     }
 
+    /// <summary>
+    /// オブジェクトを軸に回転
+    /// </summary>
+    /// <param name="target">回転軸となるオブジェクト</param>
+    /// <param name="rotateDistance">回転を開始するオブジェクトとの距離</param>
+    public void TurnAround(Transform target, float rotateDistance)
+    {
+        Vector3 p1 = transform.position - target.position;
+        Vector3 p2 = transform.right;
+
+        p1.y = 0;
+        p2.y = 0;
+
+        Vector3 P2 = Vector3.Normalize(p2);
+
+        float distance = Vector3.Dot(p1, P2);
+        float absDistance = Mathf.Abs(distance);
+
+        if (p1.magnitude <= rotateDistance && isRotate == false)
+        {
+            isRotate = true;
+            AccelAdd(RotateAcceleration);
+        }
+        if (isRotate == true)
+        {
+            moveDirection = Vector3.zero;
+            Quaternion rotation = Quaternion.LookRotation(p1);
+            transform.rotation = rotation;
+            transform.RotateAround(target.position, Vector3.up, nowPlayerSpeed);
+        }
+        else
+        {
+            moveDirection = transform.right;
+            AccelAdd(RotateAcceleration);
+        }
+    }
     public void AccelAdd(float value)
     {
         nowPlayerSpeed += value * Time.deltaTime;
