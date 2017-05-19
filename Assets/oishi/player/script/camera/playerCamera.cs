@@ -5,16 +5,33 @@ using UniRx;
 public class playerCamera : MonoBehaviour
 {
     [Tooltip("注目するオブジェクト")]
-    public Transform target;
+    Transform target;
 
-    [Tooltip("ターゲットとの距離")]
-    public float distance = 1.0f;
+    [Header("Playerとの距離")]
+    public float distanceFromPlayer = 3f;
 
-    [Tooltip("オフセット")]
-    public Vector3 offset;
+    float desiredRotateX = 0;
+    float desiredRotateY = 0;
+    float currentRotateX = 0;
+    float currentRotateY = 0;
 
-    [Tooltip("回転スピード")]
-    public Vector2 rotationSpeed = new Vector2(120.0f, 120.0f);
+    [Tooltip("Y軸周りのカメラ感度")]
+    public float mouseSpeedX = 1f;
+    [Tooltip("X軸周りのカメラ感度")]
+    public float mouseSpeedY = 1f;
+
+    [Header("ヌルヌル度")]
+    public float angleSmoothing = 10f;
+    [Header("ターゲット追尾のヌルヌル度")]
+    public float moveSmooth = 20f;
+
+    Vector3 pivotPosition;
+
+    //[Tooltip("ターゲットとの距離")]
+    //public float distance = 1.0f;
+
+    //[Tooltip("オフセット")]
+    //public Vector3 offset;
 
     [Tooltip("カメラの上下回転の限界")]
     float cameraLimitUp = 30f;
@@ -24,76 +41,66 @@ public class playerCamera : MonoBehaviour
 
     CursorLockMode mode = CursorLockMode.None;
 
-    Transform empty;
+    //[Header("カメラの感度")]
+    //public float mouseSpeed = 3f;
 
-    [Tooltip("ヌルヌル度")]
-    public float smoothing = 10f;
-
-    [Header("Playerとの距離")]
-    public float km = 3f;
-
-    [Header("カメラの感度")]
-    public float mouseSpeed = 3f;
-
-    Vector2 rotate;
     public void Start()
     {
+        target = GameObject.FindWithTag("Player").transform;
+        pivotPosition = target.position;
+
         LockCursor();
 
-        transform.forward = target.forward;
-        transform.position = transform.forward * distance + offset;
-
-        empty = new GameObject().transform;
+        //transform.forward = target.forward;
+        //transform.position = transform.forward * distance + offset;   
     }
 
-    void LateUpdate()
+    void Update()
     {
-        ChangeCursorState();
-        
-        rotate.x = Input.GetAxis("Horizontal2") * -rotationSpeed.x * Time.deltaTime / mouseSpeed;
-        rotate.y = Input.GetAxis("Vertical2") * rotationSpeed.y * Time.deltaTime / mouseSpeed;
+        pivotPosition = Vector3.Lerp(
+            pivotPosition, target.position, moveSmooth * Time.deltaTime);
 
-        //回転
-        empty.RotateAround(target.position, Vector3.up, rotate.x);
-        empty.RotateAround(target.position, transform.right, rotate.y);
+        desiredRotateY -= Input.GetAxis("Horizontal2") * mouseSpeedX;
+        desiredRotateX -= Input.GetAxis("Vertical2") * mouseSpeedY;
 
-        Vector2 rot = transform.eulerAngles;
-        rot.x = Mathf.Clamp(rotate.x, -30, 30);
-        transform.eulerAngles = rot;
+        desiredRotateX = Mathf.Clamp(desiredRotateX, cameraLimitDown, cameraLimitUp);
 
-        transform.position = Vector3.Lerp(
-            transform.position, empty.position, smoothing * Time.deltaTime);
+        currentRotateX = Mathf.Lerp(
+            currentRotateX, desiredRotateX, angleSmoothing * Time.deltaTime);
+        currentRotateY = Mathf.Lerp(
+            currentRotateY, desiredRotateY, angleSmoothing * Time.deltaTime);
+
+        transform.position = pivotPosition
+            + Quaternion.Euler(currentRotateX, currentRotateY, 0) * target.forward
+            * distanceFromPlayer;
 
         transform.LookAt(target);
 
-        transform.position = (
-            transform.position - target.position).normalized * km + target.position;
+        ChangeCursorState();
+        //FixedAngle();
 
-        
-        FixedAngle();
+        //Ray ray = new Ray()
+        //{
+        //    origin = target.position + offset,
+        //    direction = -transform.forward
+        //};
 
-        Ray ray = new Ray()
-        {
-            origin = target.position + offset,
-            direction = -transform.forward
-        };
+        //RaycastHit hitInfo;
+        //bool isHit = Physics.Raycast(ray, out hitInfo, distance, playersLayerMask.IgnorePlayerAndRopes);
 
-        RaycastHit hitInfo;
-        bool isHit = Physics.Raycast(ray, out hitInfo, distance, playersLayerMask.IgnorePlayerAndRopes);
+        //if (isHit)
+        //{
+        //    transform.position = hitInfo.point;
+        //}
+        //else
+        //{
+        //    Vector3 position = target.position;       //初期化
+        //    position -= transform.forward * distance; //ターゲットの後ろに下がって見やすいように
+        //    position += offset;                       //オフセット値
 
-        if (isHit)
-        {
-            transform.position = hitInfo.point;
-        }
-        else
-        {
-            Vector3 position = target.position;       //初期化
-            position -= transform.forward * distance; //ターゲットの後ろに下がって見やすいように
-            position += offset;                       //オフセット値
-
-            //座標の変更
-            //transform.position = position;
-        }
+        //    //座標の変更
+        //    transform.position = position;
+        //}
     }
 
     void ChangeCursorState()
@@ -124,22 +131,22 @@ public class playerCamera : MonoBehaviour
         Cursor.visible = true;
     }
 
-    void FixedAngle()
-    {
-        Vector3 angle = transform.eulerAngles;
+    //void FixedAngle()
+    //{
+    //    Vector3 angle = transform.eulerAngles;
 
-        if (Input.GetButtonDown("ResetCamera"))
-        {
-            angle.x = 0;
-        }
-        else if (angle.x >= 180)
-        {
-            //angleは取得時に0～360の値になるため
-            angle.x -= 360;
-        }
-        //上限値・下限値を設定してカメラが変な挙動をしないように
-        angle.x = Mathf.Clamp(angle.x, cameraLimitDown, cameraLimitUp);
-        angle.z = 0;
-        transform.eulerAngles = angle;
-    }
+    //    if (Input.GetButtonDown("ResetCamera"))
+    //    {
+    //        angle.x = 0;
+    //    }
+    //    else if (angle.x >= 180)
+    //    {
+    //        //angleは取得時に0～360の値になるため
+    //        angle.x -= 360;
+    //    }
+    //    //上限値・下限値を設定してカメラが変な挙動をしないように
+    //    angle.x = Mathf.Clamp(angle.x, cameraLimitDown, cameraLimitUp);
+    //    angle.z = 0;
+    //    transform.eulerAngles = angle;
+    //}
 }
