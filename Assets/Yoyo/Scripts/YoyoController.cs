@@ -82,16 +82,19 @@ public class YoyoController : MonoBehaviour
         if (Physics.SphereCast(transform.Find("Left").transform.position, 0.5f, -transform.Find("Left").up, out hit))
         {
             Debug.Log(hit.collider.name);
-            //レールとの判定
-            if (hit.collider.tag == "Rail")
-            {
-                m_IsCollised = true;
-                m_TargetCollider = hit.collider;
-            }
-            else
-            {
-                m_IsCollised = false;
-            }
+            m_TargetCollider = hit.collider;
+            m_IsCollised = true;
+
+            ////レールとの判定
+            //if (hit.collider.tag == "Rail")
+            //{
+            //    m_IsCollised = true;
+            //    m_TargetCollider = hit.collider;
+            //}
+            //else
+            //{
+            //    m_IsCollised = false;
+            //}
         }
 
         //ロープの発射
@@ -124,6 +127,10 @@ public class YoyoController : MonoBehaviour
                 MoveToRailgoal_(transform.position, m_TargetCollider.transform.parent.GetChild(3).transform.GetChild(1).transform.position);
 
                 ropeOrigin.GetComponent<SphereCollider>().enabled = true;
+            }
+            else
+            {
+
             }
         }
         //ロープの巻き取り(ロープが移動)

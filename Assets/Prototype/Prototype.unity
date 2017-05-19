@@ -240,16 +240,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fec8216fe54fb634a8cb5105c67f35c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 6
-  uPower: -0.5
+  GroundAcceleration: 3
+  DownhillAcceleration: 0
+  GroundDeceleration: 2
+  UphillDeceleration: 0
   jumpPower: 8
-  jumpTime: 0
   gravity: 20
-  inertia: 0
-  distance: 30
-  CameraBox: {fileID: 1021878059}
-  Pcamera: {fileID: 1021878059}
-  Bullet: {fileID: 1422482410064534, guid: 000bb88c8007c2048a14e59ac6840038, type: 2}
+  ropeDistance: 33
+  tpsCamera: {fileID: 1021878059}
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 4294966783
+  bulletPrefab: {fileID: 1422482410064534, guid: 000bb88c8007c2048a14e59ac6840038,
+    type: 2}
 --- !u!114 &220540815
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1466,14 +1469,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93ca4872001321749bf584977ad032a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 0}
+  target: {fileID: 220540819}
   distance: 1
   offset: {x: 0, y: 0, z: 0}
   rotationSpeed: {x: 120, y: 120}
-  cameraLimitUp: 30
-  cameraLimitDown: -30
-  mystery: 0
-  empty: {fileID: 0}
   smoothing: 10
   km: 3
   mouseSpeed: 3
