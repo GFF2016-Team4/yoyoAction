@@ -9,27 +9,27 @@ class Player : MonoBehaviour
 
     public GameObject a;
     [Header("加速(回転)")]
-    public float RotateAcceleration;
+    public float RotateAcceleration     = 2;
     [Header("加速(地面)")]
-    public float GroundAcceleration;
+    public float GroundAcceleration     = 3;
     [Header("加速(下り坂)")]
-    public float DownhillAcceleration;
+    public float DownhillAcceleration   = 1;
     [Header("減速(停止時)")]
-    public float GroundDeceleration;
+    public float GroundDeceleration     = 2;
     [Header("減速(上り坂)")]
-    public float UphillDeceleration;
+    public float UphillDeceleration     = 1;
     [Header("ジャンプ力")]
-    public float jumpPower;
+    public float jumpPower              = 8;
     [Header("重力")]
-    public float gravity;
+    public float gravity                = 20;
     [Header("ロープを伸ばせる距離")]
-    public float ropeDistance;
+    public float ropeDistance           = 33;
     [Header("最高速度")]
-    public float maxSpeed;
+    public float maxSpeed               = 10;
     [SerializeField, Header("現在の速度")]
     float nowPlayerSpeed;
     [Header("ブレーキの強さ")]
-    public float brakePower = 2.0f;
+    public float brakePower             = 2.0f;
 
     [Header("TPS視点用カメラ")]
     public Camera tpsCamera;
@@ -55,6 +55,16 @@ class Player : MonoBehaviour
     bool isBrake;       //ブレーキ中かどうか
     bool isSrant;       //斜め移動してるかどうか
     float brakeSpeed;
+
+    //インスペクター上でリセットの項目を選択したときの処理
+    private void Reset()
+    {
+        playerCamera pCamera = GameObject.FindObjectOfType<playerCamera>();
+
+        // ? がついているがこれはタイプミスではない（C#6の機能）
+        tpsCamera = pCamera?.GetComponent<Camera>();
+    }
+
     void Start()
     {
         characterController = GetComponent<CharacterController>();
