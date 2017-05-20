@@ -9,27 +9,27 @@ class Player : MonoBehaviour
 
     public GameObject a;
     [Header("加速(回転)")]
-    public float RotateAcceleration     = 2;
+    public float RotateAcceleration = 2;
     [Header("加速(地面)")]
-    public float GroundAcceleration     = 3;
+    public float GroundAcceleration = 3;
     [Header("加速(下り坂)")]
-    public float DownhillAcceleration   = 1;
+    public float DownhillAcceleration = 1;
     [Header("減速(停止時)")]
-    public float GroundDeceleration     = 2;
+    public float GroundDeceleration = 2;
     [Header("減速(上り坂)")]
-    public float UphillDeceleration     = 1;
+    public float UphillDeceleration = 1;
     [Header("ジャンプ力")]
-    public float jumpPower              = 8;
+    public float jumpPower = 8;
     [Header("重力")]
-    public float gravity                = 20;
+    public float gravity = 20;
     [Header("ロープを伸ばせる距離")]
-    public float ropeDistance           = 33;
+    public float ropeDistance = 33;
     [Header("最高速度")]
-    public float maxSpeed               = 10;
+    public float maxSpeed = 10;
     [SerializeField, Header("現在の速度")]
     float nowPlayerSpeed;
     [Header("ブレーキの強さ")]
-    public float brakePower             = 2.0f;
+    public float brakePower = 2.0f;
 
     [Header("TPS視点用カメラ")]
     public Camera tpsCamera;
@@ -48,6 +48,7 @@ class Player : MonoBehaviour
     Vector2 previousDir = new Vector2(2, 1);
     Vector2 judgeDir;
     private RaycastHit hitShot;
+    private RaycastHit hit;
 
     private GameObject bulletInst = null;
 
@@ -96,7 +97,7 @@ class Player : MonoBehaviour
 
         InputExtension.GetAxisVelocityRaw(out inputVelocity);
 
-        Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit);
+        Physics.Raycast(transform.position, Vector3.down, out hit);
         Vector3 groundAngle = Vector3.ProjectOnPlane(moveDirection.normalized, hit.normal);
 
         if (inputVelocity.magnitude >= 0.8f && isBrake == false)
@@ -260,9 +261,9 @@ class Player : MonoBehaviour
         }
     }
 
-    void OnControllerColliderHit(ControllerColliderHit hit)
+    void OnControllerColliderHit(ControllerColliderHit colHit)
     {
-        if (hit.transform.tag == "Wall")
+        if (colHit.transform.tag == "Wall" && hit.transform.tag != "Wall")
         {
             nowPlayerSpeed = 0;
         }
