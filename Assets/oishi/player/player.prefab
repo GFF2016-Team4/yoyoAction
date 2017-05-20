@@ -108,15 +108,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fec8216fe54fb634a8cb5105c67f35c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
-  uPower: -1
+  a: {fileID: 0}
+  RotateAcceleration: 0
+  GroundAcceleration: 2
+  DownhillAcceleration: 0
+  GroundDeceleration: 2
+  UphillDeceleration: 0
   jumpPower: 8
-  jumpTime: 0
   gravity: 30
-  inertia: 0
-  CameraBox: {fileID: 0}
-  Rope: {fileID: 1289387211531950, guid: 0e100c211a197ba49a4599cd941affaa, type: 2}
-  target: {fileID: 0}
+  ropeDistance: 0
+  tpsCamera: {fileID: 0}
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  bulletPrefab: {fileID: 0}
 --- !u!114 &114459121624778590
 MonoBehaviour:
   m_ObjectHideFlags: 1
