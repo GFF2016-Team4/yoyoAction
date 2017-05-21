@@ -8,10 +8,12 @@ public class YoyoController : MonoBehaviour
     public float m_SpaceDisMin = 0.6f;
     [SerializeField, Header("最大ヨーヨー間隔")]
     public float m_SpaceDisMax = 3.0f;
-    [SerializeField, Header("投げ出す距離")]
-    public float m_ThrowDis;
     [SerializeField, Header("速度")]
-    public float m_Speed = 10f;
+    public float m_Speed = 1f;
+    [SerializeField, Header("最大速度")]
+    public float m_SpeedMax = 5f;
+    [SerializeField, Header("最小速度")]
+    public float m_SpeedMin = 1f;
     [SerializeField, Header("加速倍率")]
     public float m_SpeedFactor = 2f;
 
@@ -23,13 +25,14 @@ public class YoyoController : MonoBehaviour
     private float m_ScaleNum = 10.0f;           //拡大倍率
     private float m_SeparationSpeed = 1.0f;     //分離速度
 
+    private float m_PlayerSpeed;
+
     private GameObject m_Left;                  //ヨーヨー左部分
     private GameObject m_Right;                 //ヨーヨー右部分
 
     private Collider m_TargetCollider;
     private Rigidbody m_Rigidbody;
     private RailController m_Rail;
-    private ShotGripper m_ShotGripper;
     private RopeSimulate ropeSimulate;
     private Transform ropeOrigin;
     private Player m_Player;
@@ -38,12 +41,11 @@ public class YoyoController : MonoBehaviour
     private Vector3 point;
 
     public GameObject Rope;
-    public GameObject CopyRope = null;
-    private GameObject target;
+    private GameObject CopyRope = null;
 
     private bool m_IsOpened = false;            //開いたか?
     private bool m_IsCollised = false;          //当たったか?
-    private bool m_IsHorizontal = false;        //水平であるか?
+    private bool m_IsYoyoHorizontal = false;        //水平であるか?
     private bool m_IsRailMoving = false;        //レール移動中であるか?
 
     bool IsBullet = false;
@@ -54,10 +56,7 @@ public class YoyoController : MonoBehaviour
         m_Left = transform.FindChild("Left").gameObject;
         m_Right = transform.FindChild("Right").gameObject;
 
-        target = GameObject.Find("Player");
-        m_Player = target.GetComponent<Player>();
-
-        m_ShotGripper = transform.GetComponent<ShotGripper>();
+        m_Player = GameObject.Find("Player").GetComponent<Player>();
 
         m_Rigidbody = transform.GetComponent<Rigidbody>();
         m_Rail = FindObjectOfType<RailController>().transform.GetComponent<RailController>();
@@ -65,6 +64,7 @@ public class YoyoController : MonoBehaviour
         GetPrototypeAttribute();
 
         point = m_Player.HitPoint;
+        m_PlayerSpeed = 0.0f;
     }
 
     // Use this for initialization
@@ -77,24 +77,15 @@ public class YoyoController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.DrawRay(transform.Find("Left").transform.position, -transform.Find("Left").up * 10f, Color.black);
+        Mathf.Clamp(m_Speed, m_SpeedMin, m_SpeedMax);
+
+        Debug.DrawRay(m_Left.transform.position, -m_Left.transform.up * 10f, Color.black);
         RaycastHit hit;
-        if (Physics.SphereCast(transform.Find("Left").transform.position, 0.5f, -transform.Find("Left").up, out hit))
+        if (Physics.SphereCast(m_Left.transform.position, 0.5f, -m_Left.transform.up, out hit,m_SpaceDisMax))
         {
             Debug.Log(hit.collider.name);
             m_TargetCollider = hit.collider;
             m_IsCollised = true;
-
-            ////レールとの判定
-            //if (hit.collider.tag == "Rail")
-            //{
-            //    m_IsCollised = true;
-            //    m_TargetCollider = hit.collider;
-            //}
-            //else
-            //{
-            //    m_IsCollised = false;
-            //}
         }
 
         //ロープの発射
@@ -116,16 +107,21 @@ public class YoyoController : MonoBehaviour
             IsIK = true;
             ropeSimulate.SimulationStart();
 
+            //m_Player.hitShotをアクセスできないと他の建物に挟んでもレール移動
             if (m_TargetCollider.tag == "Rail" && m_Rail.GetState() == "前")
             {
-                MoveToRailgoal_(transform.position, m_TargetCollider.transform.parent.GetChild(3).transform.GetChild(0).transform.position);
+                m_Speed++;
+                MoveToRailgoal_(transform.position, m_TargetCollider.transform.GetChild(0).transform.position);
 
+                m_PlayerSpeed = m_Speed;
                 ropeOrigin.GetComponent<SphereCollider>().enabled = true;
             }
             else if(m_TargetCollider.tag == "Rail" && m_Rail.GetState() == "後")
             {
-                MoveToRailgoal_(transform.position, m_TargetCollider.transform.parent.GetChild(3).transform.GetChild(1).transform.position);
+                m_Speed++;
+                MoveToRailgoal_(transform.position, m_TargetCollider.transform.GetChild(1).transform.position);
 
+                m_PlayerSpeed = m_Speed;
                 ropeOrigin.GetComponent<SphereCollider>().enabled = true;
             }
             else
@@ -133,13 +129,32 @@ public class YoyoController : MonoBehaviour
 
             }
         }
+
+        //ヨーヨー移動制御
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            m_IsOpened = true;
+        }
+        else
+        {
+            m_IsRailMoving = false;
+            m_IsCollised = false;
+
+            StartCoroutine(YoyoClose());
+        }
+
+        if (m_IsOpened)
+        {
+            StartCoroutine(YoyoOpen());
+        }
+
         //ロープの巻き取り(ロープが移動)
-        if (Input.GetKeyDown(KeyCode.Alpha2))
+        if ((IsBullet && Input.GetMouseButtonUp(0))||(IsBullet && Input.GetKeyDown(KeyCode.Space)))
         {
             IsBullet = false;
 
             MoveToPlayerPosition_(transform.position);
-            ropeSimulate.SimulationEnd(target.transform);
+            ropeSimulate.SimulationEnd(transform);
         }
         //ロープの巻き取り(プレイヤーが移動)
         if (Input.GetKeyDown(KeyCode.Alpha3))
@@ -150,32 +165,23 @@ public class YoyoController : MonoBehaviour
             ropeSimulate.SimulationEnd(transform);
         }
 
-        //間隔を計算
+        //間隔を計算  二回の強制キャストで誤差を無くす
         m_Space = (float)((int)Vector3.Distance(m_Left.transform.position, m_Right.transform.position));
 
         //ヨーヨーの回転制御
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (m_Rail.GetState() == "前" || m_Rail.GetState() == "後")
         {
-            m_IsHorizontal = !m_IsHorizontal;
+            m_IsYoyoHorizontal = false;
         }
-
-        //ヨーヨー移動制御
-        if (Input.GetKey(KeyCode.F))
+        else if (m_Rail.GetState() == "左" || m_Rail.GetState() == "右")
         {
-            StartCoroutine(YoyoOpen());
-        }
-        else
-        {
-            m_IsRailMoving = false;
-            m_IsCollised = false;
-
-            StartCoroutine(YoyoClose());
+            m_IsYoyoHorizontal = true;
         }
 
         //Debug.Log(m_Rail.GetState());
         Debug.Log(m_IsCollised);
         //Debug.Log("sphereCast" + Physics.Linecast(transform.Find("Left").transform.position, transform.Find("Right").transform.position, out hit));
-        Debug.DrawLine(transform.Find("Left").transform.position, -transform.Find("Left").transform.right * m_SpaceDisMax, Color.cyan);
+        Debug.DrawLine(m_Left.transform.position, -m_Left.transform.right * m_SpaceDisMax, Color.cyan);
     }
 
     public void ShotBullet()
@@ -194,10 +200,11 @@ public class YoyoController : MonoBehaviour
         //最初は物理挙動off
         ropeSimulate.SimulationStop();
 
+        m_IsOpened = true;
+
         MoveToTarget_(transform.position, point);
     }
 
-    //------------------------同じような事書いてるので要修正-------------------------------
     //OriginRope→target
     Coroutine MoveToTarget_(Vector3 current, Vector3 target)
     {
@@ -248,6 +255,11 @@ public class YoyoController : MonoBehaviour
         transform.position = getPlayerPosition;
         IsBullet = true;
 
+        MoveToPlayerPosition_(transform.position);
+        ropeSimulate.SimulationEnd(transform);
+
+        m_IsOpened = false;
+
         Destroy(gameObject);
     }
 
@@ -278,17 +290,11 @@ public class YoyoController : MonoBehaviour
         m_Player.transform.position = ropeSimulate.originPosition - pf * 0.5f;
         IsBullet = true;
 
+
         Destroy(gameObject);
     }
 
-    //------------------------同じような事書いてるので要修正-------------------------------
-
-    Vector3 getPlayerPosition
-    {
-        get { return m_Player.Position; }
-    }
-
-    //OriginRope→target
+    //レールの端まで移動
     Coroutine MoveToRailgoal_(Vector3 current, Vector3 target)
     {
         return StartCoroutine(MoveToRailgoal(current, target));
@@ -297,25 +303,41 @@ public class YoyoController : MonoBehaviour
     //現在地、目的地
     IEnumerator MoveToRailgoal(Vector3 current, Vector3 target)
     {
-        for (float i = 0.0f; i < 1f; i += Time.deltaTime)
+        float distance = Vector3.Distance(current, target);
+
+        while (distance >= m_Speed * Time.unscaledDeltaTime + 0.01f)
         {
-            float t = i / 1f;
+            transform.position = Vector3.MoveTowards(current, target, m_Speed * Time.deltaTime);
 
-            movePos = target;
-            transform.position = Vector3.Lerp(current, movePos, t);
-            ropeSimulate.originPosition = transform.position;
-
+            current = transform.position;
+            ropeSimulate.originPosition = current;
+            distance = Vector3.Distance(current, target);
             yield return null;
         }
-        transform.position = movePos;
+        transform.position = target;
 
-        //移動が終わったらコライダーを戻す
-        //GetComponent<SphereCollider>().enabled = true;
+        //this.transform.Translate(target);
+        //for (float i = 0.0f; i < 1f; i += Time.deltaTime)
+        //{
+        //    float t = i / 1f;
+
+        //    movePos = target;
+        //    transform.position = Vector3.Lerp(current, movePos, t);
+        //    ropeSimulate.originPosition = transform.position;
+
+        //    yield return null;
+        //}
+        //transform.position = movePos;
 
         IsBullet = false;
+
+        MoveToPlayerPosition_(transform.position);
+        ropeSimulate.SimulationEnd(transform);
+
+        m_IsOpened = false;
     }
 
-
+    //元の位置情報などを一旦取得して保存
     private void GetPrototypeAttribute()
     {
         if (m_Player)
@@ -327,6 +349,7 @@ public class YoyoController : MonoBehaviour
         m_RotPrototype = this.transform.rotation;
     }
 
+    //ヨーヨーの開き処理
     IEnumerator YoyoOpen()
     {
         //開く
@@ -363,30 +386,20 @@ public class YoyoController : MonoBehaviour
         yield return null;
     }
 
-    IEnumerator YoyoReturn()
+
+    Vector3 getPlayerPosition
     {
-        //大きさを戻す
-        if (this.transform.localScale.x > m_ScalePrototype.x)
-        {
-            this.transform.localScale -= new Vector3(m_ScaleNum * Time.deltaTime, m_ScaleNum * Time.deltaTime, m_ScaleNum * Time.deltaTime);
-            if (this.transform.localScale.x < m_ScalePrototype.x)
-            {
-                this.transform.localScale = m_ScalePrototype;
-            }
-        }
-        //向きを戻す
-        if (transform.rotation.x != m_RotPrototype.x)
-        {
-            transform.rotation = m_RotPrototype;
-        }
-
-        m_IsOpened = false;
-
-        yield return null;
+        get { return m_Player.Position; }
     }
 
     public bool IsCollised()
     {
         return m_IsCollised;
     }
+
+    public float GetYoyoSpeed()
+    {
+        return m_Speed;
+    }
+
 }

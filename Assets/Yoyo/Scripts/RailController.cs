@@ -14,6 +14,7 @@ public class RailController : MonoBehaviour {
     public bool m_IsOblique;
 
     private string m_State;
+    private float angle;
 
     // Use this for initialization
     void Start () {
@@ -23,65 +24,88 @@ public class RailController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         //グリッパーとオブジェクトの角度
-        Vector3 relative = transform.InverseTransformPoint(m_Player.position);
-        float angle = Mathf.Atan2(relative.x, relative.z) * Mathf.Rad2Deg;
+        var heading = m_Player.position - transform.position;
+        heading.y = 0;
 
-        if(angle > 60 && angle <120)    //前
+        var distance = heading.magnitude;
+        var direction = heading / distance;
+
+        angle = Vector3.Angle(transform.position, direction);
+
+        //Vector3 relative = transform.InverseTransformPoint(m_Player.position);
+        //float angle = Mathf.Atan2(relative.x, relative.z) * Mathf.Rad2Deg;
+
+        if(angle > 20 && angle < 50)    //前
         {
             m_IsAccel = true;
             m_IsFront = true;
             m_IsOblique = false;
             m_State = "前";
         }
-        else if(angle < -60 && angle > -120)    //後
+        else if(angle >130 && angle < 160)  //後
         {
             m_IsAccel = true;
             m_IsFront = false;
             m_IsOblique = false;
             m_State = "後";
         }
-        else if(angle > -30 && angle < 30)      //左
-        {
-            m_IsAccel = false;
-            m_IsFront = true;
-            m_IsOblique = false;
-            m_State = "左";
-        }
-        else if((angle > 150 && angle < 180) || (angle < -150 && angle > -180))     //右
-        {
-            m_IsAccel = false;
-            m_IsFront = false;
-            m_IsOblique = false;
-            m_State = "右";
-        }
-        else if(angle > 30 && angle < 60)   //左前
-        {
-            m_IsAccel = true;
-            m_IsFront = true;
-            m_IsOblique = true;
-            m_State = "左前";
-        }
-        else if(angle > 120 && angle < 150) //右前
-        {
-            m_IsAccel = false;
-            m_IsFront = false;
-            m_IsOblique = true;
-            m_State = "右前";
-        }
-        else if(angle > -60 && angle < -30) //左後
-        {
-            m_IsAccel = true;
-            m_IsFront = false;
-            m_IsOblique = true;
-            m_State = "左後";
-        }
-        else if(angle > -150 && angle < -120)   //右後
-        {
-            m_IsAccel = false;
-            m_IsFront = false;
-            m_IsOblique = true;
-            m_State = "右後";
-        }
+
+        //if (angle > 60 && angle <120)    //前
+        //{
+        //    m_IsAccel = true;
+        //    m_IsFront = true;
+        //    m_IsOblique = false;
+        //    m_State = "前";
+        //}
+        //else if(angle < -60 && angle > -120)    //後
+        //{
+        //    m_IsAccel = true;
+        //    m_IsFront = false;
+        //    m_IsOblique = false;
+        //    m_State = "後";
+        //}
+        //else if(angle > -30 && angle < 30)      //左
+        //{
+        //    m_IsAccel = false;
+        //    m_IsFront = true;
+        //    m_IsOblique = false;
+        //    m_State = "左";
+        //}
+        //else if((angle > 150 && angle < 180) || (angle < -150 && angle > -180))     //右
+        //{
+        //    m_IsAccel = false;
+        //    m_IsFront = false;
+        //    m_IsOblique = false;
+        //    m_State = "右";
+        //}
+        //else if(angle > 30 && angle < 60)   //左前
+        //{
+        //    m_IsAccel = true;
+        //    m_IsFront = true;
+        //    m_IsOblique = true;
+        //    m_State = "左前";
+        //}
+        //else if(angle > 120 && angle < 150) //右前
+        //{
+        //    m_IsAccel = false;
+        //    m_IsFront = false;
+        //    m_IsOblique = true;
+        //    m_State = "右前";
+        //}
+        //else if(angle > -60 && angle < -30) //左後
+        //{
+        //    m_IsAccel = true;
+        //    m_IsFront = false;
+        //    m_IsOblique = true;
+        //    m_State = "左後";
+        //}
+        //else if(angle > -150 && angle < -120)   //右後
+        //{
+        //    m_IsAccel = false;
+        //    m_IsFront = false;
+        //    m_IsOblique = true;
+        //    m_State = "右後";
+        //}
 
         //Debug.Log("Oblique" + m_IsOblique);
         //Debug.Log("Accel" + m_IsAccel);
