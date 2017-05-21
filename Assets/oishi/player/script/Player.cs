@@ -7,7 +7,6 @@ class Player : MonoBehaviour
     CheckGround checkGround;
     CharacterController characterController;
 
-    public GameObject a;
     [Header("加速(回転)")]
     public float RotateAcceleration = 2;
     [Header("加速(地面)")]
@@ -150,6 +149,7 @@ class Player : MonoBehaviour
                 isSrant = false;
             }
             moveDirection = forward * previousDir.y + right * previousDir.x;
+            //MoveDirection = forward * GetInputVelocity.y + right * GetInputVelocity.x;
             previousDir = inputVelocity;
         }
 
@@ -198,7 +198,6 @@ class Player : MonoBehaviour
         {
             ShootBullet();
         }
-
     }
 
     void AirMove()
@@ -271,7 +270,22 @@ class Player : MonoBehaviour
 
     public void AccelAdd(float value)
     {
-        nowPlayerSpeed += value * Time.deltaTime;
+        PlayerSpeed += value * Time.deltaTime;
+    }
+    public void SideMove()
+    {
+        InputExtension.GetAxisVelocityRaw(out inputVelocity);
+
+        Vector3 forward = tpsCamera.transform.forward;
+        forward.y = 0;
+        forward.Normalize();
+
+        Vector3 right = tpsCamera.transform.right;
+        right.y = 0;
+        right.Normalize();
+
+        MoveDirection = forward * GetInputVelocity.y + right * GetInputVelocity.x;
+        //MoveDirection = right * GetInputVelocity.y;
     }
     public Vector3 HitPoint
     {
@@ -284,5 +298,23 @@ class Player : MonoBehaviour
     public Vector3 Position
     {
         get { return transform.position; }
+    }
+    public Vector3 GetInputVelocity
+    {
+        get { return inputVelocity; }
+    }
+    public Vector3 MoveDirection
+    {
+        get { return moveDirection; }
+        set { moveDirection = value; }
+    }
+    public float PlayerSpeed
+    {
+        get { return nowPlayerSpeed; }
+        set { nowPlayerSpeed = value; }
+    }
+    public bool PlayerIsGround
+    {
+        get { return checkGround.IsGrounded; }
     }
 }
