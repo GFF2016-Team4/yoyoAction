@@ -16,6 +16,11 @@ public class RopeSimulate : MonoBehaviour
 
     [SerializeField]
     LayerMask   ignoreMask;
+
+#if UNITY_EDITOR
+    [SerializeField]
+    bool        showDebug;
+#endif
 #pragma warning restore 0649
 
     // ロープの描画
@@ -57,6 +62,7 @@ public class RopeSimulate : MonoBehaviour
         //loop
         while (true)
         {
+            ShowDebugLog(rope.length);
             RopeUpdate();
             yield return null;
         }
@@ -254,5 +260,17 @@ public class RopeSimulate : MonoBehaviour
             node.position += position;
             node = node.parent;
         }
+    }
+
+    public void ReCalcDistance(float maxDistance)
+    {
+        rope.ReCalcDistance(maxDistance);
+    }
+
+    private void ShowDebugLog(object log)
+    {
+#if UNITY_EDITOR
+        if (showDebug) { Debug.Log(log); }
+#endif
     }
 }
