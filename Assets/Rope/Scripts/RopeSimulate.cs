@@ -49,6 +49,8 @@ public class RopeSimulate : MonoBehaviour
         set { rope.tailPosition = value; }
     }
 
+    public Vector3 direction => rope.direction;
+
     void Awake()
     {
         //初期化

@@ -92,7 +92,7 @@ class Player : MonoBehaviour
     void GroundMove()
     {
         //重力をリセット
-        nowGravityPower = 0;
+        ResetGravity();
 
         InputExtension.GetAxisVelocityRaw(out inputVelocity);
 
@@ -272,6 +272,10 @@ class Player : MonoBehaviour
     {
         PlayerSpeed += value * Time.deltaTime;
     }
+    public void ResetGravity()
+    {
+        nowGravityPower = 0;
+    }
     public void SideMove()
     {
         InputExtension.GetAxisVelocityRaw(out inputVelocity);
@@ -284,8 +288,11 @@ class Player : MonoBehaviour
         right.y = 0;
         right.Normalize();
 
-        MoveDirection = forward * GetInputVelocity.y + right * GetInputVelocity.x;
-        //MoveDirection = right * GetInputVelocity.y;
+        if (inputVelocity.magnitude != 0)
+        {
+            MoveDirection = forward * GetInputVelocity.y + right * GetInputVelocity.x;
+            //MoveDirection = right * GetInputVelocity.y;
+        }
     }
     public Vector3 HitPoint
     {

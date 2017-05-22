@@ -53,6 +53,7 @@ public class YoyoController : MonoBehaviour
     bool IsBullet = false;
     bool IsIK = false;
 
+    public float yoyoSpeed = 20;
     void Awake()
     {
         m_Left = transform.FindChild("Left").gameObject;
@@ -127,7 +128,7 @@ public class YoyoController : MonoBehaviour
 
                 ropeOrigin.GetComponent<SphereCollider>().enabled = true;
             }
-            else if(m_TargetCollider.tag == "Rail" && m_Rail.GetState() == "左")
+            else if (m_TargetCollider.tag == "Rail" && m_Rail.GetState() == "左")
             {
 
             }
@@ -158,11 +159,18 @@ public class YoyoController : MonoBehaviour
         //ロープの巻き取り(ロープが移動)
         if (/*(IsBullet && Input.GetMouseButtonUp(0)) || */(IsBullet && Input.GetKeyDown(KeyCode.Space)))
         {
+            Vector3 direction = ropeSimulate.direction;
+            direction.y = 0;
+            m_Player.MoveDirection = direction.normalized;
+
+            m_Player.ResetGravity();
+            m_Player.PlayerSpeed = ropeSimulate.GetRopeSpeed();
+
             IsBullet = false;
 
             MoveToPlayerPosition_(transform.position);
 
-            m_Player.PlayerSpeed = m_Speed;
+            //m_Player.PlayerSpeed = m_Speed;
             m_Player.SideMove();
 
             ropeSimulate.SimulationEnd(transform);
@@ -227,9 +235,9 @@ public class YoyoController : MonoBehaviour
     {
         float distance = Vector3.Distance(current, target);
 
-        while (distance >= 10 * Time.unscaledDeltaTime + 0.01f)
+        while (distance >= yoyoSpeed * Time.unscaledDeltaTime + 0.01f)
         {
-            transform.position = Vector3.MoveTowards(current, target, 10 * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(current, target, yoyoSpeed * Time.deltaTime);
 
             current = transform.position;
             ropeSimulate.originPosition = current;
@@ -240,11 +248,14 @@ public class YoyoController : MonoBehaviour
 
         //移動が終わったらコライダーを戻す
         //GetComponent<SphereCollider>().enabled = true;
-        
+
         IsBullet = true;
         ropeSimulate.SimulationStart();
 
-        ropeSimulate.AddForce(Vector3.down * m_Player.PlayerSpeed, ForceMode.Force);
+        Vector3 ropeDirection = ropeSimulate.direction + m_Player.MoveDirection;
+        ropeDirection.y = 0;
+
+        ropeSimulate.AddForce(ropeDirection + Vector3.down * m_Player.PlayerSpeed, ForceMode.Impulse);
     }
 
     //OriginRope→Player
