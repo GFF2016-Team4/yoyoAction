@@ -60,6 +60,7 @@ public class YoyoController : MonoBehaviour
         m_Right = transform.FindChild("Right").gameObject;
 
         m_Player = GameObject.Find("Player").GetComponent<Player>();
+        m_Rail = FindObjectOfType<RailController>().transform.GetComponent<RailController>();
 
         m_Rigidbody = transform.GetComponent<Rigidbody>();
 
@@ -157,14 +158,14 @@ public class YoyoController : MonoBehaviour
         }
 
         //ロープの巻き取り(ロープが移動)
-        if (/*(IsBullet && Input.GetMouseButtonUp(0)) || */(IsBullet && Input.GetKeyDown(KeyCode.Space)))
+        if ((IsBullet && Input.GetMouseButtonUp(0)) || (IsBullet && Input.GetKeyDown(KeyCode.Space)))
         {
-            Vector3 direction = ropeSimulate.direction;
-            direction.y = 0;
-            m_Player.MoveDirection = direction.normalized;
+            //Vector3 direction = ropeSimulate.direction;
+            //direction.y = 0;
+            //m_Player.MoveDirection = direction.normalized;
 
-            m_Player.ResetGravity();
-            m_Player.PlayerSpeed = ropeSimulate.GetRopeSpeed();
+            //m_Player.ResetGravity();
+            //m_Player.PlayerSpeed = ropeSimulate.GetRopeSpeed();
 
             IsBullet = false;
 
@@ -300,20 +301,20 @@ public class YoyoController : MonoBehaviour
     {
         //プレイヤーと接触して位置がずれるためoffにする
         //GetComponent<SphereCollider>().enabled = false;
-        Vector3 pf = m_Player.transform.forward.normalized;
+        float distance = Vector3.Distance(current, transform.position);
 
-        for (float i = 0.0f; i < 0.5f; i += Time.deltaTime)
+        while (distance >= yoyoSpeed * Time.unscaledDeltaTime + 0.01f)
         {
-            float t = i / 0.5f;
-            //                                                                     プレイヤーの半径分マイナス
-            m_Player.transform.position = Vector3.Lerp(current, ropeSimulate.originPosition - pf * 0.5f, t);
+            m_Player.transform.position = Vector3.MoveTowards(current, transform.position, yoyoSpeed * Time.deltaTime);
 
-            //player.transform.position = Vector3.Lerp(getPlayerPosition, ropeSimulate.originPosition, t);
+            current = getPlayerPosition;
 
+            distance = Vector3.Distance(current, transform.position);
             yield return null;
+            //Debug.Log("a");
         }
+        m_Player.transform.position = ropeSimulate.originPosition;
 
-        m_Player.transform.position = ropeSimulate.originPosition - pf * 0.5f;
         IsBullet = true;
 
         Destroy(gameObject);
