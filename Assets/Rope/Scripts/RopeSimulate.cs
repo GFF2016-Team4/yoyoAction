@@ -6,20 +6,20 @@ public class RopeSimulate : MonoBehaviour
 {
 #pragma warning disable 0649
     [SerializeField, Tooltip("ロープの構造体")]
-    Rope        rope;
+    Rope rope;
 
     [SerializeField]
-    float       checkDistance;
+    float checkDistance;
 
     [SerializeField]
-    float       takeupSpeed;
+    float takeupSpeed;
 
     [SerializeField]
-    LayerMask   ignoreMask;
+    LayerMask ignoreMask;
 
 #if UNITY_EDITOR
     [SerializeField]
-    bool        showDebug;
+    bool showDebug;
 #endif
 #pragma warning restore 0649
 
@@ -36,10 +36,10 @@ public class RopeSimulate : MonoBehaviour
     /// <summary>シミュレート中か</summary>
     public bool isSimulate => !rope.tailKinematic;
 
-    
+
     public Vector3 originPosition
     {
-        get { return rope.rigOrigin.position;  }
+        get { return rope.rigOrigin.position; }
         set { rope.rigOrigin.position = value; }
     }
 
@@ -58,7 +58,7 @@ public class RopeSimulate : MonoBehaviour
     IEnumerator Start()
     {
         rope.ReCalcDistance();
-        
+
         //loop
         while (true)
         {
@@ -82,7 +82,7 @@ public class RopeSimulate : MonoBehaviour
         if (simulate) SimulationStop();
 
         rope.originPosition = origin;
-        rope.tailPosition   = tail;
+        rope.tailPosition = tail;
         rope.ResetDistance();
         rope.ReCalcDistance();
 
@@ -91,7 +91,7 @@ public class RopeSimulate : MonoBehaviour
 
     void RopeUpdate()
     {
-        if(IsRemoveOrigin())
+        if (IsRemoveOrigin())
         {
             RemoveOrigin();
             return;
@@ -101,7 +101,7 @@ public class RopeSimulate : MonoBehaviour
         Vector3 direction = rope.directionNormalized;
         direction *= ignoreDistance;
 
-        if (Physics.Linecast(rope.tailPosition, rope.originPosition-direction, out RaycastHit hitInfo, ignoreMask))
+        if (Physics.Linecast(rope.tailPosition, rope.originPosition - direction, out RaycastHit hitInfo, ignoreMask))
         {
             ChangeNewRigOrigin(hitInfo.point);
         }
@@ -118,23 +118,23 @@ public class RopeSimulate : MonoBehaviour
 
     bool IsRemoveOrigin()
     {
-        RopeNode rigOrigin  = rope.rigOrigin;
+        RopeNode rigOrigin = rope.rigOrigin;
         RopeNode prevOrigin = rope.prevRigOrigin;
 
         //ルートの場合は引っかかっていることがない
-        if(rigOrigin.isRoot) return false;
-        
+        if (rigOrigin.isRoot) return false;
+
         //Rangeが大きければ判定しない
-        if(!CheckRange(prevOrigin.position, rigOrigin.position)) return false;
+        if (!CheckRange(prevOrigin.position, rigOrigin.position)) return false;
 
         //障害物に当たってない -> 削除しないと不自然
-        ray.origin =  rope.tailPosition;
+        ray.origin = rope.tailPosition;
         ray.direction = -rope.tailPosition + prevOrigin.position;
 
         float maxDistance = Vector3.Distance(rope.tailPosition, prevOrigin.position);
         maxDistance -= ignoreDistance;
 
-        if(Physics.Raycast(ray, maxDistance, ignoreMask)) return false;
+        if (Physics.Raycast(ray, maxDistance, ignoreMask)) return false;
 
         return true;
     }
@@ -149,13 +149,13 @@ public class RopeSimulate : MonoBehaviour
     bool CheckRange(Vector3 linePoint1, Vector3 linePoint2)
     {
         //線分の始点と方向を出す
-        Vector3 origin    = linePoint1;
+        Vector3 origin = linePoint1;
         Vector3 direction = Vector3.Normalize(linePoint2 - linePoint1);
 
         //線分と点の距離を求める
         Vector3 v = tailPosition - origin;
-        float   d = Vector3.Dot(v, direction);
-        
+        float d = Vector3.Dot(v, direction);
+
         float distance = Vector3.Magnitude(-v + direction * d);
 
         return distance <= checkDistance;
@@ -188,10 +188,10 @@ public class RopeSimulate : MonoBehaviour
 
         //ルートノードとロープの末尾のノードの２つだけになるようにする
         RopeNode node = rope.rigOrigin;
-        while(!node.isRoot)
+        while (!node.isRoot)
         {
             RopeNode parent = node.parent;
-            
+
             listLineDraw.RemoveDrawList(node.transform);
             Destroy(node.gameObject);
 
@@ -241,6 +241,11 @@ public class RopeSimulate : MonoBehaviour
     public void AddForce(Vector3 force, ForceMode forceMode)
     {
         rope.tail.rigidbody.AddForce(force, forceMode);
+    }
+
+    public float GetRopeSpeed()
+    {
+        return rope.tail.rigidbody.velocity.magnitude;
     }
 
     /// <summary> ロープ全体を移動 </summary>
