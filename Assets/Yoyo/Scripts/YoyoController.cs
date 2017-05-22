@@ -244,6 +244,7 @@ public class YoyoController : MonoBehaviour
         IsBullet = true;
         ropeSimulate.SimulationStart();
 
+        ropeSimulate.AddForce(Vector3.down * m_Player.PlayerSpeed, ForceMode.Force);
     }
 
     //OriginRope→Player
