@@ -55,7 +55,7 @@ public class playerCamera : MonoBehaviour
         //transform.position = transform.forward * distance + offset;   
     }
 
-    void Update()
+    void LateUpdate()
     {
         pivotPosition = Vector3.Lerp(
             pivotPosition, target.position, moveSmooth * Time.deltaTime);
