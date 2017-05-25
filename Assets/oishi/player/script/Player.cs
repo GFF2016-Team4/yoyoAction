@@ -29,6 +29,8 @@ class Player : MonoBehaviour
     float nowPlayerSpeed;
     [Header("ブレーキの強さ")]
     public float brakePower = 2.0f;
+    [Header("回転開始の範囲補正")]
+    public float rotationRadius = 0.01f;
 
     [Header("TPS視点用カメラ")]
     public Camera tpsCamera;
@@ -74,7 +76,7 @@ class Player : MonoBehaviour
 
     void Update()
     {
-        if (checkGround.IsGrounded)
+        if (checkGround.IsGrounded && isRotate == false)
         {
             GroundMove();
         }
@@ -82,8 +84,31 @@ class Player : MonoBehaviour
         {
             AirMove();
         }
+        if (Input.GetMouseButtonDown(0))
+        {
+            ShootBullet();
+        }
+        //ヨーヨーの打ち付けが終了している時
+        if (bulletInst != null && bulletInst.GetComponent<YoyoController>().NowBullet())
+        {
+            TurnAround(hitShot.point);
+        }
+        else if (bulletInst != null && !bulletInst.GetComponent<YoyoController>().NowBullet() && isRotate == true)
+        {
+            if (nowPlayerSpeed <= 0.1f)
+            {
+                nowPlayerSpeed = 1.0f;
+            }
+            moveDirection = transform.right;
+            AccelAdd(RotateAcceleration);
+            transform.rotation = Quaternion.identity;
+            isRotate = false;
+        }
+        else if (bulletInst == null) isRotate = false;
 
         nowGravityPower -= gravity * Time.deltaTime;
+        nowPlayerSpeed = Mathf.Clamp(nowPlayerSpeed, 0, maxSpeed);
+
         Vector3 translate = moveDirection * nowPlayerSpeed;
         translate.y = nowGravityPower;
         characterController.Move(translate * Time.deltaTime);
@@ -185,18 +210,13 @@ class Player : MonoBehaviour
         }
 
         //nowPlayerSpeed = Mathf.Max(nowPlayerSpeed, 0);
-        nowPlayerSpeed = Mathf.Clamp(nowPlayerSpeed, 0, maxSpeed);
+        //nowPlayerSpeed = Mathf.Clamp(nowPlayerSpeed, 0, maxSpeed);
 
 
         //スペースキーでジャンプ
         if (Input.GetButton("Jump"))
         {
             nowGravityPower += jumpPower;
-        }
-
-        if (Input.GetMouseButtonDown(0))
-        {
-            ShootBullet();
         }
     }
 
@@ -227,10 +247,10 @@ class Player : MonoBehaviour
     /// オブジェクトを軸に回転
     /// </summary>
     /// <param name="target">回転軸となるオブジェクト</param>
-    /// <param name="rotateDistance">回転を開始するオブジェクトとの距離</param>
-    public void TurnAround(Transform target, float rotateDistance)
+    public void TurnAround(Vector3 target)
     {
-        Vector3 p1 = transform.position - target.position;
+        //target.y = transform.position.y;
+        Vector3 p1 = transform.position - target;
         Vector3 p2 = transform.right;
 
         p1.y = 0;
@@ -241,22 +261,23 @@ class Player : MonoBehaviour
         float distance = Vector3.Dot(p1, P2);
         float absDistance = Mathf.Abs(distance);
 
-        if (p1.magnitude <= rotateDistance && isRotate == false)
+        //absDistanceに補正分追加したほうが落下しすぎない（？）
+        //必要なければ削除
+        if (p1.magnitude <= absDistance + rotationRadius && isRotate == false)
         {
+
             isRotate = true;
-            AccelAdd(RotateAcceleration);
+            //AccelAdd(RotateAcceleration);
         }
         if (isRotate == true)
         {
             moveDirection = Vector3.zero;
             Quaternion rotation = Quaternion.LookRotation(p1);
             transform.rotation = rotation;
-            transform.RotateAround(target.position, Vector3.up, nowPlayerSpeed);
-        }
-        else
-        {
-            moveDirection = transform.right;
-            AccelAdd(RotateAcceleration);
+
+            ResetGravity();
+
+            transform.RotateAround(target, Vector3.up, nowPlayerSpeed / 2);
         }
     }
 
@@ -302,6 +323,10 @@ class Player : MonoBehaviour
     {
         get { return hitShot.transform.position; }
     }
+    public RaycastHit hitInfo
+    {
+        get { return hitShot; }
+    }
     public Vector3 Position
     {
         get { return transform.position; }
@@ -323,5 +348,9 @@ class Player : MonoBehaviour
     public bool PlayerIsGround
     {
         get { return checkGround.IsGrounded; }
+    }
+    public bool IsRotate
+    {
+        set { isRotate = value; }
     }
 }

@@ -10,6 +10,7 @@ TagManager:
   - Gripper
   - Rail
   - Wall
+  - Pillar
   layers:
   - Default
   - TransparentFX
@@ -22,7 +23,7 @@ TagManager:
   - Rope
   - Player
   - MoveObject/Lift
-  - 
+  - Pillar
   - 
   - 
   - 

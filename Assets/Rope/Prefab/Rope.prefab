@@ -156,7 +156,8 @@ MonoBehaviour:
   takeupSpeed: 10
   ignoreMask:
     serializedVersion: 2
-    m_Bits: 4294966523
+    m_Bits: 4294964475
+  showDebug: 0
 --- !u!114 &114457750187815014
 MonoBehaviour:
   m_ObjectHideFlags: 1

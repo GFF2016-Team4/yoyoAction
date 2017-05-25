@@ -107,10 +107,10 @@ public class YoyoController : MonoBehaviour
         //ロープの挙動on
         if (IsBullet == true)
         {
-            //if (!m_Player.PlayerIsGround)
-            //{
-            IsIK = true;
-            //}
+            if (!m_Player.PlayerIsGround && m_Player.hitInfo.transform.tag != "Pillar")
+            {
+                IsIK = true;
+            }
 
             //m_Player.transform.position = ropeSimulate.tailPosition;
 
@@ -251,7 +251,13 @@ public class YoyoController : MonoBehaviour
         //GetComponent<SphereCollider>().enabled = true;
 
         IsBullet = true;
-        ropeSimulate.SimulationStart();
+
+        //空中 + 柱以外に当たった時物理挙動on-----
+        if (m_Player.hitInfo.transform.tag != "Pillar" && !m_Player.PlayerIsGround)
+        {
+            ropeSimulate.SimulationStart();
+        }
+        //-----
 
         Vector3 ropeDirection = ropeSimulate.direction + m_Player.MoveDirection;
         ropeDirection.y = 0;
@@ -424,5 +430,8 @@ public class YoyoController : MonoBehaviour
     {
         return m_IsCollised;
     }
-
+    public bool NowBullet()
+    {
+        return IsBullet;
+    }
 }
