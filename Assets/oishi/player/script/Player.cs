@@ -6,6 +6,7 @@ class Player : MonoBehaviour
 {
     CheckGround checkGround;
     CharacterController characterController;
+    YoyoController yoyoController;
 
     [Header("加速(回転)")]
     public float RotateAcceleration = 2;
@@ -29,8 +30,8 @@ class Player : MonoBehaviour
     float nowPlayerSpeed;
     [Header("ブレーキの強さ")]
     public float brakePower = 2.0f;
-    [Header("回転開始の範囲補正")]
-    public float rotationRadius = 0.01f;
+    [Header("回転速度")]
+    public float rotatePower = 20f;
 
     [Header("TPS視点用カメラ")]
     public Camera tpsCamera;
@@ -57,6 +58,8 @@ class Player : MonoBehaviour
     bool isBrake;       //ブレーキ中かどうか
     bool isSrant;       //斜め移動してるかどうか
     float brakeSpeed;
+    float angle;
+    bool isAngle;
 
     //インスペクター上でリセットの項目を選択したときの処理
     private void Reset()
@@ -88,24 +91,33 @@ class Player : MonoBehaviour
         {
             ShootBullet();
         }
-        //ヨーヨーの打ち付けが終了している時
-        if (bulletInst != null && bulletInst.GetComponent<YoyoController>().NowBullet())
+        if (bulletInst != null)
         {
-            TurnAround(hitShot.point);
-        }
-        else if (bulletInst != null && !bulletInst.GetComponent<YoyoController>().NowBullet() && isRotate == true)
-        {
-            if (nowPlayerSpeed <= 0.1f)
+            //ヨーヨーの打ち付けが終了している時
+            if (yoyoController.NowBullet())
             {
-                nowPlayerSpeed = 1.0f;
+                ResetGravity();
+                if (hitShot.transform.tag == "Pillar")
+                {
+                    TurnAround(hitShot.point);
+                }
             }
-            moveDirection = transform.right;
-            AccelAdd(RotateAcceleration);
-            transform.rotation = Quaternion.identity;
+            else if (!yoyoController.NowBullet() && isRotate == true)
+            {
+                if (nowPlayerSpeed <= 0.1f)
+                {
+                    nowPlayerSpeed = 1.0f;
+                }
+                moveDirection = transform.right;
+                AccelAdd(RotateAcceleration);
+                transform.rotation = Quaternion.identity;
+                isRotate = false;
+            }
+        }
+        else
+        {
             isRotate = false;
         }
-        else if (bulletInst == null) isRotate = false;
-
         nowGravityPower -= gravity * Time.deltaTime;
         nowPlayerSpeed = Mathf.Clamp(nowPlayerSpeed, 0, maxSpeed);
 
@@ -143,14 +155,12 @@ class Player : MonoBehaviour
             if (groundAngle.y <= -0.1f)
             {
                 AccelAdd(DownhillAcceleration);
-                Debug.Log("下り坂");
             }
 
             //平面 + 移動中(加速)
             if (Mathf.Abs(groundAngle.y) <= 0.1f)
             {
                 AccelAdd(GroundAcceleration);
-                Debug.Log("平面");
             }
 
             judgeDir = inputVelocity + previousDir;
@@ -159,18 +169,15 @@ class Player : MonoBehaviour
             //反対のキーを押した時
             if (judgeDir.magnitude == 0 || (isSrant == true && judgeDir.magnitude == 0))
             {
-                Debug.Log("反対方向キー");
                 isBrake = true;
                 brakeSpeed = nowPlayerSpeed * brakePower;
             }
             else if (judgeDir.magnitude < 1)
             {
-                Debug.Log("斜め移動キー");
                 isSrant = true;
             }
             else
             {
-                Debug.Log("同じ方向キー");
                 isSrant = false;
             }
             moveDirection = forward * previousDir.y + right * previousDir.x;
@@ -190,7 +197,6 @@ class Player : MonoBehaviour
                 {
                     isBrake = false;
                     isSrant = false;
-                    Debug.Log("ブレーキ中止");
                 }
                 AccelAdd(-brakeSpeed);
             }
@@ -206,7 +212,6 @@ class Player : MonoBehaviour
         if (groundAngle.y >= 0.1f)
         {
             AccelAdd(-UphillDeceleration);
-            Debug.Log("上り坂");
         }
 
         //nowPlayerSpeed = Mathf.Max(nowPlayerSpeed, 0);
@@ -237,10 +242,9 @@ class Player : MonoBehaviour
         if (Physics.Raycast(ray, out hitShot, ropeDistance, layerMask))
         {
             //弾の生成
-            Debug.Log(hitShot.collider.name);
             bulletInst = Instantiate(bulletPrefab, transform.position, tpsCamera.transform.rotation);
+            yoyoController = bulletInst.GetComponent<YoyoController>();
         }
-        Debug.DrawRay(ray.origin, Camera.main.transform.forward * 100, Color.red);
     }
 
     /// <summary>
@@ -249,36 +253,62 @@ class Player : MonoBehaviour
     /// <param name="target">回転軸となるオブジェクト</param>
     public void TurnAround(Vector3 target)
     {
+        if (isAngle == false)
+        {
+            angle = Vector3.Angle(transform.position - target, transform.right);
+
+            Vector3 p1 = transform.position - target;
+            Vector3 p2 = transform.right;
+
+            p1.y = 0;
+            p2.y = 0;
+
+            float distance = Vector3.Dot(p1, p2);
+            float absDistance = Mathf.Abs(distance);
+
+            yoyoController.ropeSimulate.ReCalcDistance(absDistance);
+            isAngle = true;
+        }
+
         //target.y = transform.position.y;
-        Vector3 p1 = transform.position - target;
-        Vector3 p2 = transform.right;
-
-        p1.y = 0;
-        p2.y = 0;
-
-        Vector3 P2 = Vector3.Normalize(p2);
-
-        float distance = Vector3.Dot(p1, P2);
-        float absDistance = Mathf.Abs(distance);
-
-        //absDistanceに補正分追加したほうが落下しすぎない（？）
-        //必要なければ削除
-        if (p1.magnitude <= absDistance + rotationRadius && isRotate == false)
+        Quaternion lookRotation = Quaternion.LookRotation(yoyoController.ropeSimulate.direction);
+        Vector3 circleDir;
+        if (angle <= 90)
         {
-
-            isRotate = true;
-            //AccelAdd(RotateAcceleration);
+            circleDir = Vector3.right;
         }
-        if (isRotate == true)
+        else
         {
-            moveDirection = Vector3.zero;
-            Quaternion rotation = Quaternion.LookRotation(p1);
-            transform.rotation = rotation;
-
-            ResetGravity();
-
-            transform.RotateAround(target, Vector3.up, nowPlayerSpeed / 2);
+            circleDir = -Vector3.right;
         }
+        yoyoController.ropeSimulate.AddForce(lookRotation * circleDir * rotatePower, ForceMode.Force);
+
+
+        ////absDistanceに補正分追加したほうが落下しすぎない（？）
+        ////必要なければ削除
+        //if (p1.magnitude <= absDistance + rotationRadius && isRotate == false)
+        //{
+        //    isRotate = true;
+
+        //    //AccelAdd(RotateAcceleration);
+        //}
+        //if (isRotate == true)
+        //{
+        //    moveDirection = Vector3.zero;
+        //    Quaternion rotation = Quaternion.LookRotation(p1);
+        //    transform.rotation = rotation;
+
+        //    ResetGravity();
+
+        //    if (angle <= 90)
+        //    {
+        //        transform.RotateAround(target, Vector3.down, nowPlayerSpeed);
+        //    }
+        //    else
+        //    {
+        //        transform.RotateAround(target, Vector3.up, nowPlayerSpeed);
+        //    }
+        //}
     }
 
     void OnControllerColliderHit(ControllerColliderHit colHit)
@@ -287,8 +317,11 @@ class Player : MonoBehaviour
         {
             nowPlayerSpeed = 0;
         }
+        if (colHit.transform.tag == "MoveObject/Lift")
+        {
+            transform.parent = colHit.gameObject.transform;
+        }
     }
-
     public void AccelAdd(float value)
     {
         PlayerSpeed += value * Time.deltaTime;
@@ -348,9 +381,5 @@ class Player : MonoBehaviour
     public bool PlayerIsGround
     {
         get { return checkGround.IsGrounded; }
-    }
-    public bool IsRotate
-    {
-        set { isRotate = value; }
     }
 }

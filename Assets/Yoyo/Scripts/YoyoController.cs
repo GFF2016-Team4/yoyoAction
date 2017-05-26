@@ -17,7 +17,7 @@ public class YoyoController : MonoBehaviour
     [SerializeField, Header("加速倍率")]
     public float m_SpeedFactor = 2f;
     [SerializeField, Header("ロープの長さ制限")]
-    public float m_RopeDis = 5f;
+    public float m_RopeDis = 10f;
 
     private float m_Space;                      //ヨーヨーの間隔
     private Vector3 m_ScalePrototype;           //ヨーヨーの大きさ(原型)
@@ -33,7 +33,7 @@ public class YoyoController : MonoBehaviour
     private Collider m_TargetCollider;
     private Rigidbody m_Rigidbody;
     private RailController m_Rail;
-    private RopeSimulate ropeSimulate;
+    public RopeSimulate ropeSimulate;
     private Transform ropeOrigin;
     private Player m_Player;
 
@@ -86,7 +86,7 @@ public class YoyoController : MonoBehaviour
         RaycastHit hit;
         if (Physics.SphereCast(m_Left.transform.position, 0.5f, -m_Left.transform.up, out hit, m_SpaceDisMax))
         {
-            Debug.Log(hit.collider.name);
+            //Debug.Log(hit.collider.name);
             m_TargetCollider = hit.collider;
             m_IsCollised = true;
         }
@@ -107,7 +107,7 @@ public class YoyoController : MonoBehaviour
         //ロープの挙動on
         if (IsBullet == true)
         {
-            if (!m_Player.PlayerIsGround && m_Player.hitInfo.transform.tag != "Pillar")
+            if (!m_Player.PlayerIsGround/* && m_Player.hitInfo.transform.tag != "Pillar"*/)
             {
                 IsIK = true;
             }
@@ -199,7 +199,7 @@ public class YoyoController : MonoBehaviour
         }
 
         //Debug.Log(m_Rail.GetState());
-        Debug.Log(m_IsCollised);
+        //Debug.Log(m_IsCollised);
         //Debug.Log("sphereCast" + Physics.Linecast(transform.Find("Left").transform.position, transform.Find("Right").transform.position, out hit));
         Debug.DrawLine(m_Left.transform.position, -m_Left.transform.right * m_SpaceDisMax, Color.cyan);
     }
@@ -253,12 +253,11 @@ public class YoyoController : MonoBehaviour
         IsBullet = true;
 
         //空中 + 柱以外に当たった時物理挙動on-----
-        if (m_Player.hitInfo.transform.tag != "Pillar" && !m_Player.PlayerIsGround)
+        if (/*m_Player.hitInfo.transform.tag != "Pillar" &&*/ !m_Player.PlayerIsGround)
         {
             ropeSimulate.SimulationStart();
         }
         //-----
-
         Vector3 ropeDirection = ropeSimulate.direction + m_Player.MoveDirection;
         ropeDirection.y = 0;
 

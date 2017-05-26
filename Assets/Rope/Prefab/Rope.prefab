@@ -157,6 +157,7 @@ MonoBehaviour:
   ignoreMask:
     serializedVersion: 2
     m_Bits: 4294964475
+  maxSpeed: 100
   showDebug: 0
 --- !u!114 &114457750187815014
 MonoBehaviour:
