@@ -26,6 +26,7 @@ public class StageTimer : MonoBehaviour
             {
                 //コールバック
                 timeOverEvent.Invoke();
+                yield return null;
             }
             yield return null;
         }
@@ -36,17 +37,7 @@ public class StageTimer : MonoBehaviour
         //ポーズ時にタイマーを動かさない
         if (Time.timeScale == 0) { return; }
 
-        //スローモーション時にタイマーが遅くならないようにする
-        if (Time.timeScale == 1)
-        {
-            //timeScaleが1の場合は正確に
-            timer -= Time.deltaTime;
-        }
-        else
-        {
-            //それ以外はタイマーが遅くなったりしないように
-            timer -= Time.unscaledDeltaTime;
-        }
+        timer -= Time.deltaTime;
 
         //制限
         timer = Mathf.Max(timer, 0.0f);

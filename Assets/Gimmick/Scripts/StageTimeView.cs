@@ -18,6 +18,12 @@ public class StageTimeView : MonoBehaviour
 
     Text timerDrawer;
 
+    void Reset()
+    {
+        StageTimer timer = GameObject.FindObjectOfType<StageTimer>();
+        timerComponent = timer;
+    }
+
     void Awake()
     {
         timerDrawer = GetComponent<Text>();
