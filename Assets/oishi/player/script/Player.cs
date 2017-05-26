@@ -86,6 +86,7 @@ class Player : MonoBehaviour
         else
         {
             AirMove();
+            transform.parent = null;
         }
         if (Input.GetMouseButtonDown(0))
         {
