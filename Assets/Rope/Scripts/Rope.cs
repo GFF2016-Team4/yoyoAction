@@ -156,4 +156,9 @@ public struct Rope
             node = node.parent;
         }
     }
+
+    public void CalcForward()
+    {
+        tail.transform.forward = direction;
+    }
 }

@@ -17,6 +17,9 @@ public class RopeSimulate : MonoBehaviour
     [SerializeField]
     LayerMask ignoreMask;
 
+    [SerializeField]
+    float maxSpeed;
+
 #if UNITY_EDITOR
     [SerializeField]
     bool showDebug;
@@ -107,6 +110,14 @@ public class RopeSimulate : MonoBehaviour
         {
             ChangeNewRigOrigin(hitInfo.point);
         }
+
+        Vector3 velocity = rope.tail.rigidbody.velocity;
+        float   speed    = velocity.magnitude;
+        speed = Mathf.Min(speed, maxSpeed);
+
+        velocity.Normalize();
+
+        rope.tail.rigidbody.velocity = velocity * speed;
     }
 
     void ChangeNewRigOrigin(Vector3 position)
