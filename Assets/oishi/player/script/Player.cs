@@ -236,6 +236,10 @@ class Player : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(ScreenCenter);
         if (Physics.Raycast(ray, out hitShot, ropeDistance, layerMask))
         {
+            if (hitShot.collider.tag == "Rail")
+            {
+                hitShot.collider.GetComponent<RailController>().enabled = true;
+            }
             //弾の生成
             Debug.Log(hitShot.collider.name);
             bulletInst = Instantiate(bulletPrefab, transform.position, tpsCamera.transform.rotation);

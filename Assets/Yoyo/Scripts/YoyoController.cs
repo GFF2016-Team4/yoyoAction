@@ -60,7 +60,7 @@ public class YoyoController : MonoBehaviour
         m_Right = transform.FindChild("Right").gameObject;
 
         m_Player = GameObject.Find("Player").GetComponent<Player>();
-        m_Rail = FindObjectOfType<RailController>().transform.GetComponent<RailController>();
+        m_Rail = FindObjectOfType<RailController>();
 
         m_Rigidbody = transform.GetComponent<Rigidbody>();
 
@@ -115,34 +115,39 @@ public class YoyoController : MonoBehaviour
             //m_Player.transform.position = ropeSimulate.tailPosition;
 
             //m_Player.hitShotをアクセスできないと他の建物に挟んでもレール移動
-            if (m_TargetCollider.tag == "Rail" && m_Rail.GetState() == "前")
+            if(m_Player.hitShot.collider.tag == "Rail")
             {
-                m_Speed += m_Player.PlayerSpeed;
-                MoveToRailgoal_(transform.position, m_TargetCollider.transform.GetChild(0).transform.position);
+                if (m_TargetCollider.tag == "Rail" && m_Player.hitShot.collider.GetComponent<RailController>().GetState() == "front")
+                {
+                    m_Speed += m_Player.PlayerSpeed;
+                    MoveToRailgoal_(transform.position, m_TargetCollider.transform.GetChild(0).transform.position);
 
-                ropeOrigin.GetComponent<SphereCollider>().enabled = true;
-            }
-            else if (m_TargetCollider.tag == "Rail" && m_Rail.GetState() == "後")
-            {
-                m_Speed += m_Player.PlayerSpeed;
-                MoveToRailgoal_(transform.position, m_TargetCollider.transform.GetChild(1).transform.position);
+                    ropeOrigin.GetComponent<SphereCollider>().enabled = true;
+                }
+                else if (m_TargetCollider.tag == "Rail" && m_Player.hitShot.collider.GetComponent<RailController>().GetState() == "back")
+                {
+                    m_Speed += m_Player.PlayerSpeed;
+                    MoveToRailgoal_(transform.position, m_TargetCollider.transform.GetChild(1).transform.position);
 
-                ropeOrigin.GetComponent<SphereCollider>().enabled = true;
-            }
-            else if (m_TargetCollider.tag == "Rail" && m_Rail.GetState() == "左")
-            {
-
-            }
-            else if (m_TargetCollider.tag == "Rail" && m_Rail.GetState() == "右")
-            {
-
-            }
+                    ropeOrigin.GetComponent<SphereCollider>().enabled = true;
+                }
+                else if (m_TargetCollider.tag == "Rail" && m_Player.hitShot.collider.GetComponent<RailController>().GetState() == "left")
+                {
+                    Debug.Log("ワイヤーアクション");
+                    //transform.Rotate();
+                }
+                else if (m_TargetCollider.tag == "Rail" && m_Player.hitShot.collider.GetComponent<RailController>().GetState() == "right")
+                {
+                    Debug.Log("ワイヤーアクション");
+                    //transform.Rotate();
+                }
+            }          
         }
 
         //ヨーヨー移動制御
-        if (Input.GetKeyDown(KeyCode.F))
+        if (m_IsOpened)
         {
-            m_IsOpened = true;
+            StartCoroutine(YoyoOpen());
         }
         else
         {
@@ -152,10 +157,6 @@ public class YoyoController : MonoBehaviour
             StartCoroutine(YoyoClose());
         }
 
-        if (m_IsOpened)
-        {
-            StartCoroutine(YoyoOpen());
-        }
 
         //ロープの巻き取り(ロープが移動)
         if ((IsBullet && Input.GetMouseButtonUp(0)) || (IsBullet && Input.GetKeyDown(KeyCode.Space)))
@@ -177,7 +178,7 @@ public class YoyoController : MonoBehaviour
             ropeSimulate.SimulationEnd(transform);
         }
         //ロープの巻き取り(プレイヤーが移動)
-        if (Input.GetKeyDown(KeyCode.Alpha3))
+        if (IsBullet && Input.GetMouseButtonDown(1))
         {
             IsBullet = false;
 
@@ -188,18 +189,8 @@ public class YoyoController : MonoBehaviour
         //間隔を計算  二回の強制キャストで誤差を無くす
         m_Space = (float)((int)Vector3.Distance(m_Left.transform.position, m_Right.transform.position));
 
-        //ヨーヨーの回転制御
-        if (m_Rail.GetState() == "前" || m_Rail.GetState() == "後")
-        {
-            m_IsYoyoHorizontal = false;
-        }
-        else if (m_Rail.GetState() == "左" || m_Rail.GetState() == "右")
-        {
-            m_IsYoyoHorizontal = true;
-        }
-
         //Debug.Log(m_Rail.GetState());
-        Debug.Log(m_IsCollised);
+        //Debug.Log(m_IsCollised);
         //Debug.Log("sphereCast" + Physics.Linecast(transform.Find("Left").transform.position, transform.Find("Right").transform.position, out hit));
         Debug.DrawLine(m_Left.transform.position, -m_Left.transform.right * m_SpaceDisMax, Color.cyan);
     }
@@ -368,6 +359,8 @@ public class YoyoController : MonoBehaviour
         MoveToPlayerPosition_(transform.position);
         ropeSimulate.SimulationEnd(transform);
 
+        m_Player.hitShot.collider.GetComponent<RailController>().enabled = false;
+
         m_IsOpened = false;
     }
 
@@ -396,9 +389,6 @@ public class YoyoController : MonoBehaviour
         {
             m_Space = m_SpaceDisMax;
         }
-
-        //拡大
-        //this.transform.localScale += new Vector3(m_ScaleNum * Time.deltaTime, m_ScaleNum * Time.deltaTime, m_ScaleNum * Time.deltaTime);
 
         yield return null;
     }

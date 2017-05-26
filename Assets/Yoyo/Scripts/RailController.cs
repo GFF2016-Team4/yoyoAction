@@ -2,132 +2,98 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RailController : MonoBehaviour {
-
+public class RailController : MonoBehaviour
+{
     [SerializeField]
     public Transform m_Player;
+    [SerializeField]
+    public LayerMask layerMask;
     [HideInInspector]
-    public bool m_IsAccel = false;
-    [HideInInspector]
-    public bool m_IsFront;
-    [HideInInspector]
-    public bool m_IsOblique;
-
     private string m_State;
+
+    Vector3 dir;
+    Vector3 from, to;
     private float angle;
+    private float dot1;
+    private float dot2;
+    private Collider[] hitColliders;
 
     // Use this for initialization
-    void Start () {
-        m_State = "";
+    void Start()
+    {
+        //m_State = "";
     }
-	
-	// Update is called once per frame
-	void Update () {
-        //グリッパーとオブジェクトの角度
-        var heading = m_Player.position - transform.position;
-        heading.y = 0;
 
-        var distance = heading.magnitude;
-        var direction = heading / distance;
-
-        angle = Vector3.Angle(transform.position, direction);
-
-        //Vector3 relative = transform.InverseTransformPoint(m_Player.position);
-        //float angle = Mathf.Atan2(relative.x, relative.z) * Mathf.Rad2Deg;
-
-        if(angle > 20 && angle < 50)    //前
+    // Update is called once per frame
+    void Update()
+    {
+        var center = transform.position;
+        var radius = Vector3.Distance(transform.GetChild(0).position, transform.position);
+        hitColliders = Physics.OverlapSphere(center, radius, layerMask);
+        int i = 0;
+        while (i < hitColliders.Length)
         {
-            m_IsAccel = true;
-            m_IsFront = true;
-            m_IsOblique = false;
-            m_State = "前";
-        }
-        else if(angle >130 && angle < 160)  //後
-        {
-            m_IsAccel = true;
-            m_IsFront = false;
-            m_IsOblique = false;
-            m_State = "後";
+            Debug.Log(hitColliders[i]);
+            i++;
         }
 
-        //if (angle > 60 && angle <120)    //前
-        //{
-        //    m_IsAccel = true;
-        //    m_IsFront = true;
-        //    m_IsOblique = false;
-        //    m_State = "前";
-        //}
-        //else if(angle < -60 && angle > -120)    //後
-        //{
-        //    m_IsAccel = true;
-        //    m_IsFront = false;
-        //    m_IsOblique = false;
-        //    m_State = "後";
-        //}
-        //else if(angle > -30 && angle < 30)      //左
-        //{
-        //    m_IsAccel = false;
-        //    m_IsFront = true;
-        //    m_IsOblique = false;
-        //    m_State = "左";
-        //}
-        //else if((angle > 150 && angle < 180) || (angle < -150 && angle > -180))     //右
-        //{
-        //    m_IsAccel = false;
-        //    m_IsFront = false;
-        //    m_IsOblique = false;
-        //    m_State = "右";
-        //}
-        //else if(angle > 30 && angle < 60)   //左前
-        //{
-        //    m_IsAccel = true;
-        //    m_IsFront = true;
-        //    m_IsOblique = true;
-        //    m_State = "左前";
-        //}
-        //else if(angle > 120 && angle < 150) //右前
-        //{
-        //    m_IsAccel = false;
-        //    m_IsFront = false;
-        //    m_IsOblique = true;
-        //    m_State = "右前";
-        //}
-        //else if(angle > -60 && angle < -30) //左後
-        //{
-        //    m_IsAccel = true;
-        //    m_IsFront = false;
-        //    m_IsOblique = true;
-        //    m_State = "左後";
-        //}
-        //else if(angle > -150 && angle < -120)   //右後
-        //{
-        //    m_IsAccel = false;
-        //    m_IsFront = false;
-        //    m_IsOblique = true;
-        //    m_State = "右後";
-        //}
+        checkTargetDirForMe(m_Player);
 
-        //Debug.Log("Oblique" + m_IsOblique);
-        //Debug.Log("Accel" + m_IsAccel);
-        //Debug.Log("Front" + m_IsFront);
-
-        //Debug.Log("位置状態" + m_State);
         //Debug.Log(angle);
+        //Debug.Log(m_State);
     }
 
-    public bool IsAccel()
+    //角度と前後左右を求める 
+    public void checkTargetDirForMe(Transform target)
     {
-        return m_IsAccel;
-    }
+        Vector3 dir = target.position - transform.position; //距離差と方向 
+                                                            //ドット積 
+                                                            //ドット積の計算方式は: a·b =| a |·| b | cos < a,b > 其の中 | a | 和 | b | はベクトルの長さ 。  
+        dot1 = Vector3.Dot(transform.forward, dir.normalized);//ドット積で前後判断   //dot >0は前  <0は後  
+        if (dot1 > 0)
+        {
+            //Debug.Log("前");
+        }
+        else
+        {
+            //Debug.Log("後");
+        }
+        dot2 = Vector3.Dot(transform.right, dir.normalized);//ドット積で左右判断   //dot1>0は右  <0は左    
+        if (dot2 > 0)
+        {
+            //Debug.Log("右");
+        }
+        else
+        {
+            //Debug.Log("左");
+        }
+        Vector3 from, to;
+        from = transform.forward;
+        to = dir;
 
-    public bool IsFront()
-    {
-        return m_IsFront;
-    }
+        from.y = 0;
+        to.y = 0;
+        angle = Mathf.Acos(Vector3.Dot(from.normalized, to.normalized)) * Mathf.Rad2Deg;//ドット積で角度を求める
 
-    public bool IsOblique()
-    {
-        return m_IsOblique;
+        if (angle > 150 && angle < 180)
+        {
+            m_State = "back";
+        }
+        else if (angle > 0 && angle < 30)
+        {
+            m_State = "front";
+        }
+        else if (angle > 60 && angle < 120)
+        {
+            if (dot2 > 0)
+                m_State = "right";
+            else
+                m_State = "left";
+        }
+        else
+        {
+            m_State = "";
+        }
     }
 
     public string GetState()
