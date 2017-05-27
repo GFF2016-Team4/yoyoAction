@@ -22,7 +22,6 @@ public class CheckGround : MonoBehaviour
                .Subscribe(x =>
                {
                    _isGrounded = x;
-                   Debug.Log("change");
                });
     }
 }
