@@ -115,28 +115,28 @@ public class YoyoController : MonoBehaviour
             //m_Player.transform.position = ropeSimulate.tailPosition;
 
             //m_Player.hitShotをアクセスできないと他の建物に挟んでもレール移動
-            if(m_Player.hitShot.collider.tag == "Rail")
+            if(m_Player.hitInfo.collider.tag == "Rail")
             {
-                if (m_TargetCollider.tag == "Rail" && m_Player.hitShot.collider.GetComponent<RailController>().GetState() == "front")
+                if (m_TargetCollider.tag == "Rail" && m_Player.hitInfo.collider.GetComponent<RailController>().GetState() == "front")
                 {
                     m_Speed += m_Player.PlayerSpeed;
                     MoveToRailgoal_(transform.position, m_TargetCollider.transform.GetChild(0).transform.position);
 
                     ropeOrigin.GetComponent<SphereCollider>().enabled = true;
                 }
-                else if (m_TargetCollider.tag == "Rail" && m_Player.hitShot.collider.GetComponent<RailController>().GetState() == "back")
+                else if (m_TargetCollider.tag == "Rail" && m_Player.hitInfo.collider.GetComponent<RailController>().GetState() == "back")
                 {
                     m_Speed += m_Player.PlayerSpeed;
                     MoveToRailgoal_(transform.position, m_TargetCollider.transform.GetChild(1).transform.position);
 
                     ropeOrigin.GetComponent<SphereCollider>().enabled = true;
                 }
-                else if (m_TargetCollider.tag == "Rail" && m_Player.hitShot.collider.GetComponent<RailController>().GetState() == "left")
+                else if (m_TargetCollider.tag == "Rail" && m_Player.hitInfo.collider.GetComponent<RailController>().GetState() == "left")
                 {
                     Debug.Log("ワイヤーアクション");
                     //transform.Rotate();
                 }
-                else if (m_TargetCollider.tag == "Rail" && m_Player.hitShot.collider.GetComponent<RailController>().GetState() == "right")
+                else if (m_TargetCollider.tag == "Rail" && m_Player.hitInfo.collider.GetComponent<RailController>().GetState() == "right")
                 {
                     Debug.Log("ワイヤーアクション");
                     //transform.Rotate();
@@ -358,7 +358,7 @@ public class YoyoController : MonoBehaviour
         MoveToPlayerPosition_(transform.position);
         ropeSimulate.SimulationEnd(transform);
 
-        m_Player.hitShot.collider.GetComponent<RailController>().enabled = false;
+        m_Player.hitInfo.collider.GetComponent<RailController>().enabled = false;
 
         m_IsOpened = false;
     }
