@@ -30,8 +30,8 @@ public class playerCamera : MonoBehaviour
     //[Tooltip("ターゲットとの距離")]
     //public float distance = 1.0f;
 
-    //[Tooltip("オフセット")]
-    //public Vector3 offset;
+    [Tooltip("オフセット")]
+    public Vector3 offset;
 
     [Tooltip("カメラの上下回転の限界")]
     float cameraLimitUp = 30f;
@@ -40,6 +40,9 @@ public class playerCamera : MonoBehaviour
     float cameraLimitDown = -30f;
 
     CursorLockMode mode = CursorLockMode.None;
+
+    Texture m_cursor;
+    Vector3 m_position;
 
     //[Header("カメラの感度")]
     //public float mouseSpeed = 3f;
@@ -51,12 +54,16 @@ public class playerCamera : MonoBehaviour
 
         LockCursor();
 
+        m_cursor = GetComponent<GUITexture>().texture;
+
         //transform.forward = target.forward;
-        //transform.position = transform.forward * distance + offset;   
+        //transform.position = transform.forward * distanceFromPlayer + offset;
     }
 
     void LateUpdate()
     {
+        m_position = target.transform.position + offset;
+
         pivotPosition = Vector3.Lerp(
             pivotPosition, target.position, moveSmooth * Time.deltaTime);
 
@@ -72,11 +79,20 @@ public class playerCamera : MonoBehaviour
 
         transform.position = pivotPosition
             + Quaternion.Euler(currentRotateX, currentRotateY, 0) * target.forward
-            * distanceFromPlayer;
+            * distanceFromPlayer + offset;
 
-        transform.LookAt(target);
+        transform.LookAt(m_position);
 
         ChangeCursorState();
+
+        //カメラの後方にRayを飛ばし近くのオブジェクトに当たったらその位置に移動
+        //RaycastHit hit;
+        //if(Physics.Raycast(target.transform.position,-transform.forward,
+        //    out hit,distanceFromPlayer))
+        //{
+        //    transform.position = hit.point;
+        //}
+
         //FixedAngle();
 
         //Ray ray = new Ray()
@@ -129,6 +145,12 @@ public class playerCamera : MonoBehaviour
     {
         mode = CursorLockMode.None;
         Cursor.visible = true;
+    }
+
+    void OnGUI()
+    {
+        GUI.DrawTexture(new Rect(Screen.width / 2 - 128, Screen.height / 2 - 128,
+            m_cursor.width, m_cursor.width), m_cursor);
     }
 
     //void FixedAngle()
