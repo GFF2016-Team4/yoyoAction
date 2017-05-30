@@ -3,36 +3,63 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class StageSelect : MonoBehaviour {
 
     SpriteRenderer m_renderer;
+    RectTransform m_rectTrans;
 
     public GameObject m_canvas;
     public GameObject m_spriteRenderer;
-    [Tooltip("画像１")]
-    public Sprite m_image1;
-    [Tooltip("画像２")]
-    public Sprite m_image2;
 
-
-    [Header("ステージ１のシーン名")]
+    [Header("ステージ１")]
+    [Tooltip("ステージ１シーン名")]
     public string m_stage1;
+    [Tooltip("ステージ１画像")]
+    public Sprite m_image1;
+    [Tooltip("ステージ１ボタン")]
+    public GameObject m_stage1Button;
 
-    [Header("ステージ２のシーン名")]
+    [Header("ステージ２")]
+    [Tooltip("ステージ２シーン名")]
     public string m_stage2;
+    [Tooltip("ステージ２画像")]
+    public Sprite m_image2;
+    [Tooltip("ステージ２ボタン")]
+    public GameObject m_stage2Button;
 
-    [Header("ステージ３のシーン名")]
+    [Header("ステージ３")]
+    [Tooltip("ステージ３シーン名")]
     public string m_stage3;
+    [Tooltip("ステージ３画像")]
+    public Sprite m_image3;
+    [Tooltip("ステージ３ボタン")]
+    public GameObject m_stage3Button;
 
-    [Header("ステージ４のシーン名")]
+    [Header("ステージ４")]
+    [Tooltip("ステージ４シーン名")]
     public string m_stage4;
+    [Tooltip("ステージ４画像")]
+    public Sprite m_image4;
+    [Tooltip("ステージ４ボタン")]
+    public GameObject m_stage4Button;
 
-    [Header("ステージ５のシーン名")]
+    [Header("ステージ５")]
+    [Tooltip("ステージ５シーン名")]
     public string m_stage5;
+    [Tooltip("ステージ５画像")]
+    public Sprite m_image5;
+    [Tooltip("ステージ５ボタン")]
+    public GameObject m_stage5Button;
 
     [Header("タイトルのシーン名")]
     public string m_title;
+
+    void Awake()
+    {
+        m_rectTrans = GetComponent<RectTransform>();
+    }
 
     // Use this for initialization
     void Start () {
@@ -41,11 +68,40 @@ public class StageSelect : MonoBehaviour {
     }
 	
 	// Update is called once per frame
-	void Update () {
-        if (Input.GetKeyDown(KeyCode.T))
+	void LateUpdate () {
+        //EventSystem に今選択中のオブジェクトを教えてもらう
+        GameObject selectedObject =
+            EventSystem.current.currentSelectedGameObject;
+
+        //m_stage1Buttonが選択中なら
+        if(selectedObject == m_stage1Button)
+        {
             m_renderer.sprite = m_image1;
-        if (Input.GetKeyDown(KeyCode.Y))
+        }
+        //m_stage2Buttonが選択中なら
+        if (selectedObject == m_stage2Button)
+        {
             m_renderer.sprite = m_image2;
+        }
+        //m_stage3Buttonが選択中なら
+        if (selectedObject == m_stage3Button)
+        {
+            m_renderer.sprite = m_image3;
+        }
+        //m_stage4Buttonが選択中なら
+        if (selectedObject == m_stage4Button)
+        {
+            m_renderer.sprite = m_image4;
+        }
+        //m_stage5Buttonが選択中なら
+        if (selectedObject == m_stage5Button)
+        {
+            m_renderer.sprite = m_image5;
+        }
+
+        //選択中のオブジェクトの場所にカーソルを表示
+        m_rectTrans.anchoredPosition =
+            selectedObject.GetComponent<RectTransform>().anchoredPosition;
     }
 
     public void PushStage1()

@@ -961,13 +961,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_canvas: {fileID: 977515135}
   m_spriteRenderer: {fileID: 1123581644}
-  m_image1: {fileID: 21300000, guid: 3b30bfc46dc84884d86a883f514f2573, type: 3}
-  m_image2: {fileID: 21300000, guid: 7906eace5703a0041bd9d5f0cc0c6315, type: 3}
   m_stage1: Sample
+  m_image1: {fileID: 21300000, guid: 3b30bfc46dc84884d86a883f514f2573, type: 3}
+  m_stage1Button: {fileID: 1514319690}
   m_stage2: GameClear
+  m_image2: {fileID: 21300000, guid: 7906eace5703a0041bd9d5f0cc0c6315, type: 3}
+  m_stage2Button: {fileID: 344827235}
   m_stage3: 
+  m_image3: {fileID: 0}
+  m_stage3Button: {fileID: 0}
   m_stage4: 
+  m_image4: {fileID: 0}
+  m_stage4Button: {fileID: 0}
   m_stage5: 
+  m_image5: {fileID: 0}
+  m_stage5Button: {fileID: 0}
   m_title: Title
 --- !u!1 &1271903532
 GameObject:

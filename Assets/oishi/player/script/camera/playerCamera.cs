@@ -56,14 +56,14 @@ public class playerCamera : MonoBehaviour
 
         m_cursor = GetComponent<GUITexture>().texture;
 
-        m_position = target.position + offset;
-
         //transform.forward = target.forward;
         //transform.position = transform.forward * distanceFromPlayer + offset;
     }
 
     void LateUpdate()
     {
+        m_position = target.transform.position + offset;
+
         pivotPosition = Vector3.Lerp(
             pivotPosition, target.position, moveSmooth * Time.deltaTime);
 
