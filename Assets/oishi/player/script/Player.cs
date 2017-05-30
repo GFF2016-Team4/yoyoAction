@@ -8,7 +8,7 @@ class Player : MonoBehaviour
     CharacterController characterController;
     YoyoController yoyoController;
 
-    [Header("加速(回転)")]
+    [Header("加速(回転離脱時)")]
     public float RotateAcceleration = 2;
     [Header("加速(地面)")]
     public float GroundAcceleration = 3;
@@ -40,7 +40,7 @@ class Player : MonoBehaviour
 
     public GameObject bulletPrefab;
 
-    Vector2 ScreenCenter;
+    Vector2 ViewportCenter;
 
     Vector3 moveDirection;
 
@@ -49,17 +49,20 @@ class Player : MonoBehaviour
     Vector2 inputVelocity;
     Vector2 previousDir = new Vector2(2, 1);
     Vector2 judgeDir;
+
+    Vector3 lookRotation;
+    Vector3 previousLook;
+
     private RaycastHit hitShot;
     private RaycastHit hit;
 
     private GameObject bulletInst = null;
 
-    bool isRotate;      //回転中かどうか
+    //public bool isRotate;      //回転中かどうか
     bool isBrake;       //ブレーキ中かどうか
-    bool isSrant;       //斜め移動してるかどうか
     float brakeSpeed;
     float angle;
-    bool isAngle;
+    bool judgeDirection;
 
     //インスペクター上でリセットの項目を選択したときの処理
     private void Reset()
@@ -74,15 +77,18 @@ class Player : MonoBehaviour
     {
         characterController = GetComponent<CharacterController>();
         checkGround = GetComponent<CheckGround>();
-        ScreenCenter = new Vector2(Screen.width / 2, Screen.height / 2);
+        ViewportCenter = new Vector2(0.5f, 0.5f);
+        previousLook = transform.position;
     }
 
     void Update()
     {
-        if (checkGround.IsGrounded && isRotate == false)
+        //地面にいる時
+        if (checkGround.IsGrounded/* && isRotate == false*/)
         {
             GroundMove();
         }
+        //空中にいる時
         else
         {
             AirMove();
@@ -103,28 +109,50 @@ class Player : MonoBehaviour
                     TurnAround(hitShot.point);
                 }
             }
-            else if (!yoyoController.NowBullet() && isRotate == true)
+            //ヨーヨーを離した時
+            else if (!yoyoController.NowBullet() && judgeDirection == true)
             {
-                if (nowPlayerSpeed <= 0.1f)
-                {
-                    nowPlayerSpeed = 1.0f;
-                }
-                moveDirection = transform.right;
-                AccelAdd(RotateAcceleration);
-                transform.rotation = Quaternion.identity;
-                isRotate = false;
+                //最後に進んでる方向にプレイヤーを飛ばす
+                judgeDirection = false;
+
+                //if (nowPlayerSpeed <= 0.1f)
+                //{
+                //    nowPlayerSpeed = 1.0f;
+                //}
+                //moveDirection = transform.right;
+                //AccelAdd(RotateAcceleration);
+                //transform.rotation = Quaternion.identity;
+                //isRotate = false;
             }
         }
-        else
-        {
-            isRotate = false;
-        }
+        //else
+        //{
+        //    isRotate = false;
+        //}
+
         nowGravityPower -= gravity * Time.deltaTime;
         nowPlayerSpeed = Mathf.Clamp(nowPlayerSpeed, 0, maxSpeed);
 
         Vector3 translate = moveDirection * nowPlayerSpeed;
         translate.y = nowGravityPower;
         characterController.Move(translate * Time.deltaTime);
+
+        //移動方向にｚ軸を向ける
+        Vector3 euler;
+        lookRotation = transform.position - previousLook;
+        if (lookRotation.magnitude > 0.01f)
+        {
+            transform.rotation = Quaternion.LookRotation(lookRotation);
+            //変な方向向くため0に
+            euler = transform.eulerAngles;
+            euler.x = 0;
+            euler.z = 0;
+
+            transform.eulerAngles = euler;
+
+        }
+        previousLook = transform.position;
+
     }
 
     void GroundMove()
@@ -168,19 +196,12 @@ class Player : MonoBehaviour
 
             judgeDir = Vector3.Normalize(judgeDir);
             //反対のキーを押した時
-            if (judgeDir.magnitude == 0 || (isSrant == true && judgeDir.magnitude == 0))
+            if (judgeDir.magnitude == 0)
             {
                 isBrake = true;
                 brakeSpeed = nowPlayerSpeed * brakePower;
             }
-            else if (judgeDir.magnitude < 1)
-            {
-                isSrant = true;
-            }
-            else
-            {
-                isSrant = false;
-            }
+
             moveDirection = forward * previousDir.y + right * previousDir.x;
             //MoveDirection = forward * GetInputVelocity.y + right * GetInputVelocity.x;
             previousDir = inputVelocity;
@@ -197,14 +218,12 @@ class Player : MonoBehaviour
                 if (inputVelocity != previousDir)
                 {
                     isBrake = false;
-                    isSrant = false;
                 }
                 AccelAdd(-brakeSpeed);
             }
             if (nowPlayerSpeed <= 0)
             {
                 isBrake = false;
-                isSrant = false;
                 judgeDir = Vector3.zero;
             }
         }
@@ -239,7 +258,7 @@ class Player : MonoBehaviour
     {
         if (bulletInst != null) return;
 
-        Ray ray = Camera.main.ScreenPointToRay(ScreenCenter);
+        Ray ray = Camera.main.ViewportPointToRay(ViewportCenter);
         if (Physics.Raycast(ray, out hitShot, ropeDistance, layerMask))
         {
             if (hitShot.collider.tag == "Rail")
@@ -258,7 +277,7 @@ class Player : MonoBehaviour
     /// <param name="target">回転軸となるオブジェクト</param>
     public void TurnAround(Vector3 target)
     {
-        if (isAngle == false)
+        if (judgeDirection == false)
         {
             angle = Vector3.Angle(transform.position - target, transform.right);
 
@@ -272,7 +291,7 @@ class Player : MonoBehaviour
             float absDistance = Mathf.Abs(distance);
 
             yoyoController.ropeSimulate.ReCalcDistance(absDistance);
-            isAngle = true;
+            judgeDirection = true;
         }
 
         //target.y = transform.position.y;
