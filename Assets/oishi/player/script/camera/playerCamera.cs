@@ -5,6 +5,7 @@ using UniRx;
 public class playerCamera : MonoBehaviour
 {
     [Tooltip("注目するオブジェクト")]
+    [SerializeField]
     Transform target;
 
     [Header("Playerとの距離")]
@@ -46,10 +47,12 @@ public class playerCamera : MonoBehaviour
 
     //[Header("カメラの感度")]
     //public float mouseSpeed = 3f;
-
-    public void Start()
+    private void Reset()
     {
         target = GameObject.FindWithTag("Player").transform;
+    }
+    public void Start()
+    {
         pivotPosition = target.position;
 
         LockCursor();
@@ -78,7 +81,7 @@ public class playerCamera : MonoBehaviour
             currentRotateY, desiredRotateY, angleSmoothing * Time.deltaTime);
 
         transform.position = pivotPosition
-            + Quaternion.Euler(currentRotateX, currentRotateY, 0) * target.forward
+            + Quaternion.Euler(currentRotateX, currentRotateY, 0) * Vector3.forward
             * distanceFromPlayer + offset;
 
         transform.LookAt(m_position);
