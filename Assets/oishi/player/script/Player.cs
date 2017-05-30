@@ -152,7 +152,6 @@ class Player : MonoBehaviour
 
         }
         previousLook = transform.position;
-
     }
 
     void GroundMove()
@@ -247,6 +246,22 @@ class Player : MonoBehaviour
 
     void AirMove()
     {
+
+        InputExtension.GetAxisVelocityRaw(out inputVelocity);
+        if (inputVelocity.magnitude >= 0.8f)
+        {
+
+            Vector3 forward = tpsCamera.transform.forward;
+            forward.y = 0;
+            forward.Normalize();
+
+            Vector3 right = tpsCamera.transform.right;
+            right.y = 0;
+            right.Normalize();
+
+            moveDirection = forward * previousDir.y + right * previousDir.x;
+            previousDir = inputVelocity;
+        }
         //スペースキーを離す、上昇中
         if (Input.GetButtonUp("Jump") && nowGravityPower > 0)
         {
@@ -344,6 +359,11 @@ class Player : MonoBehaviour
         if (colHit.transform.tag == "MoveObject/Lift")
         {
             transform.parent = colHit.gameObject.transform;
+            //transform.SetParent(colHit.gameObject.transform, true);
+        }
+        else
+        {
+            transform.parent = null;
         }
     }
     public void AccelAdd(float value)
