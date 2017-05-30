@@ -72,15 +72,15 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1422482410064534}
-  m_LocalRotation: {x: -0, y: 0.70012456, z: -0, w: -0.7140207}
-  m_LocalPosition: {x: 27.268648, y: 7.78619, z: 9.083711}
+  m_LocalRotation: {x: -0, y: 0.999993, z: -0, w: -0.0037443982}
+  m_LocalPosition: {x: 0.83, y: 0.96, z: 1.94}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4792950373884156}
   - {fileID: 4900595777908564}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 271.126, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180.42899, z: 0}
 --- !u!4 &4792950373884156
 Transform:
   m_ObjectHideFlags: 1
@@ -271,8 +271,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_SpaceDisMin: 0.6
   m_SpaceDisMax: 3
-  m_ThrowDis: 15
   m_Speed: 10
+  m_SpeedMax: 5
+  m_SpeedMin: 1
   m_SpeedFactor: 2
+  m_RopeDis: 10
+  ropeSimulate: {fileID: 0}
   Rope: {fileID: 1289387211531950, guid: 0e100c211a197ba49a4599cd941affaa, type: 2}
-  CopyRope: {fileID: 0}
+  yoyoSpeed: 20

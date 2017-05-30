@@ -27,19 +27,16 @@ public class YoyoController : MonoBehaviour
     private GameObject m_Right;                 //ヨーヨー右部分
 
     private Collider m_TargetCollider;
-    private Rigidbody m_Rigidbody;
     private RailController m_Rail;
     public RopeSimulate ropeSimulate;
+    private Animator m_Animator;
     private Transform ropeOrigin;
     private Player m_Player;
+    public GameObject Rope;
+    private GameObject CopyRope = null;
 
     private Vector3 movePos;
     private Vector3 point;
-
-    private Rope m_Rope;
-
-    public GameObject Rope;
-    private GameObject CopyRope = null;
 
     private bool m_IsOpened = false;            //開いたか?
     private bool m_IsYoyoHorizontal = false;        //水平であるか?
@@ -50,13 +47,12 @@ public class YoyoController : MonoBehaviour
     public float yoyoSpeed = 20;
     void Awake()
     {
-        m_Left = transform.FindChild("Left").gameObject;
-        m_Right = transform.FindChild("Right").gameObject;
+        m_Left = transform.GetChild(0).FindChild("polySurface8").Find("Left").gameObject;
+        m_Right = transform.GetChild(0).FindChild("polySurface2").Find("Right").gameObject;
 
         m_Player = GameObject.Find("Player").GetComponent<Player>();
         m_Rail = FindObjectOfType<RailController>();
-
-        m_Rigidbody = transform.GetComponent<Rigidbody>();
+        m_Animator = transform.GetComponent<Animator>();
 
         point = m_Player.HitPoint;
     }
@@ -107,6 +103,7 @@ public class YoyoController : MonoBehaviour
             //m_Player.hitShotをアクセスできないと他の建物に挟んでもレール移動
             if(m_Player.hitInfo.collider.tag == "Rail")
             {
+                m_Animator.SetBool("IsHit", true);
                 if (m_TargetCollider.tag == "Rail" && m_Player.hitInfo.collider.GetComponent<RailController>().GetState() == "front")
                 {
                     m_Speed += m_Player.PlayerSpeed;
@@ -192,6 +189,8 @@ public class YoyoController : MonoBehaviour
         ropeOrigin.GetComponent<SphereCollider>().enabled = false;
 
         CopyRope.transform.parent = transform;
+
+        m_Animator.SetBool("IsShoot", true);
 
         //初期化           引数(origin,tail) 
         ropeSimulate.InitPosition(transform.position, getPlayerPosition);

@@ -6,12 +6,13 @@ public class AnimationController : MonoBehaviour {
 
     [SerializeField, HideInInspector]
     public float m_Speed;
-    [SerializeField]
+    [SerializeField, HideInInspector]
     private Animator m_Animator;
 
 
     private bool m_IsGround;
     private bool m_IsJumped;
+    private int m_RailState;
 
 	// Use this for initialization
 	void Start () {
@@ -34,6 +35,30 @@ public class AnimationController : MonoBehaviour {
             m_IsJumped = false;
         }
 
+        if(Input.GetMouseButton(0))
+        {
+            m_Animator.SetBool("IsShoot", true);
+        }
+        else
+        {
+            m_Animator.SetBool("IsShoot", false);
+        }
+
+        //if(transform.GetComponent<Player>().hitInfo.collider.tag == "Rail")
+        //{
+        //    string state = transform.GetComponent<Player>().hitInfo.collider.GetComponent<RailController>().GetState();
+
+        //    if(state == "front" || state == "back")
+        //    {
+        //        m_RailState = 0;
+        //    }
+        //    else if(state == "left" || state == "right")
+        //    {
+        //        m_RailState = 1;
+        //    }
+        //}
+
+        m_Animator.SetInteger("RailState", m_RailState);
         m_Animator.SetFloat("Speed", m_Speed);
         m_Animator.SetBool("IsGround", m_IsGround);
         m_Animator.SetBool("IsJumped", m_IsJumped);
