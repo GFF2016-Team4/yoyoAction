@@ -189,6 +189,8 @@ public class RopeSimulate : MonoBehaviour
     [System.Obsolete("エラーになります")]
     public void SimulationEnd(Transform sync)
     {
+        Debug.LogError("Obsolete function");
+
         Debug.Log("is end?");
 
         if (isSimulationEnd) return;
@@ -259,6 +261,11 @@ public class RopeSimulate : MonoBehaviour
     public float GetRopeSpeed()
     {
         return rope.tail.rigidbody.velocity.magnitude;
+    }
+
+    public Vector3 GetRopeSpeedDirection()
+    {
+        return rope.tail.rigidbody.velocity.normalized;
     }
 
     /// <summary> ロープ全体を移動 </summary>
