@@ -20,10 +20,6 @@ public class YoyoController : MonoBehaviour
     public float m_RopeDis = 10f;
 
     private float m_Space;                      //ヨーヨーの間隔
-    private Vector3 m_ScalePrototype;           //ヨーヨーの大きさ(原型)
-    private Vector3 m_PosPrototype;             //ヨーヨーの場所(原型)
-    private Quaternion m_RotPrototype;          //ヨーヨーの向き(原型)
-
     private float m_ScaleNum = 10.0f;           //拡大倍率
     private float m_SeparationSpeed = 1.0f;     //分離速度
 
@@ -46,9 +42,7 @@ public class YoyoController : MonoBehaviour
     private GameObject CopyRope = null;
 
     private bool m_IsOpened = false;            //開いたか?
-    private bool m_IsCollised = false;          //当たったか?
     private bool m_IsYoyoHorizontal = false;        //水平であるか?
-    private bool m_IsRailMoving = false;        //レール移動中であるか?
 
     bool IsBullet = false;
     bool IsIK = false;
@@ -63,9 +57,6 @@ public class YoyoController : MonoBehaviour
         m_Rail = FindObjectOfType<RailController>();
 
         m_Rigidbody = transform.GetComponent<Rigidbody>();
-
-        //手元の大きさと場所を取得
-        GetPrototypeAttribute();
 
         point = m_Player.HitPoint;
     }
@@ -88,7 +79,6 @@ public class YoyoController : MonoBehaviour
         {
             //Debug.Log(hit.collider.name);
             m_TargetCollider = hit.collider;
-            m_IsCollised = true;
         }
 
         //ロープの発射
@@ -151,9 +141,6 @@ public class YoyoController : MonoBehaviour
         }
         else
         {
-            m_IsRailMoving = false;
-            m_IsCollised = false;
-
             StartCoroutine(YoyoClose());
         }
 
@@ -363,18 +350,6 @@ public class YoyoController : MonoBehaviour
         m_IsOpened = false;
     }
 
-    //元の位置情報などを一旦取得して保存
-    private void GetPrototypeAttribute()
-    {
-        if (m_Player)
-            m_PosPrototype = m_Player.transform.position;
-        else
-            m_PosPrototype = this.transform.position;
-
-        m_ScalePrototype = this.transform.localScale;
-        m_RotPrototype = this.transform.rotation;
-    }
-
     //ヨーヨーの開き処理
     IEnumerator YoyoOpen()
     {
@@ -409,16 +384,11 @@ public class YoyoController : MonoBehaviour
         yield return null;
     }
 
-
     Vector3 getPlayerPosition
     {
         get { return m_Player.Position; }
     }
 
-    public bool IsCollised()
-    {
-        return m_IsCollised;
-    }
     public bool NowBullet()
     {
         return IsBullet;
