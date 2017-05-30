@@ -13,6 +13,6 @@ public class testFade2 : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         if(Input.GetKeyDown(KeyCode.Space))
-        canvas.GetComponent<FadeManager>().SceneChange("Scene1");
-	}
+        canvas.GetComponent<FadeManager>().SceneChange("StageSelect");
+    }
 }

@@ -1432,6 +1432,51 @@ Transform:
   m_Father: {fileID: 1673876106}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &929614724
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 929614726}
+  - component: {fileID: 929614725}
+  m_Layer: 0
+  m_Name: GameOver
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &929614725
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 929614724}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2beac00ecab6c247b9fd07b5cbb4974, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_stage1: Sample
+  m_stage2: GameClear
+  m_stage3: 
+  m_stage4: 
+  m_stage5: 
+--- !u!4 &929614726
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 929614724}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 171.39119, y: 5.0799713, z: 270.76566}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1034883881
 GameObject:
   m_ObjectHideFlags: 0
@@ -1586,7 +1631,7 @@ MonoBehaviour:
   maxSpeed: 10
   nowPlayerSpeed: 0
   brakePower: 2
-  rotationRadius: 0.01
+  rotatePower: 20
   tpsCamera: {fileID: 2079600678}
   layerMask:
     serializedVersion: 2
@@ -3242,13 +3287,14 @@ MonoBehaviour:
   mouseSpeedY: 1
   angleSmoothing: 10
   moveSmooth: 20
+  offset: {x: 0, y: 1, z: 0}
 --- !u!131 &2079600681
 GUITexture:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2079600674}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Texture: {fileID: 2800000, guid: 0c6271a290ef75b4c97d58746c86c5b8, type: 3}
   m_Color: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 0.5}
   m_PixelInset:
