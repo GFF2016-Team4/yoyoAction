@@ -18,6 +18,8 @@ public class RailController : MonoBehaviour
     private float dot2;
     private Collider[] hitColliders;
 
+    private RaycastHit hitInfo;
+
     // Use this for initialization
     void Start()
     {
@@ -27,14 +29,19 @@ public class RailController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        var center = transform.position;
-        var radius = Vector3.Distance(transform.GetChild(0).position, transform.position);
-        hitColliders = Physics.OverlapSphere(center, radius, layerMask);
-        int i = 0;
-        while (i < hitColliders.Length)
+        //var center = transform.position;
+        //var halfExtent = transform.GetChild(0).position - transform.position;
+        //hitColliders = Physics.OverlapBox(center, halfExtent, Quaternion.identity, layerMask);
+        //int i = 0;
+        //while (i < hitColliders.Length)
+        //{
+        //    Debug.Log(hitColliders[i]);
+        //    i++;
+        //}
+
+        if (Physics.BoxCast(transform.GetChild(0).position, transform.GetChild(0).localScale * 0.5f, (transform.GetChild(1).position - transform.GetChild(0).position), out hitInfo, Quaternion.identity, layerMask));
         {
-            Debug.Log(hitColliders[i]);
-            i++;
+            Debug.Log(hitInfo.transform.name);
         }
 
         checkTargetDirForMe(m_Player);
