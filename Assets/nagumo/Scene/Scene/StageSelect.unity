@@ -304,6 +304,74 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 344827235}
+--- !u!1 &418890584
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 418890585}
+  - component: {fileID: 418890587}
+  - component: {fileID: 418890586}
+  m_Layer: 5
+  m_Name: Image
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &418890585
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 418890584}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1202062788}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -195, y: 135}
+  m_SizeDelta: {x: 400, y: 50}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &418890586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 418890584}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_Sprite: {fileID: 21300000, guid: c49ef7cc844791148b8d875654c1a2e5, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+--- !u!222 &418890587
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 418890584}
 --- !u!1 &491462497
 GameObject:
   m_ObjectHideFlags: 0
@@ -933,6 +1001,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 1590487028}
+  - {fileID: 418890585}
   - {fileID: 1271903533}
   m_Father: {fileID: 0}
   m_RootOrder: 3
@@ -969,13 +1038,13 @@ MonoBehaviour:
   m_stage2Button: {fileID: 344827235}
   m_stage3: 
   m_image3: {fileID: 0}
-  m_stage3Button: {fileID: 0}
+  m_stage3Button: {fileID: 1835451684}
   m_stage4: 
   m_image4: {fileID: 0}
-  m_stage4Button: {fileID: 0}
+  m_stage4Button: {fileID: 2124317761}
   m_stage5: 
   m_image5: {fileID: 0}
-  m_stage5Button: {fileID: 0}
+  m_stage5Button: {fileID: 491462497}
   m_title: Title
 --- !u!1 &1271903532
 GameObject:
@@ -1010,7 +1079,7 @@ RectTransform:
   - {fileID: 491462498}
   - {fileID: 1509374772}
   m_Father: {fileID: 1202062788}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -1229,7 +1298,7 @@ MonoBehaviour:
     m_Mode: 4
     m_SelectOnUp: {fileID: 491462499}
     m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnLeft: {fileID: 491462499}
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
@@ -1332,7 +1401,7 @@ MonoBehaviour:
     m_Mode: 4
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 2124317762}
-    m_SelectOnLeft: {fileID: 1509374773}
+    m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 344827237}
   m_Transition: 1
   m_Colors:
@@ -1512,7 +1581,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1590487028
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1676,7 +1745,7 @@ MonoBehaviour:
   m_Navigation:
     m_Mode: 4
     m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 1509374773}
+    m_SelectOnDown: {fileID: 491462499}
     m_SelectOnLeft: {fileID: 344827237}
     m_SelectOnRight: {fileID: 2124317762}
   m_Transition: 1
