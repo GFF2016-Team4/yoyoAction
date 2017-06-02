@@ -24,7 +24,7 @@ public class playerCamera : MonoBehaviour
     [Header("ヌルヌル度")]
     public float angleSmoothing = 10f;
     [Header("ターゲット追尾のヌルヌル度")]
-    public float moveSmooth = 20f;
+    public float moveSmooth = 50f;
 
     Vector3 pivotPosition;
 
@@ -57,7 +57,7 @@ public class playerCamera : MonoBehaviour
 
         LockCursor();
 
-        m_cursor = GetComponent<GUITexture>().texture;
+        //m_cursor = GetComponent<GUITexture>().texture;
 
         //transform.forward = target.forward;
         //transform.position = transform.forward * distanceFromPlayer + offset;
@@ -150,11 +150,11 @@ public class playerCamera : MonoBehaviour
         Cursor.visible = true;
     }
 
-    void OnGUI()
-    {
-        GUI.DrawTexture(new Rect(Screen.width / 2 - 128, Screen.height / 2 - 128,
-            m_cursor.width, m_cursor.width), m_cursor);
-    }
+    //void OnGUI()
+    //{
+    //    GUI.DrawTexture(new Rect(Screen.width / 2 - 128, Screen.height / 2 - 128,
+    //        m_cursor.width, m_cursor.width), m_cursor);
+    //}
 
     //void FixedAngle()
     //{

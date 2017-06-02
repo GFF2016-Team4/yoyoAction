@@ -32,6 +32,9 @@ public class Pause : MonoBehaviour {
             m_pauseCanvas.SetActive(true);
             m_camera.GetComponent<playerCamera>().enabled = false;
         }
+
+        //if (Input.GetKeyDown(KeyCode.G))
+        //    m_canvas.GetComponent<FadeManager>().SceneChange("GameOver");
 	}
 
     public void StratButtonPush()
