@@ -32,9 +32,11 @@ public class StageTimeView : MonoBehaviour
     void LateUpdate()
     {
         int   min     = (int)Mathf.Floor(timerComponent.timer / 60.0f);
-        float secound = timerComponent.timer - (min * 60);
+        float second = timerComponent.timer - (min * 60);
 
-        string time = string.Format("{0:"+minFormat+"}:{1:"+secFormat+"}", min, secound);
+        min = Mathf.Min(min, 99);
+            
+        string time = string.Format("{0:"+minFormat+"}:{1:"+secFormat+"}", min, second);
 
         timerDrawer.text = textTimeString + time;
     }
