@@ -3,6 +3,7 @@
 		_Color ("Color", Color) = (1,1,1,1)
 		_MainTex ("Albedo (_tex)", 2D) = "white" {}
 		_Specular("Specular(_Sp)", 2D) = "white" {}
+		_Normal("Normal", 2D) = "bump" {}
 		_EmissionPower("Emission Power", Float) = 1
 		_EmissionColor("Emission Color", Color) = (1,1,1,1)
 		_Emission("Emission(_M)", 2D) = "white" {}
@@ -21,11 +22,13 @@
 
 		sampler2D _MainTex;
 		sampler2D _Specular;
+		sampler2D _Normal;
 		sampler2D _Emission;
 
 		struct Input {
 			float2 uv_MainTex;
 			float2 uv_Specular;
+			float2 uv_Normal;
 			float2 uv_Emission;
 		};
 
@@ -44,12 +47,15 @@
 		void surf (Input IN, inout SurfaceOutputStandardSpecular o) {
 			// Albedo comes from a texture tinted by color
 			fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
-			o.Albedo = c.rgb;
+			o.Albedo   = c.rgb;
 			o.Smoothness = _Glossiness;
 			o.Alpha = c.a;
 			
 			c = tex2D(_Specular, IN.uv_Specular) * _Color;
 			o.Specular = c.rgb;
+
+			c = tex2D(_Normal,   IN.uv_Normal);
+			o.Normal   = UnpackNormal(c);
 
 			c = tex2D(_Emission, IN.uv_Emission) * _EmissionColor * _EmissionPower;
 			o.Emission = c.rgb;
