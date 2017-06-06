@@ -7,6 +7,7 @@ class Player : MonoBehaviour
     CheckGround checkGround;
     CharacterController characterController;
     YoyoController yoyoController;
+    playerCamera playerCamera;
 
     [Header("加速(回転離脱時)")]
     public float RotateAcceleration = 2;
@@ -77,6 +78,7 @@ class Player : MonoBehaviour
     {
         characterController = GetComponent<CharacterController>();
         checkGround = GetComponent<CheckGround>();
+        playerCamera = GetComponent<playerCamera>();
         ViewportCenter = new Vector2(0.5f, 0.5f);
         previousLook = transform.position;
     }
@@ -281,7 +283,10 @@ class Player : MonoBehaviour
                 hitShot.collider.GetComponent<RailController>().enabled = true;
             }
             //弾の生成
-            bulletInst = Instantiate(bulletPrefab, transform.position, tpsCamera.transform.rotation);
+            Quaternion rot = transform.rotation;
+            float offset = tpsCamera.transform.GetComponent<playerCamera>().GetCameraRotate().x;
+            rot.eulerAngles = new Vector3(rot.eulerAngles.x + 90 - offset, rot.eulerAngles.y, rot.eulerAngles.z);
+            bulletInst = Instantiate(bulletPrefab, transform.position, rot);
             yoyoController = bulletInst.GetComponent<YoyoController>();
         }
     }

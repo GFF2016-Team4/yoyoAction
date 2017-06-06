@@ -3882,7 +3882,7 @@ GameObject:
   - component: {fileID: 735988601}
   - component: {fileID: 735988600}
   m_Layer: 12
-  m_Name: Rail(Clone)141414
+  m_Name: Rail(Clone)
   m_TagString: Rail
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9668,7 +9668,7 @@ GameObject:
   - component: {fileID: 2121445329}
   - component: {fileID: 2121445328}
   m_Layer: 12
-  m_Name: Rail(Clone)232323
+  m_Name: Rail(Clone)
   m_TagString: Rail
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

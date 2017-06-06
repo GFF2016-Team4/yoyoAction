@@ -104,30 +104,33 @@ public class YoyoController : MonoBehaviour
             if(m_Player.hitInfo.collider.tag == "Rail")
             {
                 m_Animator.SetBool("IsHit", true);
-                if (m_TargetCollider.tag == "Rail" && m_Player.hitInfo.collider.GetComponent<RailController>().GetState() == "front")
+                if(m_TargetCollider.tag == "Rail")
                 {
-                    m_Speed += m_Player.PlayerSpeed;
-                    MoveToRailgoal_(transform.position, m_TargetCollider.transform.GetChild(0).transform.position);
+                    if (m_Player.hitInfo.collider.GetComponent<RailController>().GetState() == RailController.DirectionState.Forward)
+                    {
+                        m_Speed += m_Player.PlayerSpeed;
+                        MoveToRailgoal_(transform.position, m_TargetCollider.transform.GetChild(0).transform.position);
 
-                    ropeOrigin.GetComponent<SphereCollider>().enabled = true;
-                }
-                else if (m_TargetCollider.tag == "Rail" && m_Player.hitInfo.collider.GetComponent<RailController>().GetState() == "back")
-                {
-                    m_Speed += m_Player.PlayerSpeed;
-                    MoveToRailgoal_(transform.position, m_TargetCollider.transform.GetChild(1).transform.position);
+                        ropeOrigin.GetComponent<SphereCollider>().enabled = true;
+                    }
+                    else if (m_Player.hitInfo.collider.GetComponent<RailController>().GetState() == RailController.DirectionState.Backward)
+                    {
+                        m_Speed += m_Player.PlayerSpeed;
+                        MoveToRailgoal_(transform.position, m_TargetCollider.transform.GetChild(1).transform.position);
 
-                    ropeOrigin.GetComponent<SphereCollider>().enabled = true;
-                }
-                else if (m_TargetCollider.tag == "Rail" && m_Player.hitInfo.collider.GetComponent<RailController>().GetState() == "left")
-                {
-                    Debug.Log("ワイヤーアクション");
-                    //transform.Rotate();
-                }
-                else if (m_TargetCollider.tag == "Rail" && m_Player.hitInfo.collider.GetComponent<RailController>().GetState() == "right")
-                {
-                    Debug.Log("ワイヤーアクション");
-                    //transform.Rotate();
-                }
+                        ropeOrigin.GetComponent<SphereCollider>().enabled = true;
+                    }
+                    else if (m_Player.hitInfo.collider.GetComponent<RailController>().GetState() == RailController.DirectionState.Left)
+                    {
+                        Debug.Log("ワイヤーアクション");
+                        //transform.Rotate();
+                    }
+                    else if (m_Player.hitInfo.collider.GetComponent<RailController>().GetState() == RailController.DirectionState.Right)
+                    {
+                        Debug.Log("ワイヤーアクション");
+                        //transform.Rotate();
+                    }
+                }            
             }          
         }
 

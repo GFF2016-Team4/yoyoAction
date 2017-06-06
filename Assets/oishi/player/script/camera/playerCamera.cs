@@ -174,4 +174,9 @@ public class playerCamera : MonoBehaviour
     //    angle.z = 0;
     //    transform.eulerAngles = angle;
     //}
+
+    public Vector2 GetCameraRotate()
+    {
+        return new Vector2(currentRotateX, currentRotateY);
+    }
 }

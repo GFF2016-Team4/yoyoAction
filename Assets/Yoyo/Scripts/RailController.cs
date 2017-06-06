@@ -9,7 +9,7 @@ public class RailController : MonoBehaviour
     [SerializeField]
     public LayerMask layerMask;
     [HideInInspector]
-    private string m_State;
+    private DirectionState m_State;
 
     Vector3 dir;
     Vector3 from, to;
@@ -19,6 +19,14 @@ public class RailController : MonoBehaviour
     private Collider[] hitColliders;
 
     private RaycastHit hitInfo;
+
+    public enum DirectionState
+    {
+        Forward,
+        Backward,
+        Left,
+        Right
+    }
 
     // Use this for initialization
     void Start()
@@ -84,26 +92,30 @@ public class RailController : MonoBehaviour
 
         if (angle > 150 && angle < 180)
         {
-            m_State = "back";
+            //m_State = "back";
+            m_State = DirectionState.Backward;
         }
         else if (angle > 0 && angle < 30)
         {
-            m_State = "front";
+            //m_State = "front";
+            m_State = DirectionState.Forward;
         }
         else if (angle > 60 && angle < 120)
         {
             if (dot2 > 0)
-                m_State = "right";
+                m_State = DirectionState.Right;
+            //m_State = "right";
             else
-                m_State = "left";
+                m_State = DirectionState.Left;
+                //m_State = "left";
         }
         else
         {
-            m_State = "";
+            //m_State = "";
         }
     }
 
-    public string GetState()
+    public DirectionState GetState()
     {
         return m_State;
     }
