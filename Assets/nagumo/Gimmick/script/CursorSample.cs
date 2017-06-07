@@ -21,7 +21,10 @@ public class CursorSample : MonoBehaviour {
 	void Update () {
         //EventSystem に今選択中のオブジェクトを教えてもらう
         GameObject selectedObject =
-            EventSystem.current.currentSelectedGameObject;
+            EventSystem.current?.currentSelectedGameObject;
+        if(selectedObject == null) {
+            return;
+        }
         //選択中のオブジェクトの場所にカーソルを表示
         m_rectTrans.anchoredPosition =
             selectedObject.GetComponent<RectTransform>().anchoredPosition;

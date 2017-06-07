@@ -72,10 +72,13 @@ public class StageSelect : MonoBehaviour {
 	void LateUpdate () {
         //EventSystem に今選択中のオブジェクトを教えてもらう
         GameObject selectedObject =
-            EventSystem.current.currentSelectedGameObject;
+            EventSystem.current?.currentSelectedGameObject;
+        if (selectedObject == null) {
+            return;
+        }
 
         //m_stage1Buttonが選択中なら
-        if(selectedObject == m_stage1Button)
+        if (selectedObject == m_stage1Button)
         {
             m_renderer.sprite = m_image1;
         }
