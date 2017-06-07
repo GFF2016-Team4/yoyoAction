@@ -208,6 +208,11 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: b0859f8705c18fe478abe571761e4591, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &47637390 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1720954145136866, guid: b0859f8705c18fe478abe571761e4591,
+    type: 2}
+  m_PrefabInternal: {fileID: 47637389}
 --- !u!1 &144257115
 GameObject:
   m_ObjectHideFlags: 0
@@ -649,7 +654,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6ca85545beba3145b447f5abc9c2eb5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_canvas: {fileID: 0}
+  m_canvas: {fileID: 47637390}
   m_buttonCanvas: {fileID: 647324072}
   m_stage1: Stage1
   m_stage2: Stage2

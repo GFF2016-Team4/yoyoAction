@@ -824,7 +824,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd8ecb5b66349584ba5b964284fbc565, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_canvas: {fileID: 0}
+  m_canvas: {fileID: 1140704475}
   m_titleCanvas: {fileID: 1124315286}
   m_selectScene: StageSelect
 --- !u!1001 &1140704474
@@ -927,6 +927,11 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: b0859f8705c18fe478abe571761e4591, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &1140704475 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1720954145136866, guid: b0859f8705c18fe478abe571761e4591,
+    type: 2}
+  m_PrefabInternal: {fileID: 1140704474}
 --- !u!1 &1162031608
 GameObject:
   m_ObjectHideFlags: 0
