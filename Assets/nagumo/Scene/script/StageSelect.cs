@@ -12,6 +12,7 @@ public class StageSelect : MonoBehaviour {
 
     public GameObject m_canvas;
     public GameObject m_spriteRenderer;
+    public GameObject m_eventSystem;
 
     [Header("ステージ１")]
     [Tooltip("ステージ１シーン名")]
@@ -107,31 +108,31 @@ public class StageSelect : MonoBehaviour {
     public void PushStage1()
     {
         m_canvas.GetComponent<FadeManager>().SceneChange(m_stage1);
-        this.gameObject.SetActive(false);
+        m_eventSystem.SetActive(false);
     }
     public void PushStage2()
     {
         m_canvas.GetComponent<FadeManager>().SceneChange(m_stage2);
-        this.gameObject.SetActive(false);
+        m_eventSystem.SetActive(false);
     }
     public void PushStage3()
     {
         m_canvas.GetComponent<FadeManager>().SceneChange(m_stage3);
-        this.gameObject.SetActive(false);
+        m_eventSystem.SetActive(false);
     }
     public void PushStage4()
     {
         m_canvas.GetComponent<FadeManager>().SceneChange(m_stage4);
-        this.gameObject.SetActive(false);
+        m_eventSystem.SetActive(false);
     }
     public void PushStage5()
     {
         m_canvas.GetComponent<FadeManager>().SceneChange(m_stage5);
-        this.gameObject.SetActive(false);
+        m_eventSystem.SetActive(false);
     }
     public void PushTitle()
     {
         m_canvas.GetComponent<FadeManager>().SceneChange(m_title);
-        this.gameObject.SetActive(false);
+        m_eventSystem.SetActive(false);
     }
 }

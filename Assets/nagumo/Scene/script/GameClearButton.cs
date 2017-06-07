@@ -7,8 +7,7 @@ using UnityEngine.SceneManagement;
 public class GameClearButton : MonoBehaviour {
     [Header("フェード用Canvas")]
     public GameObject m_canvas;
-    [Header("ボタンがついてるCanvas")]
-    public GameObject m_clearCanvas;
+    public GameObject m_eventSystem;
 
     [Header("タイトルシーン名")]
     public string m_title;
@@ -25,6 +24,6 @@ public class GameClearButton : MonoBehaviour {
     public void PushTitle()
     {
         m_canvas.GetComponent<FadeManager>().SceneChange(m_title);
-        m_clearCanvas.SetActive(false);
+        m_eventSystem.SetActive(false);
     }
 }

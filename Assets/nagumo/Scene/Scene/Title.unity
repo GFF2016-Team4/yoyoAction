@@ -825,7 +825,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_canvas: {fileID: 1140704475}
-  m_titleCanvas: {fileID: 1124315286}
+  m_eventSystem: {fileID: 1940314243}
   m_selectScene: StageSelect
 --- !u!1001 &1140704474
 Prefab:

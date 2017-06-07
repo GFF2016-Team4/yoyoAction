@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 public class GameTitleButton : MonoBehaviour {
 
     public GameObject m_canvas;
-    public GameObject m_titleCanvas;
+    public GameObject m_eventSystem;
 
     [Header("ゲーム選択シーン名")]
     public string m_selectScene;
@@ -25,7 +25,7 @@ public class GameTitleButton : MonoBehaviour {
     public void PushSelect()
     {
         m_canvas.GetComponent<FadeManager>().SceneChange(m_selectScene);
-        m_titleCanvas.SetActive(false);
+        m_eventSystem.SetActive(false);
     }
     public void GameEnd()
     {

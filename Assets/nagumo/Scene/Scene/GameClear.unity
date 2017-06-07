@@ -772,7 +772,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_canvas: {fileID: 2009332128}
-  m_clearCanvas: {fileID: 1665464287}
+  m_eventSystem: {fileID: 1576538230}
   m_title: Title
 --- !u!1 &1724891603
 GameObject:

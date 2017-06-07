@@ -1138,6 +1138,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_canvas: {fileID: 977515135}
   m_spriteRenderer: {fileID: 1123581644}
+  m_eventSystem: {fileID: 1054216007}
   m_stage1: Stage1
   m_image1: {fileID: 21300000, guid: 3b30bfc46dc84884d86a883f514f2573, type: 3}
   m_stage1Button: {fileID: 1514319690}

@@ -655,7 +655,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_canvas: {fileID: 47637390}
-  m_buttonCanvas: {fileID: 647324072}
+  m_eventSystem: {fileID: 1148467308}
   m_stage1: Stage1
   m_stage2: Stage2
   m_stage3: Stage3

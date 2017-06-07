@@ -8,8 +8,7 @@ public class GameOverButton : MonoBehaviour {
 
     [Header("フェード用Canvas")]
     public GameObject m_canvas;
-    [Header("ボタンがあるCanvas")]
-    public GameObject m_buttonCanvas;
+    public GameObject m_eventSystem;
     [Header("それぞれのステージ名")]
     public string m_stage1;
     public string m_stage2;
@@ -45,31 +44,31 @@ public class GameOverButton : MonoBehaviour {
         if (m_retryScene == m_stage1)
         {
             m_canvas.GetComponent<FadeManager>().SceneChange(m_retryScene);
-            m_buttonCanvas.SetActive(false);
+            m_eventSystem.SetActive(false);
         }
 
         if (m_retryScene == m_stage2)
         {
             m_canvas.GetComponent<FadeManager>().SceneChange(m_stage2);
-            m_buttonCanvas.SetActive(false);
+            m_eventSystem.SetActive(false);
         }
 
         if (m_retryScene == m_stage3)
         {
             m_canvas.GetComponent<FadeManager>().SceneChange(m_stage3);
-            m_buttonCanvas.SetActive(false);
+            m_eventSystem.SetActive(false);
         }
 
         if (m_retryScene == m_stage4)
         {
             m_canvas.GetComponent<FadeManager>().SceneChange(m_stage4);
-            m_buttonCanvas.SetActive(false);
+            m_eventSystem.SetActive(false);
         }
 
         if (m_retryScene == m_stage5)
         {
             m_canvas.GetComponent<FadeManager>().SceneChange(m_stage5);
-            m_buttonCanvas.SetActive(false);
+            m_eventSystem.SetActive(false);
         }
     }
 }
