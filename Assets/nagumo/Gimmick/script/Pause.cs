@@ -15,6 +15,7 @@ public class Pause : MonoBehaviour {
     public string m_stageSelect;
 
     string nowScene;
+    bool m_pause;
 
 	// Use this for initialization
 	void Start () {
@@ -26,11 +27,19 @@ public class Pause : MonoBehaviour {
 
         nowScene = SceneManager.GetActiveScene().name;
 
-        if (Input.GetKeyDown(KeyCode.P))
+        if (m_pause == false && Input.GetKeyDown(KeyCode.P))
         {
+            m_pause = true;
             Time.timeScale = 0;
             m_pauseCanvas.SetActive(true);
             m_camera.GetComponent<playerCamera>().enabled = false;
+        }
+        else if (m_pause == true && Input.GetKeyDown(KeyCode.P))
+        {
+            Time.timeScale = 1;
+            m_pauseCanvas.SetActive(false);
+            m_camera.GetComponent<playerCamera>().enabled = true;
+            m_pause = false;
         }
 
         //if (Input.GetKeyDown(KeyCode.G))

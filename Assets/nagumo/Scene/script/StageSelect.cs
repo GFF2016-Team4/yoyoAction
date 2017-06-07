@@ -100,8 +100,8 @@ public class StageSelect : MonoBehaviour {
         }
 
         //選択中のオブジェクトの場所にカーソルを表示
-        m_rectTrans.anchoredPosition =
-            selectedObject.GetComponent<RectTransform>().anchoredPosition;
+        //m_rectTrans.anchoredPosition =
+        //    selectedObject.GetComponent<RectTransform>().anchoredPosition;
     }
 
     public void PushStage1()
