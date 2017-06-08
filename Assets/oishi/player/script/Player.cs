@@ -58,7 +58,6 @@ class Player : MonoBehaviour
     private GameObject bulletInst = null;
 
     //public bool isRotate;      //回転中かどうか
-    bool isBrake;       //ブレーキ中かどうか
     float brakeSpeed;
     float angle;
     bool judgeDirection;
@@ -82,8 +81,10 @@ class Player : MonoBehaviour
 
     void Update()
     {
-        //地面にいる時
-        if (checkGround.IsGrounded/* && isRotate == false*/)
+		InputExtension.GetAxisVelocityRaw(out inputVelocity);
+
+		//地面にいる時
+		if (checkGround.IsGrounded/* && isRotate == false*/)
         {
             GroundMove();
         }
@@ -93,6 +94,7 @@ class Player : MonoBehaviour
             AirMove();
             transform.parent = null;
         }
+
         if (Input.GetMouseButtonDown(0))
         {
             ShootBullet();
@@ -136,7 +138,6 @@ class Player : MonoBehaviour
         translate.y = nowGravityPower;
         characterController.Move(translate * Time.deltaTime);
 
-
 		transform.rotation = Quaternion.LookRotation(moveDirection);
     }
 
@@ -144,106 +145,70 @@ class Player : MonoBehaviour
     {
         //重力をリセット
         ResetGravity();
-
-        InputExtension.GetAxisVelocityRaw(out inputVelocity);
-
+		
 		SlopeState slopeState = checkGround.FetchSlope(transform.position, moveDirection);
 
-        if (inputVelocity.magnitude >= 0.8f && isBrake == false)
+		//上り坂は減速
+		if (slopeState == SlopeState.UpHill)
+		{
+			Accel(-UphillDeceleration);
+		}
+
+		//スペースキーでジャンプ
+		if (Input.GetButton("Jump"))
+		{
+			nowGravityPower += jumpPower;
+		}
+
+		if (IsBrake())
+		{
+			//-1 -> ブレーキ中では無い状態
+			if (brakeSpeed == -1)
+			{
+				//ブレーキの初期化
+				brakeSpeed = nowPlayerSpeed * brakePower;
+			}
+
+			Accel(-brakeSpeed);
+
+			//ブレーキしている間は普通の移動を受け付けない
+			return;
+		}
+		
+		//ブレーキ解除後に１回だけ実行
+		if(brakeSpeed != -1)
+		{
+			//ブレーキ中じゃないときは-1にする
+			brakeSpeed = -1;
+			previousDir = inputVelocity;
+		}
+
+		//普通の移動
+		if (inputVelocity.magnitude >= 0.8f)
         {
-            Vector3 forward = tpsCamera.transform.forward;
-            forward.y = 0;
-            forward.Normalize();
-
-            Vector3 right = tpsCamera.transform.right;
-            right.y = 0;
-            right.Normalize();
-
-			//moveDirection = Quaternion.Euler(0, tpsCamera.transform.localEulerAngles.y, 0) * inputVelocity.normalized;
-			//moveDirection = transform.TransformDirection(moveDirection);
-			//坂道判定
-			//坂の角度
-			//坂道での速度処理
-			//下り坂 + 移動中(加速)
 			if (slopeState == SlopeState.DownHill)
             {
                 Accel(DownhillAcceleration);
             }
-
-            //平面 + 移動中(加速)
-            if (slopeState == SlopeState.Flatten)
+            else if (slopeState == SlopeState.Flatten)
             {
                 Accel(GroundAcceleration);
             }
-			float angle = Vector2.Angle(previousDir, inputVelocity);
 
-            if (angle >= 160)
-            {
-                isBrake = true;
-                brakeSpeed = nowPlayerSpeed * brakePower;
-
-				return;
-            }
-
-            moveDirection = forward * previousDir.y + right * previousDir.x;
-            //MoveDirection = forward * GetInputVelocity.y + right * GetInputVelocity.x;
-            previousDir = inputVelocity;
+			ApplyMoveDirection();
         }
-
-        else
+		else
         {
-            Accel(-GroundDeceleration);
-
-            //ブレーキ中
-            if (isBrake == true)
-            {
-				float angle = Vector2.Angle(previousDir, inputVelocity);
-                //ブレーキ中に他のキーが押されたら中止
-                if (angle < 160)
-                {
-                    isBrake = false;
-                }
-                Accel(-brakeSpeed);
-            }
-
-            if (nowPlayerSpeed <= 0)
-            {
-                isBrake = false;
-				previousDir = inputVelocity;
-			}
-        }
-
-        //上り坂 + 移動中(減速)
-        if (slopeState == SlopeState.UpHill)
-        {
-            Accel(-UphillDeceleration);
-        }
-
-        //スペースキーでジャンプ
-        if (Input.GetButton("Jump"))
-        {
-            nowGravityPower += jumpPower;
+			Accel(-GroundDeceleration);
         }
     }
 
     void AirMove()
     {
-
-        InputExtension.GetAxisVelocityRaw(out inputVelocity);
         if (inputVelocity.magnitude >= 0.8f)
         {
-
-            Vector3 forward = tpsCamera.transform.forward;
-            forward.y = 0;
-            forward.Normalize();
-
-            Vector3 right = tpsCamera.transform.right;
-            right.y = 0;
-            right.Normalize();
-
-            moveDirection = forward * previousDir.y + right * previousDir.x;
-            previousDir = inputVelocity;
-        }
+			ApplyMoveDirection();
+		}
         //スペースキーを離す、上昇中
         if (Input.GetButtonUp("Jump") && nowGravityPower > 0)
         {
@@ -351,10 +316,34 @@ class Player : MonoBehaviour
             transform.parent = null;
         }
     }
+
+	private void ApplyMoveDirection()
+	{
+		Vector3 forward = tpsCamera.transform.forward;
+		forward.y = 0;
+		forward.Normalize();
+
+		Vector3 right = tpsCamera.transform.right;
+		right.y = 0;
+		right.Normalize();
+
+		moveDirection = forward * previousDir.y + right * previousDir.x;
+		previousDir = inputVelocity;
+	}
+
     public void Accel(float value)
     {
         PlayerSpeed += value * Time.deltaTime;
     }
+
+	private bool IsBrake()
+	{
+		float angle = Vector2.Angle(previousDir, inputVelocity);
+		if (nowPlayerSpeed <=   0) return false;
+		if (angle          <  160) return false;
+		return true;
+	}
+
     public void ResetGravity()
     {
         nowGravityPower = 0;
