@@ -57,9 +57,11 @@ public class RailInspector : Editor
 
         rail.createObject = EditorGUILayout.ObjectField ("Rail Object", rail.createObject, typeof(GameObject), false) as GameObject;
 
+        EditorGUILayout.Space();
         GUILayout.Label("Railの名前");
         rail.railName = EditorGUILayout.TextField("Rail Name", rail.railName);
 
+        EditorGUILayout.Space();
         GUILayout.Label("GenerateはUndo出来ません");
         if (GUILayout.Button("Generate"))
         {

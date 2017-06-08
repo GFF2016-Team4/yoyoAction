@@ -44,14 +44,12 @@ class Player : MonoBehaviour
 
     Vector2 ViewportCenter;
 
-    Vector3 moveDirection;
+	Vector3 moveDirection;
 
     float nowGravityPower;
 
     Vector2 inputVelocity;
     Vector2 previousDir = new Vector2(2, 1);
-
-    Vector3 lookRotation;
 
     private RaycastHit hitShot;
 
@@ -118,8 +116,8 @@ class Player : MonoBehaviour
 
                 //if (nowPlayerSpeed <= 0.1f)
                 //{
-                //    nowPlayerSpeed = 1.0f;
                 //}
+                //    nowPlayerSpeed = 1.0f;
                 //moveDirection = transform.right;
                 //AccelAdd(RotateAcceleration);
                 //transform.rotation = Quaternion.identity;
