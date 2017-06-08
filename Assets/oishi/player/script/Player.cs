@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using SlopeState = CheckGround.SlopeState;
 
 [RequireComponent(typeof(CheckGround), typeof(CharacterController))]
 class Player : MonoBehaviour
@@ -49,13 +50,10 @@ class Player : MonoBehaviour
 
     Vector2 inputVelocity;
     Vector2 previousDir = new Vector2(2, 1);
-    Vector2 judgeDir;
 
     Vector3 lookRotation;
-    Vector3 previousLook;
 
     private RaycastHit hitShot;
-    private RaycastHit hit;
 
     private GameObject bulletInst = null;
 
@@ -68,7 +66,7 @@ class Player : MonoBehaviour
     //インスペクター上でリセットの項目を選択したときの処理
     private void Reset()
     {
-        playerCamera pCamera = GameObject.FindObjectOfType<playerCamera>();
+        playerCamera pCamera = FindObjectOfType<playerCamera>();
 
         // ? がついているがこれはタイプミスではない（C#6の機能）
         tpsCamera = pCamera?.GetComponent<Camera>();
@@ -78,9 +76,8 @@ class Player : MonoBehaviour
     {
         characterController = GetComponent<CharacterController>();
         checkGround = GetComponent<CheckGround>();
-        playerCamera = GetComponent<playerCamera>();
+        playerCamera = tpsCamera.GetComponent<playerCamera>();
         ViewportCenter = new Vector2(0.5f, 0.5f);
-        previousLook = transform.position;
     }
 
     void Update()
@@ -139,21 +136,8 @@ class Player : MonoBehaviour
         translate.y = nowGravityPower;
         characterController.Move(translate * Time.deltaTime);
 
-        //移動方向にｚ軸を向ける
-        Vector3 euler;
-        lookRotation = transform.position - previousLook;
-        if (lookRotation.magnitude > 0.01f)
-        {
-            transform.rotation = Quaternion.LookRotation(lookRotation);
-            //変な方向向くため0に
-            euler = transform.eulerAngles;
-            euler.x = 0;
-            euler.z = 0;
 
-            transform.eulerAngles = euler;
-
-        }
-        previousLook = transform.position;
+		transform.rotation = Quaternion.LookRotation(moveDirection);
     }
 
     void GroundMove()
@@ -163,8 +147,7 @@ class Player : MonoBehaviour
 
         InputExtension.GetAxisVelocityRaw(out inputVelocity);
 
-        Physics.Raycast(transform.position, Vector3.down, out hit);
-        Vector3 groundAngle = Vector3.ProjectOnPlane(moveDirection.normalized, hit.normal);
+		SlopeState slopeState = checkGround.FetchSlope(transform.position, moveDirection);
 
         if (inputVelocity.magnitude >= 0.8f && isBrake == false)
         {
@@ -176,31 +159,30 @@ class Player : MonoBehaviour
             right.y = 0;
             right.Normalize();
 
-            //moveDirection = Quaternion.Euler(0, tpsCamera.transform.localEulerAngles.y, 0) * inputVelocity.normalized;
-            //moveDirection = transform.TransformDirection(moveDirection);
-            //坂道判定
-            //坂の角度
-            //坂道での速度処理
-            //下り坂 + 移動中(加速)
-            if (groundAngle.y <= -0.1f)
+			//moveDirection = Quaternion.Euler(0, tpsCamera.transform.localEulerAngles.y, 0) * inputVelocity.normalized;
+			//moveDirection = transform.TransformDirection(moveDirection);
+			//坂道判定
+			//坂の角度
+			//坂道での速度処理
+			//下り坂 + 移動中(加速)
+			if (slopeState == SlopeState.DownHill)
             {
-                AccelAdd(DownhillAcceleration);
+                Accel(DownhillAcceleration);
             }
 
             //平面 + 移動中(加速)
-            if (Mathf.Abs(groundAngle.y) <= 0.1f)
+            if (slopeState == SlopeState.Flatten)
             {
-                AccelAdd(GroundAcceleration);
+                Accel(GroundAcceleration);
             }
+			float angle = Vector2.Angle(previousDir, inputVelocity);
 
-            judgeDir = inputVelocity + previousDir;
-
-            judgeDir = Vector3.Normalize(judgeDir);
-            //反対のキーを押した時
-            if (judgeDir.magnitude == 0)
+            if (angle >= 160)
             {
                 isBrake = true;
                 brakeSpeed = nowPlayerSpeed * brakePower;
+
+				return;
             }
 
             moveDirection = forward * previousDir.y + right * previousDir.x;
@@ -210,34 +192,32 @@ class Player : MonoBehaviour
 
         else
         {
-            AccelAdd(-GroundDeceleration);
+            Accel(-GroundDeceleration);
 
             //ブレーキ中
             if (isBrake == true)
             {
+				float angle = Vector2.Angle(previousDir, inputVelocity);
                 //ブレーキ中に他のキーが押されたら中止
-                if (inputVelocity != previousDir)
+                if (angle < 160)
                 {
                     isBrake = false;
                 }
-                AccelAdd(-brakeSpeed);
+                Accel(-brakeSpeed);
             }
+
             if (nowPlayerSpeed <= 0)
             {
                 isBrake = false;
-                judgeDir = Vector3.zero;
-            }
+				previousDir = inputVelocity;
+			}
         }
 
         //上り坂 + 移動中(減速)
-        if (groundAngle.y >= 0.1f)
+        if (slopeState == SlopeState.UpHill)
         {
-            AccelAdd(-UphillDeceleration);
+            Accel(-UphillDeceleration);
         }
-
-        //nowPlayerSpeed = Mathf.Max(nowPlayerSpeed, 0);
-        //nowPlayerSpeed = Mathf.Clamp(nowPlayerSpeed, 0, maxSpeed);
-
 
         //スペースキーでジャンプ
         if (Input.GetButton("Jump"))
@@ -284,7 +264,7 @@ class Player : MonoBehaviour
             }
             //弾の生成
             Quaternion rot = transform.rotation;
-            float offset = tpsCamera.transform.GetComponent<playerCamera>().GetCameraRotate().x;
+            float offset = playerCamera.GetCameraRotate().x;
             rot.eulerAngles = new Vector3(rot.eulerAngles.x + 90 - offset, rot.eulerAngles.y, rot.eulerAngles.z);
             bulletInst = Instantiate(bulletPrefab, transform.position, rot);
             yoyoController = bulletInst.GetComponent<YoyoController>();
@@ -357,7 +337,7 @@ class Player : MonoBehaviour
 
     void OnControllerColliderHit(ControllerColliderHit colHit)
     {
-        if (colHit.transform.tag == "Wall" && hit.transform.tag != "Wall")
+        if (colHit.transform.tag == "Wall" && checkGround.groundInfo.tag != "Wall")
         {
             nowPlayerSpeed = 0;
         }
@@ -371,7 +351,7 @@ class Player : MonoBehaviour
             transform.parent = null;
         }
     }
-    public void AccelAdd(float value)
+    public void Accel(float value)
     {
         PlayerSpeed += value * Time.deltaTime;
     }
