@@ -57,6 +57,6 @@ public class CheckGround : MonoBehaviour
 		if (groundAngle.y >= 0.1f) { return SlopeState.UpHill;   } //上り坂
 		if (groundAngle.y <= 0.1f) { return SlopeState.DownHill; } //下り坂
 
-		return SlopeState.Flatten;                                  //平面
+		return SlopeState.Flatten;                                 //平面
 	}
 }

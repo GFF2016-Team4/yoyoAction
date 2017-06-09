@@ -10,17 +10,17 @@ public class AccelPanel : MonoBehaviour {
 	void Start () {
         player = GameObject.FindWithTag("Player");
     }
-	
+
 	// Update is called once per frame
 	void Update () {
-        
+
 	}
 
     void OnTriggerEnter(Collider col)
     {
         if(col.gameObject.tag == "Player")
         {
-            player.GetComponent<Player>().AccelAdd(accel);
+            player.GetComponent<Player>().Accel(accel);
             //player.GetComponent<Player>().speed *= 5;
         }
     }
