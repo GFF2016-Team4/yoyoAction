@@ -461,6 +461,7 @@ GameObject:
   - component: {fileID: 95966274764403116}
   - component: {fileID: 54565078801190358}
   - component: {fileID: 114041759323156504}
+  - component: {fileID: 135328624993496374}
   m_Layer: 0
   m_Name: Gripper
   m_TagString: Gripper
@@ -1224,6 +1225,18 @@ MonoBehaviour:
   ropeSimulate: {fileID: 0}
   Rope: {fileID: 1289387211531950, guid: 0e100c211a197ba49a4599cd941affaa, type: 2}
   yoyoSpeed: 20
+--- !u!135 &135328624993496374
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1787272249566620}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.122653484
+  m_Center: {x: 0, y: 0.5, z: 0}
 --- !u!137 &137001694300288786
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
