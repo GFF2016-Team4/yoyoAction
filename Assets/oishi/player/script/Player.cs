@@ -2,51 +2,67 @@
 using System.Collections;
 using SlopeState = CheckGround.SlopeState;
 
+public enum PlayerState
+{
+	NormalMove,
+	RopeWait,
+	TarzanMove,
+	RailMove,
+	CircleMove,
+}
+
 [RequireComponent(typeof(CheckGround), typeof(CharacterController))]
 class Player : MonoBehaviour
 {
-    CheckGround checkGround;
-    CharacterController characterController;
-    YoyoController yoyoController;
-    playerCamera playerCamera;
+	// ----- ----- ----- -----
+	// Inspectorで編集可能
+	// ----- ----- ----- -----
 
-    [Header("加速(回転離脱時)")]
-    public float RotateAcceleration = 2;
+	[Header("加速(回転離脱時)")]
+    public float RotateAcceleration   = 2;
     [Header("加速(地面)")]
-    public float GroundAcceleration = 3;
+    public float GroundAcceleration   = 3;
     [Header("加速(下り坂)")]
     public float DownhillAcceleration = 1;
     [Header("減速(停止時)")]
-    public float GroundDeceleration = 2;
+    public float GroundDeceleration   = 2;
     [Header("減速(上り坂)")]
-    public float UphillDeceleration = 1;
+    public float UphillDeceleration   = 1;
     [Header("ジャンプ力")]
-    public float jumpPower = 8;
+    public float jumpPower            = 8;
     [Header("重力")]
-    public float gravity = 20;
+    public float gravity              = 20;
     [Header("ロープを伸ばせる距離")]
-    public float ropeDistance = 33;
+    public float ropeDistance         = 33;
     [Header("最高速度")]
-    public float maxSpeed = 10;
-    [SerializeField, Header("現在の速度")]
-    float nowPlayerSpeed;
+    public float maxSpeed             = 10;
     [Header("ブレーキの強さ")]
-    public float brakePower = 2.0f;
+    public float brakePower           = 2.0f;
     [Header("回転速度")]
-    public float rotatePower = 20f;
+    public float rotatePower          = 20f;
 
-    [Header("TPS視点用カメラ")]
-    public Camera tpsCamera;
+	[SerializeField]
+	private new Camera camera;
 
-    public LayerMask layerMask;
+	[SerializeField]
+    private LayerMask  layerMask;
 
-    public GameObject bulletPrefab;
+	[SerializeField]
+    private GameObject bulletPrefab;
 
-    Vector2 ViewportCenter;
+	// ----- ----- ----- -----
+	// Inspectorで編集不可
+	// ----- ----- ----- -----
+
+	CheckGround         checkGround;
+	CharacterController characterController;
+	YoyoController      yoyoController;
+	playerCamera        playerCamera;
 
 	Vector3 moveDirection;
 
-    float nowGravityPower;
+	float   nowPlayerSpeed;
+    float   nowGravityPower;
 
     Vector2 inputVelocity;
     Vector2 previousDir = new Vector2(2, 1);
@@ -58,45 +74,83 @@ class Player : MonoBehaviour
     //public bool isRotate;      //回転中かどうか
     float brakeSpeed;
     float angle;
-    bool judgeDirection;
+    bool  judgeDirection;
 
-    //インスペクター上でリセットの項目を選択したときの処理
-    private void Reset()
+	PlayerState state = PlayerState.NormalMove;
+
+	// ----- ----- ----- -----
+	// 定数(structはreadonlyで代用)
+	// ----- ----- ----- -----
+
+	const string JUMP_KEY = "Jump";
+	const string WALL_TAG = "Wall";
+
+	readonly Vector2 VIEW_POSITION_CENTER = new Vector2(0.5f, 0.5f);
+
+
+
+	// ----- ---- -----
+	//     プロパティ
+	// ----- ---- -----
+
+	public RaycastHit hitInfo          => hitShot;
+	public Vector3    HitPoint         => hitShot.point;
+	public Vector3    HitPosition      => hitShot.transform.position;
+
+	public Vector3    Position         => transform.position;
+
+	public Vector3    GetInputVelocity => inputVelocity;
+
+	public bool       PlayerIsGround   => checkGround.IsGrounded;
+
+	public Vector3 MoveDirection
+	{
+		get { return moveDirection; }
+		set { moveDirection = value; }
+	}
+
+	public float MoveSpeed
+	{
+		get { return nowPlayerSpeed; }
+		set { nowPlayerSpeed = value; }
+	}
+
+	// ----- ---- -----
+	//       関数
+	// ----- ---- -----
+
+	//インスペクター上でリセットの項目を選択したときの処理
+	private void Reset()
     {
         playerCamera pCamera = FindObjectOfType<playerCamera>();
 
         // ? がついているがこれはタイプミスではない（C#6の機能）
-        tpsCamera = pCamera?.GetComponent<Camera>();
+        camera = pCamera?.GetComponent<Camera>();
     }
 
     void Start()
     {
         characterController = GetComponent<CharacterController>();
-        checkGround = GetComponent<CheckGround>();
-        playerCamera = tpsCamera.GetComponent<playerCamera>();
-        ViewportCenter = new Vector2(0.5f, 0.5f);
+        checkGround         = GetComponent<CheckGround>();
+        playerCamera        = camera.GetComponent<playerCamera>();
     }
 
     void Update()
     {
-		InputExtension.GetAxisVelocityRaw(out inputVelocity);
+		switch (state)
+		{
+			case PlayerState.NormalMove: NormalMove(); break;
+			case PlayerState.RopeWait:   RopeWait();   break;
+			case PlayerState.TarzanMove: TarzanMove(); break;
+			case PlayerState.RailMove:   RailMove();   break;
+			case PlayerState.CircleMove:  break;
 
-		//地面にいる時
-		if (checkGround.IsGrounded/* && isRotate == false*/)
-        {
-            GroundMove();
-        }
-        //空中にいる時
-        else
-        {
-            AirMove();
-            transform.parent = null;
-        }
+			default:
+				Debug.LogError("無効な値です");
+				break;
+		}
 
-        if (Input.GetMouseButtonDown(0))
-        {
-            ShootBullet();
-        }
+
         if (bulletInst != null)
         {
             //ヨーヨーの打ち付けが終了している時
@@ -128,22 +182,126 @@ class Player : MonoBehaviour
         //{
         //    isRotate = false;
         //}
+    }
 
-        nowGravityPower -= gravity * Time.deltaTime;
-        nowPlayerSpeed = Mathf.Clamp(nowPlayerSpeed, 0, maxSpeed);
+	void NormalMove()
+	{
+		InputExtension.GetAxisVelocityRaw(out inputVelocity);
 
-        Vector3 translate = moveDirection * nowPlayerSpeed;
-        translate.y = nowGravityPower;
-        characterController.Move(translate * Time.deltaTime);
+		if (checkGround.IsGrounded)
+		{
+			GroundMove();
+		}
+		else
+		{
+			AirMove();
+			//transform.parent = null;
+		}
+
+		if (Input.GetMouseButtonDown(0))
+		{
+			ShootBullet();
+			state = PlayerState.RopeWait;
+		}
+
+		nowGravityPower -= gravity * Time.deltaTime;
+		nowPlayerSpeed = Mathf.Clamp(nowPlayerSpeed, 0, maxSpeed);
+
+		Vector3 translate = moveDirection * nowPlayerSpeed;
+		translate.y = nowGravityPower;
+		characterController.Move(translate * Time.deltaTime);
 
 		transform.rotation = Quaternion.LookRotation(moveDirection);
-    }
+	}
+
+	void RopeWait()
+	{
+		InputExtension.GetAxisVelocityRaw(out inputVelocity);
+
+		if (checkGround.IsGrounded)
+		{
+			GroundMove();
+		}
+		else
+		{
+			AirMove();
+			//transform.parent = null;
+		}
+
+		nowGravityPower -= gravity * Time.deltaTime;
+		nowPlayerSpeed = Mathf.Clamp(nowPlayerSpeed, 0, maxSpeed);
+
+		Vector3 translate = moveDirection * nowPlayerSpeed;
+		translate.y = nowGravityPower;
+		characterController.Move(translate * Time.deltaTime);
+
+		transform.rotation = Quaternion.LookRotation(moveDirection);
+	}
+
+	void TarzanMove()
+	{
+		InputExtension.GetAxisVelocityRaw(out inputVelocity);
+
+		bool isTarzan = nowGravityPower < 0;
+
+
+		if (checkGround.IsGrounded)
+		{
+			GroundMove();
+		}
+		else
+		{
+			if (isTarzan)
+			{
+				//ターザン移動
+			}
+			else
+			{
+				AirMove();
+			}
+		}
+
+		//ターザン移動中はプレイヤーはロープの動きに移動させるので通常の移動量計算をしない
+		if (!isTarzan)
+		{
+			nowGravityPower -= gravity * Time.deltaTime;
+			nowPlayerSpeed = Mathf.Clamp(nowPlayerSpeed, 0, maxSpeed);
+
+			Vector3 translate = moveDirection * nowPlayerSpeed;
+			translate.y = nowGravityPower;
+			characterController.Move(translate * Time.deltaTime);
+
+			transform.rotation = Quaternion.LookRotation(moveDirection);
+		}
+	}
+
+	void RailMove()
+	{
+		InputExtension.GetAxisVelocityRaw(out inputVelocity);
+		bool isRailMove = nowGravityPower < 0;
+
+		if (checkGround.IsGrounded)
+		{
+			GroundMove();
+		}
+		else
+		{
+			if (isRailMove)
+			{
+				//レール移動
+			}
+			else
+			{
+				AirMove();
+			}
+		}
+	}
 
     void GroundMove()
     {
         //重力をリセット
         ResetGravity();
-		
+
 		SlopeState slopeState = checkGround.FetchSlope(transform.position, moveDirection);
 
 		//上り坂は減速
@@ -153,7 +311,7 @@ class Player : MonoBehaviour
 		}
 
 		//スペースキーでジャンプ
-		if (Input.GetButton("Jump"))
+		if (Input.GetButton(JUMP_KEY))
 		{
 			nowGravityPower += jumpPower;
 		}
@@ -172,7 +330,7 @@ class Player : MonoBehaviour
 			//ブレーキしている間は普通の移動を受け付けない
 			return;
 		}
-		
+
 		//ブレーキ解除後に１回だけ実行
 		if(brakeSpeed != -1)
 		{
@@ -208,7 +366,7 @@ class Player : MonoBehaviour
 			ApplyMoveDirection();
 		}
         //スペースキーを離す、上昇中
-        if (Input.GetButtonUp("Jump") && nowGravityPower > 0)
+        if (Input.GetButtonUp(JUMP_KEY) && nowGravityPower > 0)
         {
             nowGravityPower *= 0.8f;
         }
@@ -216,15 +374,18 @@ class Player : MonoBehaviour
 
     void ShootBullet()
     {
-        if (bulletInst != null) return;
+		Debug.Assert(bulletInst == null, "bulletInstに値が入っています");
 
-        Ray ray = Camera.main.ViewportPointToRay(ViewportCenter);
+		Ray ray = camera.ViewportPointToRay(VIEW_POSITION_CENTER);
+
+
         if (Physics.Raycast(ray, out hitShot, ropeDistance, layerMask))
         {
             if (hitShot.collider.tag == "Rail")
             {
                 hitShot.collider.GetComponent<RailController>().enabled = true;
             }
+
             //弾の生成
             Quaternion rot = transform.rotation;
             float offset = playerCamera.GetCameraRotate().x;
@@ -300,7 +461,7 @@ class Player : MonoBehaviour
 
     void OnControllerColliderHit(ControllerColliderHit colHit)
     {
-        if (colHit.transform.tag == "Wall" && checkGround.groundInfo.tag != "Wall")
+        if (colHit.transform.tag == WALL_TAG && checkGround.groundInfo.tag != WALL_TAG)
         {
             nowPlayerSpeed = 0;
         }
@@ -317,11 +478,11 @@ class Player : MonoBehaviour
 
 	private void ApplyMoveDirection()
 	{
-		Vector3 forward = tpsCamera.transform.forward;
+		Vector3 forward = camera.transform.forward;
 		forward.y = 0;
 		forward.Normalize();
 
-		Vector3 right = tpsCamera.transform.right;
+		Vector3 right = camera.transform.right;
 		right.y = 0;
 		right.Normalize();
 
@@ -331,7 +492,7 @@ class Player : MonoBehaviour
 
     public void Accel(float value)
     {
-        PlayerSpeed += value * Time.deltaTime;
+        MoveSpeed += value * Time.deltaTime;
     }
 
 	private bool IsBrake()
@@ -346,15 +507,16 @@ class Player : MonoBehaviour
     {
         nowGravityPower = 0;
     }
+
     public void SideMove()
     {
         InputExtension.GetAxisVelocityRaw(out inputVelocity);
 
-        Vector3 forward = tpsCamera.transform.forward;
+        Vector3 forward = camera.transform.forward;
         forward.y = 0;
         forward.Normalize();
 
-        Vector3 right = tpsCamera.transform.right;
+        Vector3 right = camera.transform.right;
         right.y = 0;
         right.Normalize();
 
@@ -363,39 +525,5 @@ class Player : MonoBehaviour
             MoveDirection = forward * GetInputVelocity.y + right * GetInputVelocity.x;
             //MoveDirection = right * GetInputVelocity.y;
         }
-    }
-    public Vector3 HitPoint
-    {
-        get { return hitShot.point; }
-    }
-    public Vector3 HitPosition
-    {
-        get { return hitShot.transform.position; }
-    }
-    public RaycastHit hitInfo
-    {
-        get { return hitShot; }
-    }
-    public Vector3 Position
-    {
-        get { return transform.position; }
-    }
-    public Vector3 GetInputVelocity
-    {
-        get { return inputVelocity; }
-    }
-    public Vector3 MoveDirection
-    {
-        get { return moveDirection; }
-        set { moveDirection = value; }
-    }
-    public float PlayerSpeed
-    {
-        get { return nowPlayerSpeed; }
-        set { nowPlayerSpeed = value; }
-    }
-    public bool PlayerIsGround
-    {
-        get { return checkGround.IsGrounded; }
     }
 }
