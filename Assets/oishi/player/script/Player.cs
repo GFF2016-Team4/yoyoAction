@@ -116,8 +116,8 @@ class Player : MonoBehaviour
 
                 //if (nowPlayerSpeed <= 0.1f)
                 //{
-                //}
                 //    nowPlayerSpeed = 1.0f;
+                //}
                 //moveDirection = transform.right;
                 //AccelAdd(RotateAcceleration);
                 //transform.rotation = Quaternion.identity;
