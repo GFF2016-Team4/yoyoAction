@@ -5,9 +5,9 @@ using UnityEngine;
 public class YoyoController : MonoBehaviour
 {
     [SerializeField, Header("速度")]
-    public float m_Speed = 1f;
+    public float m_Speed = 20f;
     [SerializeField, Header("最大速度")]
-    public float m_SpeedMax = 5f;
+    public float m_SpeedMax = 20f;
     [SerializeField, Header("最小速度")]
     public float m_SpeedMin = 1f;
 
@@ -29,8 +29,8 @@ public class YoyoController : MonoBehaviour
 
     void Awake()
     {
-        m_Left = transform.GetChild(0).FindChild("polySurface8").Find("Left").gameObject;
-        m_Right = transform.GetChild(0).FindChild("polySurface2").Find("Right").gameObject;
+        //m_Left = transform.GetChild(0).FindChild("polySurface8").Find("Left").gameObject;
+        //m_Right = transform.GetChild(0).FindChild("polySurface2").Find("Right").gameObject;
 
         m_Player = GameObject.Find("Player").GetComponent<Player>();
         m_Animator = transform.GetComponent<Animator>();
@@ -41,8 +41,7 @@ public class YoyoController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        //弾を飛ばす
-        ShotBullet();
+
     }
 
     // Update is called once per frame
@@ -50,7 +49,6 @@ public class YoyoController : MonoBehaviour
     {
         Mathf.Clamp(m_Speed, m_SpeedMin, m_SpeedMax);
 
-        Debug.DrawRay(m_Left.transform.position, -m_Left.transform.up * 10f, Color.black);
         RaycastHit hit;
         if (Physics.SphereCast(m_Left.transform.position, 0.5f, -m_Left.transform.up, out hit, 6))
         {
@@ -136,26 +134,6 @@ public class YoyoController : MonoBehaviour
         Debug.DrawLine(m_Left.transform.position, -m_Left.transform.right * 6, Color.cyan);
     }
 
-    public void ShotBullet()
-    {
-        CopyRope = Instantiate(Rope, transform.position, Quaternion.identity);
-
-        ropeSimulate = CopyRope.GetComponent<RopeSimulate>();
-        ropeOrigin = CopyRope.transform.FindChild("Origin").transform.GetComponent<Transform>();
-
-        ropeOrigin.GetComponent<SphereCollider>().enabled = false;
-
-        CopyRope.transform.parent = transform;
-
-        m_Animator.SetBool("IsShoot", true);
-
-        //初期化           引数(origin,tail) 
-        ropeSimulate.InitPosition(transform.position, m_Player.transform.FindChild("RightHand").position);
-        //最初は物理挙動off
-        ropeSimulate.SimulationStop();
-
-        MoveToTarget_(transform.position, point);
-    }
 
     //OriginRope→target
     Coroutine MoveToTarget_(Vector3 current, Vector3 target)
@@ -289,17 +267,21 @@ public class YoyoController : MonoBehaviour
         m_Player.hitInfo.collider.GetComponent<RailController>().enabled = false;
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if(other.transform.tag == "Rail")
-        {
-            m_TargetCollider = other;
-            Debug.Log(m_TargetCollider);
-        }
-    }
-
     public bool NowBullet()
     {
         return IsBullet;
+    }
+
+    public delegate void Callback(Collider collider);
+    public Callback callback;
+
+    private void OnTriggerEnter(Collider other)
+    {
+        callback(other);
+    }
+
+    public void SetCollisionCallback(Callback func)
+    {
+        callback = func;
     }
 }

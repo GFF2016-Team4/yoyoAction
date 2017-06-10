@@ -45,7 +45,8 @@ public class RailController : MonoBehaviour
             Quaternion.identity, 
             layerMask))
         {
-            //m_Gripper = FindObjectOfType<YoyoController>().transform;
+            m_Gripper = FindObjectOfType<YoyoController>().transform;
+            m_Gripper.transform.position = hitInfo.transform.GetChild(0).position;
             Debug.Log(hitInfo.transform.name);
         }
 
@@ -87,7 +88,7 @@ public class RailController : MonoBehaviour
 
         from.y = 0;
         to.y = 0;
-        angle = Mathf.Acos(Vector3.Dot(from.normalized, to.normalized)) * Mathf.Rad2Deg;//ドット積で角度を求める
+        angle = Mathf.Acos(Vector3.Dot(from.normalized, to.normalized)) * Mathf.Rad2Deg;//内積で角度を求める
 
         if (angle > 150 && angle < 180)
         {
