@@ -2043,7 +2043,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ropeSimulate: {fileID: 0}
-  Rope: {fileID: 0}
+  Rope: {fileID: 1289387211531950, guid: 0e100c211a197ba49a4599cd941affaa, type: 2}
 --- !u!1 &405391992
 GameObject:
   m_ObjectHideFlags: 0

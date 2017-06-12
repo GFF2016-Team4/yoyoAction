@@ -272,16 +272,4 @@ public class YoyoController : MonoBehaviour
         return IsBullet;
     }
 
-    public delegate void Callback(Collider collider);
-    public Callback callback;
-
-    private void OnTriggerEnter(Collider other)
-    {
-        callback(other);
-    }
-
-    public void SetCollisionCallback(Callback func)
-    {
-        callback = func;
-    }
 }

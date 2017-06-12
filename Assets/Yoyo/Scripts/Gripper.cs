@@ -19,10 +19,15 @@ public class Gripper : MonoBehaviour {
     private GameObject copyRope = null;
     private Transform ropeOrigin;
 
+    public float m_Speed;
+    public Transform m_Target;
+
     private Animator m_Animator;
     private Player m_Player;
     private Collider m_TargetCollider;      //当たる相手のコライダー
     private RopeState m_RopeState = RopeState.Shoot;
+
+    private RailController[] m_Rail;
 
     //デリゲートでコルバック関数を宣言
     public delegate void Callback(Collider collider);
@@ -30,30 +35,73 @@ public class Gripper : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+        m_Rail = FindObjectsOfType<RailController>();
         //弾を飛ばす
-        ShotBullet();
+        //ShotBullet();
     }
 	
 	// Update is called once per frame
 	void Update () {
-        switch(m_RopeState)
+
+        switch (m_RopeState)
         {
-            case RopeState.Shoot:            
+            case RopeState.Shoot:
+                {
+                    //ターゲットに向けて移動
+                    ShotBullet();
+                }
                 break;
             case RopeState.NoSimulate:
+                {
+
+                }
                 break;
             case RopeState.TarzanMove:
-                
+                {
+                    //物理挙動を始める
+                    ropeSimulate.SimulationStart();
+                }
                 break;
             case RopeState.RailMove:
+                {
+                    MoveTo(m_Target.position);
+                }
                 break;
             case RopeState.CircleMove:
+                {
+
+                }
                 break;
             case RopeState.TakeUp:
+                {
+
+                }
                 break;
         }
 
 	}
+
+    Coroutine MoveTo(Vector3 target)
+    {
+        return StartCoroutine(MoveTo_(target));
+    }
+
+    IEnumerator MoveTo_(Vector3 target)
+    {
+        //目的地までの距離
+        float distance = Vector3.Distance(target, transform.position);
+
+        //      距離 　＝ 　速度　*     時間
+        while(distance >= m_Speed * Time.unscaledDeltaTime + 0.01f)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, target, m_Speed * Time.deltaTime);
+
+            distance = Vector3.Distance(target, transform.position);
+
+            yield return null;
+        }
+        transform.position = target;
+    }
 
     public void ShotBullet()
     {
@@ -73,7 +121,7 @@ public class Gripper : MonoBehaviour {
         //最初は物理挙動off
         ropeSimulate.SimulationStop();
 
-        //MoveToTarget_(transform.position, point);
+        MoveTo(m_Target.position);
     }
 
 
@@ -98,8 +146,6 @@ public class Gripper : MonoBehaviour {
         callback = func;
     }
 
-    public Vector3 getPlayerPosition(Vector3 playerPos)
-    {
-        
-    }
+
+
 }
