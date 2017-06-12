@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using SlopeState = CheckGround.SlopeState;
+using GripperState  = Gripper2.State;
 
 public enum PlayerState
 {
@@ -101,7 +102,7 @@ class Player : MonoBehaviour
 
 	public Vector3    GetInputVelocity => inputVelocity;
 
-	public bool       PlayerIsGround   => checkGround.IsGrounded;
+	public bool       IsGround         => checkGround.IsGrounded;
 
 	public Vector3 MoveDirection
 	{
@@ -151,33 +152,33 @@ class Player : MonoBehaviour
 		}
 
 
-        if (bulletInst != null)
-        {
-            //ヨーヨーの打ち付けが終了している時
-            if (yoyoController.NowBullet())
-            {
-                ResetGravity();
-                if (hitShot.transform.tag == "Pillar")
-                {
-                    TurnAround(hitShot.point);
-                }
-            }
-            //ヨーヨーを離した時
-            else if (!yoyoController.NowBullet() && judgeDirection == true)
-            {
-                //最後に進んでる方向にプレイヤーを飛ばす
-                judgeDirection = false;
+        //if (bulletInst != null)
+        //{
+        //    //ヨーヨーの打ち付けが終了している時
+        //    if (yoyoController.NowBullet())
+        //    {
+        //        ResetGravity();
+        //        if (hitShot.transform.tag == "Pillar")
+        //        {
+        //            TurnAround(hitShot.point);
+        //        }
+        //    }
+        //    //ヨーヨーを離した時
+        //    else if (!yoyoController.NowBullet() && judgeDirection == true)
+        //    {
+        //        //最後に進んでる方向にプレイヤーを飛ばす
+        //        judgeDirection = false;
 
-                //if (nowPlayerSpeed <= 0.1f)
-                //{
-                //    nowPlayerSpeed = 1.0f;
-                //}
-                //moveDirection = transform.right;
-                //AccelAdd(RotateAcceleration);
-                //transform.rotation = Quaternion.identity;
-                //isRotate = false;
-            }
-        }
+        //        //if (nowPlayerSpeed <= 0.1f)
+        //        //{
+        //        //    nowPlayerSpeed = 1.0f;
+        //        //}
+        //        //moveDirection = transform.right;
+        //        //AccelAdd(RotateAcceleration);
+        //        //transform.rotation = Quaternion.identity;
+        //        //isRotate = false;
+        //    }
+        //}
         //else
         //{
         //    isRotate = false;
@@ -201,9 +202,11 @@ class Player : MonoBehaviour
 		if (Input.GetMouseButtonDown(0))
 		{
 			Ray ray = camera.ViewportPointToRay(VIEW_POSITION_CENTER);
-			Gripper2.Shoot(ray.origin, ray.direction);
+			var gripper = Gripper2.Shoot(ray.origin, ray.direction);
 
-			//ShootBullet();
+			gripper.callback = OnRopeHitEvent;
+
+			Debug.Log("state change : RopeWait");
 			state = PlayerState.RopeWait;
 		}
 
@@ -214,7 +217,10 @@ class Player : MonoBehaviour
 		translate.y = nowGravityPower;
 		characterController.Move(translate * Time.deltaTime);
 
-		transform.rotation = Quaternion.LookRotation(moveDirection);
+		if (!moveDirection.IsZero())
+		{
+			transform.rotation = Quaternion.LookRotation(moveDirection);
+		}
 	}
 
 	void RopeWait()
@@ -507,23 +513,24 @@ class Player : MonoBehaviour
         }
     }
 
-	private void OnRopeHitEvent(Collider hitInfo)
+	private GripperState OnRopeHitEvent(Collider hitInfo)
 	{
 		if (hitInfo.tag == "Pillar")
 		{
 			//円運動
 
+			Debug.Log("state change : CircleMove");
 			state = PlayerState.CircleMove;
+			return GripperState.CircleMove;
 		}
 
 		if (hitInfo.tag == "Rail")
 		{
-			//レール移動 or ターザン移動
-
-			//レールの進む向きは常にレールオブジェクトのforward方向
+			//レールの進む向きは常にレールオブジェクトのforward方向で固定
 			Vector3 reilMoveDir = hitInfo.transform.forward;
 			Vector3 player2rail = hitInfo.transform.position - transform.position;
 
+			//XZのみで判定
 			reilMoveDir.y = 0;
 			player2rail.y = 0;
 
@@ -532,12 +539,19 @@ class Player : MonoBehaviour
 
 			if (angle < 45 && 135 < angle)
 			{
+				Debug.Log("state change : RailMove");
 				state = PlayerState.RailMove;
+				return (IsGround) ? GripperState.NoSimulate : GripperState.RailMove;
 			}
 			else
 			{
+				Debug.Log("state change : TarzanMove");
 				state = PlayerState.TarzanMove;
+				return (IsGround) ? GripperState.NoSimulate : GripperState.TarzanMove;
 			}
 		}
+
+		Debug.Log("Rope Takeup");
+		return GripperState.TakeUp;
 	}
 }

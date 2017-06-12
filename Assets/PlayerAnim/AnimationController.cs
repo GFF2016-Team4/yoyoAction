@@ -20,8 +20,8 @@ public class AnimationController : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-        m_Speed = transform.GetComponent<Player>().PlayerSpeed;
-        m_IsGround = transform.GetComponent<Player>().PlayerIsGround;
+        m_Speed = transform.GetComponent<Player>().MoveSpeed;
+        m_IsGround = transform.GetComponent<Player>().IsGround;
 
         if (m_IsGround == true && Input.GetKeyDown(KeyCode.Space))
         {

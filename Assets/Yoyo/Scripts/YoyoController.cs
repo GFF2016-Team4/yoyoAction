@@ -15,13 +15,13 @@ public class YoyoController : MonoBehaviour
     private GameObject m_Right;                 //ヨーヨー右部分
     private Collider m_TargetCollider;          //当たるターゲット
 
-    private Transform ropeOrigin;               
+    private Transform ropeOrigin;
     private Animator m_Animator;                //アニメーター
     private Player m_Player;                    //プレイヤー
 
-    public RopeSimulate ropeSimulate;           
-    public GameObject Rope;                     
-    private GameObject CopyRope = null;         
+    public RopeSimulate ropeSimulate;
+    public GameObject Rope;
+    private GameObject CopyRope = null;
     private Vector3 point;
 
     bool IsBullet = false;
@@ -72,7 +72,7 @@ public class YoyoController : MonoBehaviour
         //ロープの挙動on
         if (IsBullet == true)
         {
-            if (!m_Player.PlayerIsGround/* && m_Player.hitInfo.transform.tag != "Pillar"*/)
+            if (!m_Player.IsGround/* && m_Player.hitInfo.transform.tag != "Pillar"*/)
             {
                 IsIK = true;
             }
@@ -84,7 +84,7 @@ public class YoyoController : MonoBehaviour
                 {
                     if (m_Player.hitInfo.collider.GetComponent<RailController>().GetState() == RailController.DirectionState.Forward)
                     {
-                        m_Speed += m_Player.PlayerSpeed;
+                        m_Speed += m_Player.MoveSpeed;
                         MoveToRailgoal_(transform.position, m_TargetCollider.transform.GetChild(0).transform.position);
 
                         ropeOrigin.GetComponent<SphereCollider>().enabled = true;
@@ -92,7 +92,7 @@ public class YoyoController : MonoBehaviour
                     }
                     else if (m_Player.hitInfo.collider.GetComponent<RailController>().GetState() == RailController.DirectionState.Backward)
                     {
-                        m_Speed += m_Player.PlayerSpeed;
+                        m_Speed += m_Player.MoveSpeed;
                         MoveToRailgoal_(transform.position, m_TargetCollider.transform.GetChild(1).transform.position);
 
                         ropeOrigin.GetComponent<SphereCollider>().enabled = true;
@@ -108,8 +108,8 @@ public class YoyoController : MonoBehaviour
                         Debug.Log("ワイヤーアクション");
                         //transform.Rotate();
                     }
-                }            
-            }          
+                }
+            }
         }
 
         //ロープの巻き取り(ロープが移動)
@@ -160,7 +160,7 @@ public class YoyoController : MonoBehaviour
         IsBullet = true;
 
         //空中 + 柱以外に当たった時物理挙動on-----
-        if (/*m_Player.hitInfo.transform.tag != "Pillar" &&*/ !m_Player.PlayerIsGround)
+        if (/*m_Player.hitInfo.transform.tag != "Pillar" &&*/ !m_Player.IsGround)
         {
             ropeSimulate.SimulationStart();
         }
@@ -168,7 +168,7 @@ public class YoyoController : MonoBehaviour
         Vector3 ropeDirection = ropeSimulate.direction + m_Player.MoveDirection;
         ropeDirection.y = 0;
 
-        ropeSimulate.AddForce(ropeDirection + Vector3.down * m_Player.PlayerSpeed, ForceMode.Impulse);
+        ropeSimulate.AddForce(ropeDirection + Vector3.down * m_Player.MoveSpeed, ForceMode.Impulse);
     }
 
     //public void MoveToOtherRail(Transform other)
@@ -257,7 +257,7 @@ public class YoyoController : MonoBehaviour
         }
         transform.position = target;
 
-        m_Player.PlayerSpeed = m_Speed;
+        m_Player.MoveSpeed = m_Speed;
 
         IsBullet = false;
 
