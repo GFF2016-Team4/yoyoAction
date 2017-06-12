@@ -200,7 +200,10 @@ class Player : MonoBehaviour
 
 		if (Input.GetMouseButtonDown(0))
 		{
-			ShootBullet();
+			Ray ray = camera.ViewportPointToRay(VIEW_POSITION_CENTER);
+			Gripper2.Shoot(ray.origin, ray.direction);
+
+			//ShootBullet();
 			state = PlayerState.RopeWait;
 		}
 
@@ -372,29 +375,6 @@ class Player : MonoBehaviour
         }
     }
 
-    void ShootBullet()
-    {
-		Debug.Assert(bulletInst == null, "bulletInstに値が入っています");
-
-		Ray ray = camera.ViewportPointToRay(VIEW_POSITION_CENTER);
-
-
-        if (Physics.Raycast(ray, out hitShot, ropeDistance, layerMask))
-        {
-            if (hitShot.collider.tag == "Rail")
-            {
-                hitShot.collider.GetComponent<RailController>().enabled = true;
-            }
-
-            //弾の生成
-            Quaternion rot = transform.rotation;
-            float offset = playerCamera.GetCameraRotate().x;
-            rot.eulerAngles = new Vector3(rot.eulerAngles.x + 90 - offset, rot.eulerAngles.y, rot.eulerAngles.z);
-            bulletInst = Instantiate(bulletPrefab, transform.position, rot);
-            yoyoController = bulletInst.GetComponent<YoyoController>();
-        }
-    }
-
     /// <summary>
     /// オブジェクトを軸に回転
     /// </summary>
@@ -526,4 +506,38 @@ class Player : MonoBehaviour
             //MoveDirection = right * GetInputVelocity.y;
         }
     }
+
+	private void OnRopeHitEvent(Collider hitInfo)
+	{
+		if (hitInfo.tag == "Pillar")
+		{
+			//円運動
+
+			state = PlayerState.CircleMove;
+		}
+
+		if (hitInfo.tag == "Rail")
+		{
+			//レール移動 or ターザン移動
+
+			//レールの進む向きは常にレールオブジェクトのforward方向
+			Vector3 reilMoveDir = hitInfo.transform.forward;
+			Vector3 player2rail = hitInfo.transform.position - transform.position;
+
+			reilMoveDir.y = 0;
+			player2rail.y = 0;
+
+			//帰ってくる値は0-180の間
+			float angle = Vector3.Angle(reilMoveDir, player2rail);
+
+			if (angle < 45 && 135 < angle)
+			{
+				state = PlayerState.RailMove;
+			}
+			else
+			{
+				state = PlayerState.TarzanMove;
+			}
+		}
+	}
 }
