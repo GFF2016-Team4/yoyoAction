@@ -9,24 +9,21 @@ public class AnimationController : MonoBehaviour {
     [SerializeField, HideInInspector]
     private Animator m_Animator;
 
-
     private bool m_IsGround;
     private bool m_IsJumped;
     private int m_RailState;
 
 	// Use this for initialization
 	void Start () {
-
-	}
-	
-	// Update is called once per frame
-	void Update () {
-
-        m_Speed = transform.GetComponent<Player>().PlayerSpeed;
         m_Animator = transform.GetComponent<Animator>();
+    }
+
+    // Update is called once per frame
+    void Update () {
+        m_Speed = transform.GetComponent<Player>().PlayerSpeed;
         m_IsGround = transform.GetComponent<Player>().PlayerIsGround;
 
-        if (m_IsGround == false && Input.GetKey(KeyCode.Space))
+        if (m_IsGround == true && Input.GetKeyDown(KeyCode.Space))
         {
             m_IsJumped = true;
         }

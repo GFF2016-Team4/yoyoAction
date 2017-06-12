@@ -2026,6 +2026,24 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 365654471}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &376422408 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1787272249566620, guid: e77951ff63ebf9341b6ba501f2170d7f,
+    type: 2}
+  m_PrefabInternal: {fileID: 2136936804}
+--- !u!114 &376422414
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 376422408}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2124e774f45189b44bd21d34b875c6ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ropeSimulate: {fileID: 0}
+  Rope: {fileID: 0}
 --- !u!1 &405391992
 GameObject:
   m_ObjectHideFlags: 0
