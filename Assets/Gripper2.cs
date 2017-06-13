@@ -26,7 +26,7 @@ public class Gripper2 : MonoBehaviour
 	private Transform    ropeOrigin;
 	private State state = State.None;
 
-	public delegate State Callback(Collider collider);
+	public delegate void Callback(Collider collider);
 	public Callback callback;
 
 	static GameObject RopePrefab;
@@ -35,6 +35,7 @@ public class Gripper2 : MonoBehaviour
 	//発射時に使う変数
 	private LineRenderer lineRenderer;
 	private Vector3      shootDir;
+	private float        shootDistance;
 
 	// ----- ----- ----- -----
 	//定数
@@ -64,11 +65,6 @@ public class Gripper2 : MonoBehaviour
 			return;
 		}
 		simulate.tailPosition = position;
-	}
-
-	private void Awake()
-	{
-		lineRenderer = GetComponent<LineRenderer>();
 	}
 
 	void Update()
@@ -132,7 +128,7 @@ public class Gripper2 : MonoBehaviour
 	#region 射出関係
 
 	//オブジェクトの生成
-	public static Gripper2 Shoot(Vector3 origin, Vector3 direction)
+	public static Gripper2 Shoot(Vector3 origin, Vector3 direction, float distance)
 	{
 		Debug.Assert(!direction.IsZero(), "引数 directionにゼロベクトルを指定することはできません");
 
@@ -141,16 +137,18 @@ public class Gripper2 : MonoBehaviour
 
 		GameObject inst = Instantiate(GripperPrefab, origin, Quaternion.identity);
 		var gripper = inst.GetComponent<Gripper2>();
-		gripper.ShootInitialize(direction);
+		gripper.ShootInitialize(direction, distance);
 		return gripper;
 	}
 
 	//射出の初期化
-	public void ShootInitialize(Vector3 direction)
+	public void ShootInitialize(Vector3 direction, float distace)
 	{
-		shootDir = direction;
+		shootDir      = direction;
+		shootDistance = distace;
+		state         = State.Shoot;
 
-		state = State.Shoot;
+		lineRenderer = GetComponent<LineRenderer>();
 
 		lineRenderer.positionCount = 2; //originとtailの２つ
 
@@ -158,7 +156,7 @@ public class Gripper2 : MonoBehaviour
 		lineRenderer.SetPosition(  TAIL_INDEX, transform.position);
 		lineRenderer.SetPosition(ORIGIN_INDEX, transform.position);
 
-		transform.rotation = Quaternion.LookRotation(direction);
+		transform.forward = shootDir;
 	}
 
 	//射出中
@@ -168,15 +166,28 @@ public class Gripper2 : MonoBehaviour
 
 		//更新する
 		lineRenderer.SetPosition(ORIGIN_INDEX, transform.position);
+
+		Vector3 originPos = transform.position;
+		Vector3 tailPos   = lineRenderer.GetPosition(TAIL_INDEX);
+
+		transform.rotation = Quaternion.LookRotation(shootDir);
+
+		if (Vector3.Distance(originPos, tailPos) > shootDistance)
+		{
+			state = State.TakeUp;
+		}
 	}
 
 	private void OnTriggerEnter(Collider other)
 	{
+		Debug.Log(state);
+
 		if (state == State.Shoot)
 		{
+			shootDir.InitZero();
 			Vector3 origin = lineRenderer.GetPosition(  TAIL_INDEX);
 			Vector3 tail   = lineRenderer.GetPosition(ORIGIN_INDEX);
-			state = callback(other);
+			callback(other);
 
 			if (state != State.TakeUp)
 			{
@@ -205,4 +216,10 @@ public class Gripper2 : MonoBehaviour
 	}
 
 	#endregion //巻き取り関係
+
+	#region レール移動関係
+
+
+
+	#endregion //レール移動関係
 }

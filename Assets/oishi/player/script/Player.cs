@@ -57,7 +57,7 @@ class Player : MonoBehaviour
 
 	CheckGround         checkGround;
 	CharacterController characterController;
-	YoyoController      yoyoController;
+	Gripper2            gripperInst;
 	playerCamera        playerCamera;
 
 	Vector3 moveDirection;
@@ -151,38 +151,11 @@ class Player : MonoBehaviour
 				break;
 		}
 
-
-        //if (bulletInst != null)
-        //{
-        //    //ヨーヨーの打ち付けが終了している時
-        //    if (yoyoController.NowBullet())
-        //    {
-        //        ResetGravity();
-        //        if (hitShot.transform.tag == "Pillar")
-        //        {
-        //            TurnAround(hitShot.point);
-        //        }
-        //    }
-        //    //ヨーヨーを離した時
-        //    else if (!yoyoController.NowBullet() && judgeDirection == true)
-        //    {
-        //        //最後に進んでる方向にプレイヤーを飛ばす
-        //        judgeDirection = false;
-
-        //        //if (nowPlayerSpeed <= 0.1f)
-        //        //{
-        //        //    nowPlayerSpeed = 1.0f;
-        //        //}
-        //        //moveDirection = transform.right;
-        //        //AccelAdd(RotateAcceleration);
-        //        //transform.rotation = Quaternion.identity;
-        //        //isRotate = false;
-        //    }
-        //}
-        //else
-        //{
-        //    isRotate = false;
-        //}
+		if (Input.GetMouseButtonUp(0))
+		{
+			if (gripperInst == null) return;
+			gripperInst.ChangeState(GripperState.TakeUp);
+		}
     }
 
 	void NormalMove()
@@ -202,9 +175,26 @@ class Player : MonoBehaviour
 		if (Input.GetMouseButtonDown(0))
 		{
 			Ray ray = camera.ViewportPointToRay(VIEW_POSITION_CENTER);
-			var gripper = Gripper2.Shoot(ray.origin, ray.direction);
 
-			gripper.callback = OnRopeHitEvent;
+			Vector3 shootDir = ray.direction;
+
+			if (Physics.SphereCast(ray, 0.5f, out RaycastHit hitInfo, ropeDistance, layerMask))
+			{
+				shootDir = hitInfo.point - transform.position;
+			}
+			else
+			{
+				Vector3 endPoint = ray.direction.normalized * ropeDistance;
+				endPoint += ray.origin;
+				shootDir = endPoint      - transform.position;
+			}
+
+			Vector3 shootPos = transform.position;
+			shootPos.y += 1.0f;
+
+			gripperInst = Gripper2.Shoot(shootPos, shootDir, ropeDistance);
+
+			gripperInst.callback = OnRopeHitEvent;
 
 			Debug.Log("state change : RopeWait");
 			state = PlayerState.RopeWait;
@@ -225,6 +215,12 @@ class Player : MonoBehaviour
 
 	void RopeWait()
 	{
+		if (gripperInst == null)
+		{
+			state = PlayerState.NormalMove;
+			return;
+		}
+
 		InputExtension.GetAxisVelocityRaw(out inputVelocity);
 
 		if (checkGround.IsGrounded)
@@ -245,6 +241,8 @@ class Player : MonoBehaviour
 		characterController.Move(translate * Time.deltaTime);
 
 		transform.rotation = Quaternion.LookRotation(moveDirection);
+
+		gripperInst.ApplyTailPosition(transform.position);
 	}
 
 	void TarzanMove()
@@ -252,7 +250,6 @@ class Player : MonoBehaviour
 		InputExtension.GetAxisVelocityRaw(out inputVelocity);
 
 		bool isTarzan = nowGravityPower < 0;
-
 
 		if (checkGround.IsGrounded)
 		{
@@ -263,6 +260,8 @@ class Player : MonoBehaviour
 			if (isTarzan)
 			{
 				//ターザン移動
+				transform.position = gripperInst.FetchTailPosition();
+				return;
 			}
 			else
 			{
@@ -271,17 +270,14 @@ class Player : MonoBehaviour
 		}
 
 		//ターザン移動中はプレイヤーはロープの動きに移動させるので通常の移動量計算をしない
-		if (!isTarzan)
-		{
-			nowGravityPower -= gravity * Time.deltaTime;
-			nowPlayerSpeed = Mathf.Clamp(nowPlayerSpeed, 0, maxSpeed);
+		nowGravityPower -= gravity * Time.deltaTime;
+		nowPlayerSpeed = Mathf.Clamp(nowPlayerSpeed, 0, maxSpeed);
 
-			Vector3 translate = moveDirection * nowPlayerSpeed;
-			translate.y = nowGravityPower;
-			characterController.Move(translate * Time.deltaTime);
+		Vector3 translate = moveDirection * nowPlayerSpeed;
+		translate.y = nowGravityPower;
+		characterController.Move(translate * Time.deltaTime);
 
-			transform.rotation = Quaternion.LookRotation(moveDirection);
-		}
+		transform.rotation = Quaternion.LookRotation(moveDirection);
 	}
 
 	void RailMove()
@@ -298,6 +294,7 @@ class Player : MonoBehaviour
 			if (isRailMove)
 			{
 				//レール移動
+
 			}
 			else
 			{
@@ -387,35 +384,35 @@ class Player : MonoBehaviour
     /// <param name="target">回転軸となるオブジェクト</param>
     public void TurnAround(Vector3 target)
     {
-        if (judgeDirection == false)
-        {
-            angle = Vector3.Angle(transform.position - target, transform.right);
+        //if (judgeDirection == false)
+        //{
+        //    angle = Vector3.Angle(transform.position - target, transform.right);
 
-            Vector3 p1 = transform.position - target;
-            Vector3 p2 = transform.right;
+        //    Vector3 p1 = transform.position - target;
+        //    Vector3 p2 = transform.right;
 
-            p1.y = 0;
-            p2.y = 0;
+        //    p1.y = 0;
+        //    p2.y = 0;
 
-            float distance = Vector3.Dot(p1, p2);
-            float absDistance = Mathf.Abs(distance);
+        //    float distance = Vector3.Dot(p1, p2);
+        //    float absDistance = Mathf.Abs(distance);
 
-            yoyoController.ropeSimulate.ReCalcDistance(absDistance);
-            judgeDirection = true;
-        }
+        //    yoyoController.ropeSimulate.ReCalcDistance(absDistance);
+        //    judgeDirection = true;
+        //}
 
-        //target.y = transform.position.y;
-        Quaternion lookRotation = Quaternion.LookRotation(yoyoController.ropeSimulate.direction);
-        Vector3 circleDir;
-        if (angle <= 90)
-        {
-            circleDir = Vector3.right;
-        }
-        else
-        {
-            circleDir = -Vector3.right;
-        }
-        yoyoController.ropeSimulate.AddForce(lookRotation * circleDir * rotatePower, ForceMode.Force);
+        ////target.y = transform.position.y;
+        //Quaternion lookRotation = Quaternion.LookRotation(yoyoController.ropeSimulate.direction);
+        //Vector3 circleDir;
+        //if (angle <= 90)
+        //{
+        //    circleDir = Vector3.right;
+        //}
+        //else
+        //{
+        //    circleDir = -Vector3.right;
+        //}
+        //yoyoController.ropeSimulate.AddForce(lookRotation * circleDir * rotatePower, ForceMode.Force);
 
 
         ////absDistanceに補正分追加したほうが落下しすぎない（？）
@@ -513,19 +510,33 @@ class Player : MonoBehaviour
         }
     }
 
-	private GripperState OnRopeHitEvent(Collider hitInfo)
+	private void OnRopeHitEvent(Collider hitInfo)
 	{
+		Debug.Log("hit");
+
+		if (!Input.GetMouseButton(0))
+		{
+			gripperInst.ChangeState(GripperState.TakeUp);
+			return;
+		}
+
 		if (hitInfo.tag == "Pillar")
 		{
 			//円運動
 
 			Debug.Log("state change : CircleMove");
 			state = PlayerState.CircleMove;
-			return GripperState.CircleMove;
+			gripperInst.ChangeState(GripperState.CircleMove);
+			return;
 		}
 
 		if (hitInfo.tag == "Rail")
 		{
+			if (IsGround)
+			{
+				gripperInst.ChangeState(GripperState.NoSimulate);
+			}
+
 			//レールの進む向きは常にレールオブジェクトのforward方向で固定
 			Vector3 reilMoveDir = hitInfo.transform.forward;
 			Vector3 player2rail = hitInfo.transform.position - transform.position;
@@ -537,21 +548,36 @@ class Player : MonoBehaviour
 			//帰ってくる値は0-180の間
 			float angle = Vector3.Angle(reilMoveDir, player2rail);
 
-			if (angle < 45 && 135 < angle)
-			{
-				Debug.Log("state change : RailMove");
-				state = PlayerState.RailMove;
-				return (IsGround) ? GripperState.NoSimulate : GripperState.RailMove;
-			}
-			else
+			if (45 < angle && angle < 135)
 			{
 				Debug.Log("state change : TarzanMove");
 				state = PlayerState.TarzanMove;
-				return (IsGround) ? GripperState.NoSimulate : GripperState.TarzanMove;
+				if (IsGround)
+				{
+					gripperInst.ChangeState(GripperState.NoSimulate);
+				}
+				else
+				{
+					gripperInst.ChangeState(GripperState.TarzanMove);
+				}
 			}
+			else
+			{
+				Debug.Log("state change : RailMove");
+				state = PlayerState.RailMove;
+				if (IsGround)
+				{
+					gripperInst.ChangeState(GripperState.NoSimulate);
+				}
+				else
+				{
+					gripperInst.ChangeState(GripperState.RailMove);
+				}
+			}
+			return;
 		}
 
 		Debug.Log("Rope Takeup");
-		return GripperState.TakeUp;
+		gripperInst.ChangeState(GripperState.TakeUp);
 	}
 }

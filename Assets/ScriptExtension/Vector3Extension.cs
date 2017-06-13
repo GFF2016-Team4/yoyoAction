@@ -10,4 +10,11 @@ public static class Vector3Extension
 			   self.y == 0.0f &&
 			   self.z == 0.0f;
 	}
+
+	public static void InitZero(this Vector3 self)
+	{
+		self.x = 0.0f;
+		self.y = 0.0f;
+		self.z = 0.0f;
+	}
 }
