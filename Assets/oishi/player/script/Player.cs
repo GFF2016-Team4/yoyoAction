@@ -294,7 +294,7 @@ class Player : MonoBehaviour
 			if (isRailMove)
 			{
 				//レール移動
-
+				
 			}
 			else
 			{

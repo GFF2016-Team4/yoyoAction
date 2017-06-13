@@ -21,6 +21,9 @@ public class Gripper2 : MonoBehaviour
 	[SerializeField]
 	private float takeupSpeed = 1;
 
+	[SerializeField]
+	private float railMoveSpeed = 1.0f;
+
 	private RopeSimulate simulate;
 	private GameObject   ropeInst;
 	private Transform    ropeOrigin;
@@ -36,6 +39,9 @@ public class Gripper2 : MonoBehaviour
 	private LineRenderer lineRenderer;
 	private Vector3      shootDir;
 	private float        shootDistance;
+
+	//レール移動時に使う変数
+	private RailNode     nowMoveRailNode;
 
 	// ----- ----- ----- -----
 	//定数
@@ -219,7 +225,18 @@ public class Gripper2 : MonoBehaviour
 
 	#region レール移動関係
 
+	public void RailMove(RailNode node)
+	{
+		nowMoveRailNode = node;
+	}
 
+	private void RailMove()
+	{
+
+
+
+		//simulate.originPosition
+	}
 
 	#endregion //レール移動関係
 }

@@ -19,7 +19,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4935025999896690}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Left
   m_TagString: Gripper
   m_Icon: {fileID: 5721338939258241955, guid: 0000000000000000d000000000000000, type: 0}
@@ -35,7 +35,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4191334440712608}
   - component: {fileID: 137822257336603586}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: pPlane6
   m_TagString: Gripper
   m_Icon: {fileID: 0}
@@ -50,7 +50,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4852265623635680}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: joint5
   m_TagString: Gripper
   m_Icon: {fileID: 0}
@@ -65,7 +65,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4856463851375544}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: group3
   m_TagString: Gripper
   m_Icon: {fileID: 0}
@@ -81,7 +81,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4087671124579316}
   - component: {fileID: 137770921929462304}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: polySurface11
   m_TagString: Gripper
   m_Icon: {fileID: 0}
@@ -97,7 +97,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4024202618457332}
   - component: {fileID: 137205135674446042}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: polySurface6
   m_TagString: Gripper
   m_Icon: {fileID: 0}
@@ -113,7 +113,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4222679896564168}
   - component: {fileID: 137701245841289026}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: pPlane2
   m_TagString: Gripper
   m_Icon: {fileID: 0}
@@ -129,7 +129,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4578573990474296}
   - component: {fileID: 137827290912791850}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: pPlane7
   m_TagString: Gripper
   m_Icon: {fileID: 0}
@@ -145,7 +145,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4260256695629728}
   - component: {fileID: 137242127456865444}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: polySurface2
   m_TagString: Gripper
   m_Icon: {fileID: 0}
@@ -161,7 +161,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4991859622458872}
   - component: {fileID: 137930310644246940}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: pCylinder4
   m_TagString: Gripper
   m_Icon: {fileID: 0}
@@ -177,7 +177,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4288153803860512}
   - component: {fileID: 137876032464441332}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: pCylinder3
   m_TagString: Gripper
   m_Icon: {fileID: 0}
@@ -193,7 +193,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4621038626492810}
   - component: {fileID: 137897340059604958}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: polySurface9
   m_TagString: Gripper
   m_Icon: {fileID: 0}
@@ -209,7 +209,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4162768141826768}
   - component: {fileID: 137612840238846320}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: pPlane5
   m_TagString: Gripper
   m_Icon: {fileID: 0}
@@ -225,7 +225,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4472398825598492}
   - component: {fileID: 137324128021380474}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: pCylinder1
   m_TagString: Gripper
   m_Icon: {fileID: 0}
@@ -240,7 +240,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4512156416181012}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: joint2
   m_TagString: Gripper
   m_Icon: {fileID: 0}
@@ -255,7 +255,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4231406160357002}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Right
   m_TagString: Gripper
   m_Icon: {fileID: 5721338939258241955, guid: 0000000000000000d000000000000000, type: 0}
@@ -270,7 +270,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4199224552317972}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: joint7
   m_TagString: Gripper
   m_Icon: {fileID: 0}
@@ -286,7 +286,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4105618383444200}
   - component: {fileID: 137194065203003022}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: pCylinder2
   m_TagString: Gripper
   m_Icon: {fileID: 0}
@@ -302,7 +302,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4307236937352628}
   - component: {fileID: 137246899142005834}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: pPlane12
   m_TagString: Gripper
   m_Icon: {fileID: 0}
@@ -318,7 +318,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4879006669297408}
   - component: {fileID: 137744076528339686}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: polySurface8
   m_TagString: Gripper
   m_Icon: {fileID: 0}
@@ -334,7 +334,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4231882030527942}
   - component: {fileID: 137001694300288786}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: polySurface7
   m_TagString: Gripper
   m_Icon: {fileID: 0}
@@ -349,7 +349,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4733272996870204}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: joint1
   m_TagString: Gripper
   m_Icon: {fileID: 0}
@@ -365,7 +365,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4172030145072354}
   - component: {fileID: 137161326014633448}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: polySurface5
   m_TagString: Gripper
   m_Icon: {fileID: 0}
@@ -381,7 +381,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4390133543896864}
   - component: {fileID: 137702100063498838}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: polySurface10
   m_TagString: Gripper
   m_Icon: {fileID: 0}
@@ -396,7 +396,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4480025654435682}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: joint6
   m_TagString: Gripper
   m_Icon: {fileID: 0}
@@ -411,7 +411,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4841853096509170}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: joint8
   m_TagString: Gripper
   m_Icon: {fileID: 0}
@@ -427,7 +427,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4739202245070168}
   - component: {fileID: 137254904332329094}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: pPlane11
   m_TagString: Gripper
   m_Icon: {fileID: 0}
@@ -443,7 +443,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4684954329430194}
   - component: {fileID: 137870379502675090}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: pPlane15
   m_TagString: Gripper
   m_Icon: {fileID: 0}
@@ -462,7 +462,7 @@ GameObject:
   - component: {fileID: 114401477171954824}
   - component: {fileID: 120370209048780398}
   - component: {fileID: 136491969317575966}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Gripper
   m_TagString: Gripper
   m_Icon: {fileID: 0}
@@ -478,7 +478,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4062027027469122}
   - component: {fileID: 137056421974832280}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: group1_pPlane4
   m_TagString: Gripper
   m_Icon: {fileID: 0}
@@ -494,7 +494,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4311802756031880}
   - component: {fileID: 137374511526523070}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: pPlane9
   m_TagString: Gripper
   m_Icon: {fileID: 0}
@@ -510,7 +510,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4013451948435498}
   - component: {fileID: 137341214564121702}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: polySurface1
   m_TagString: Gripper
   m_Icon: {fileID: 0}
@@ -525,7 +525,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4343860528246190}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: joint3
   m_TagString: Gripper
   m_Icon: {fileID: 0}
@@ -541,7 +541,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4667622582131798}
   - component: {fileID: 137946811257998918}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: pPlane13
   m_TagString: Gripper
   m_Icon: {fileID: 0}
@@ -556,7 +556,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4723015616720634}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: joint4
   m_TagString: Gripper
   m_Icon: {fileID: 0}
@@ -572,7 +572,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4218775351744130}
   - component: {fileID: 137194574129122832}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: pPlane16
   m_TagString: Gripper
   m_Icon: {fileID: 0}
@@ -588,7 +588,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4261401315939892}
   - component: {fileID: 137632937205523734}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: pPlane14
   m_TagString: Gripper
   m_Icon: {fileID: 0}
@@ -604,7 +604,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4541059073025726}
   - component: {fileID: 137839233691729030}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: polySurface3
   m_TagString: Gripper
   m_Icon: {fileID: 0}
@@ -620,7 +620,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4290729797809984}
   - component: {fileID: 137884956770139012}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: pPlane10
   m_TagString: Gripper
   m_Icon: {fileID: 0}
@@ -1183,7 +1183,7 @@ Rigidbody:
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 0
-  m_IsKinematic: 1
+  m_IsKinematic: 0
   m_Interpolate: 2
   m_Constraints: 0
   m_CollisionDetection: 1
@@ -1200,6 +1200,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   shootSpeed: 0.2
   takeupSpeed: 0.2
+  railMoveSpeed: 1
 --- !u!120 &120370209048780398
 LineRenderer:
   m_ObjectHideFlags: 1
