@@ -107,7 +107,8 @@ public class RopeSimulate : MonoBehaviour
         direction *= ignoreDistance;
 
         if (Physics.Linecast(rope.tailPosition, rope.originPosition - direction, out RaycastHit hitInfo, ignoreMask))
-        {
+		{
+			Debug.Log("rope simulate - hit layer name : " + LayerMask.LayerToName(hitInfo.collider.gameObject.layer));
             ChangeNewRigOrigin(hitInfo.point);
         }
 

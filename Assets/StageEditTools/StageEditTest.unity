@@ -305,6 +305,11 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 114592884443936936, guid: 63f6da10494743f428f3345cdcb20368,
+        type: 2}
+      propertyPath: points.Array.size
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 4394349332791826, guid: 63f6da10494743f428f3345cdcb20368, type: 2}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -340,17 +345,17 @@ Prefab:
     - target: {fileID: 114592884443936936, guid: 63f6da10494743f428f3345cdcb20368,
         type: 2}
       propertyPath: points.Array.data[2].x
-      value: 3
+      value: 10.172049
       objectReference: {fileID: 0}
     - target: {fileID: 114592884443936936, guid: 63f6da10494743f428f3345cdcb20368,
         type: 2}
       propertyPath: points.Array.data[1].x
-      value: 2
+      value: 5.2585907
       objectReference: {fileID: 0}
     - target: {fileID: 114592884443936936, guid: 63f6da10494743f428f3345cdcb20368,
         type: 2}
       propertyPath: points.Array.data[1].z
-      value: 0
+      value: -6.9046955
       objectReference: {fileID: 0}
     - target: {fileID: 114592884443936936, guid: 63f6da10494743f428f3345cdcb20368,
         type: 2}
@@ -361,6 +366,62 @@ Prefab:
         type: 2}
       propertyPath: points.Array.data[0].z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114592884443936936, guid: 63f6da10494743f428f3345cdcb20368,
+        type: 2}
+      propertyPath: points.Array.data[1].y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114592884443936936, guid: 63f6da10494743f428f3345cdcb20368,
+        type: 2}
+      propertyPath: points.Array.data[3].x
+      value: 11.172049
+      objectReference: {fileID: 0}
+    - target: {fileID: 114592884443936936, guid: 63f6da10494743f428f3345cdcb20368,
+        type: 2}
+      propertyPath: points.Array.data[3].z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114592884443936936, guid: 63f6da10494743f428f3345cdcb20368,
+        type: 2}
+      propertyPath: points.Array.data[4].x
+      value: 12.172049
+      objectReference: {fileID: 0}
+    - target: {fileID: 114592884443936936, guid: 63f6da10494743f428f3345cdcb20368,
+        type: 2}
+      propertyPath: points.Array.data[4].z
+      value: 4.1523685
+      objectReference: {fileID: 0}
+    - target: {fileID: 114592884443936936, guid: 63f6da10494743f428f3345cdcb20368,
+        type: 2}
+      propertyPath: points.Array.data[5].x
+      value: 16.159105
+      objectReference: {fileID: 0}
+    - target: {fileID: 114592884443936936, guid: 63f6da10494743f428f3345cdcb20368,
+        type: 2}
+      propertyPath: points.Array.data[5].z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114592884443936936, guid: 63f6da10494743f428f3345cdcb20368,
+        type: 2}
+      propertyPath: points.Array.data[6].x
+      value: 15.08847
+      objectReference: {fileID: 0}
+    - target: {fileID: 114592884443936936, guid: 63f6da10494743f428f3345cdcb20368,
+        type: 2}
+      propertyPath: points.Array.data[6].z
+      value: 4.8264027
+      objectReference: {fileID: 0}
+    - target: {fileID: 114592884443936936, guid: 63f6da10494743f428f3345cdcb20368,
+        type: 2}
+      propertyPath: createObject
+      value: 
+      objectReference: {fileID: 1863657832429706, guid: 87404e8b24201d449ba30143d178482b,
+        type: 2}
+    - target: {fileID: 114592884443936936, guid: 63f6da10494743f428f3345cdcb20368,
+        type: 2}
+      propertyPath: points.Array.data[3].y
+      value: 1.996604
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 63f6da10494743f428f3345cdcb20368, type: 2}
@@ -398,6 +459,8 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
+  isPlay: 1
+  initOnPlayerPrefsLoad: 0
 --- !u!4 &1234212395
 Transform:
   m_ObjectHideFlags: 0

@@ -46,6 +46,8 @@ public class RailCreator : MonoBehaviour
             name = railName
         };
 
+		RailNode node = null;
+
         for (int i = 0; i < points.Length-1; i++)
         {
             Vector3 p1 = points[i + 0];
@@ -63,15 +65,23 @@ public class RailCreator : MonoBehaviour
             obj.transform.position = midPoint;
             obj.transform.rotation = quat;
 
+			RailNode railNode = obj.GetComponent<RailNode>();
+			if (node != null)
+			{
+				node.next     = railNode;
+				railNode.prev = node;
+			}
+			node = railNode;
+
             Vector3 scale = obj.transform.localScale;
             scale.z  = distance;
-            
+
             obj.transform.localScale = scale;
 
             obj.transform.parent = railParent.transform;
         }
     }
-    
+
     Vector3 CalcMidPoint(Vector3 vec1, Vector3 vec2)
     {
         return (vec1 + vec2) / 2.0f;

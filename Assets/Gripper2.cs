@@ -39,6 +39,10 @@ public class Gripper2 : MonoBehaviour
 	private LineRenderer lineRenderer;
 	private Vector3      shootDir;
 	private float        shootDistance;
+	private Vector3?     hitPos;
+
+	//ロープ全般
+	private Vector3?     syncPosition;
 
 	//レール移動時に使う変数
 	private RailNode     nowMoveRailNode;
@@ -64,13 +68,7 @@ public class Gripper2 : MonoBehaviour
 	/// <summary> ロープ末尾の座標を格納します </summary>
 	public void ApplyTailPosition(Vector3 position)
 	{
-		if (state == State.Shoot ||
-			state == State.TakeUp)
-		{
-			lineRenderer.SetPosition(TAIL_INDEX, position);
-			return;
-		}
-		simulate.tailPosition = position;
+		syncPosition = position;
 	}
 
 	void Update()
@@ -90,7 +88,7 @@ public class Gripper2 : MonoBehaviour
 				break;
 
 			case State.RailMove:
-				simulate.SimulationStart();
+				RailMove();
 				break;
 
 			case State.CircleMove:
@@ -101,6 +99,23 @@ public class Gripper2 : MonoBehaviour
 				TakeUp();
 				break;
 		}
+	}
+
+	private void LateUpdate()
+	{
+		if (!syncPosition.HasValue) return;
+
+		if (state == State.Shoot ||
+			state == State.TakeUp)
+		{
+			lineRenderer.SetPosition(TAIL_INDEX,   syncPosition.Value);
+			lineRenderer.SetPosition(ORIGIN_INDEX, transform.position);
+
+			return;
+		}
+
+		simulate.tailPosition = syncPosition.Value;
+		syncPosition = null;
 	}
 
 	public void ChangeState(State state)
@@ -122,6 +137,12 @@ public class Gripper2 : MonoBehaviour
 
 	private void CreateRope(Vector3 origin, Vector3 tail)
 	{
+		if (ropeInst != null)
+		{
+			Debug.LogError("既にロープは生成されています");
+			return;
+		}
+
 		ropeInst = Instantiate(RopePrefab);
 		simulate = ropeInst.GetComponent<RopeSimulate>();
 
@@ -150,7 +171,7 @@ public class Gripper2 : MonoBehaviour
 	//射出の初期化
 	public void ShootInitialize(Vector3 direction, float distace)
 	{
-		shootDir      = direction;
+		shootDir      = direction.normalized;
 		shootDistance = distace;
 		state         = State.Shoot;
 
@@ -161,20 +182,26 @@ public class Gripper2 : MonoBehaviour
 		//初期値をいれておかないと変になる可能性
 		lineRenderer.SetPosition(  TAIL_INDEX, transform.position);
 		lineRenderer.SetPosition(ORIGIN_INDEX, transform.position);
-
 		transform.forward = shootDir;
+
+		GetComponent<Rigidbody>().AddForce(transform.forward * shootSpeed, ForceMode.Impulse);
 	}
 
 	//射出中
 	private void Shoot()
 	{
-		transform.position += shootDir * shootSpeed;
+		//if (hitPos.HasValue &&
+		//	Vector3.Distance(hitPos.Value, transform.position) < shootSpeed+0.5f)
+		//{
+		//	transform.position = hitPos.Value;
+		//}
 
-		//更新する
-		lineRenderer.SetPosition(ORIGIN_INDEX, transform.position);
+		//transform.position += shootDir * shootSpeed * Time.deltaTime;
+
+		//transform.position += ;
 
 		Vector3 originPos = transform.position;
-		Vector3 tailPos   = lineRenderer.GetPosition(TAIL_INDEX);
+		Vector3 tailPos = lineRenderer.GetPosition(TAIL_INDEX);
 
 		transform.rotation = Quaternion.LookRotation(shootDir);
 
@@ -188,16 +215,19 @@ public class Gripper2 : MonoBehaviour
 	{
 		Debug.Log(state);
 
+		GetComponent<Rigidbody>().velocity = Vector3.zero;
+		GetComponent<Rigidbody>().Sleep();
+
 		if (state == State.Shoot)
 		{
-			shootDir.InitZero();
-			Vector3 origin = lineRenderer.GetPosition(  TAIL_INDEX);
-			Vector3 tail   = lineRenderer.GetPosition(ORIGIN_INDEX);
+			Vector3 origin = lineRenderer.GetPosition(ORIGIN_INDEX);
+			Vector3 tail   = lineRenderer.GetPosition(  TAIL_INDEX);
 			callback(other);
 
 			if (state != State.TakeUp)
 			{
 				//ここで初めてロープを生成する
+
 				CreateRope(origin, tail);
 				lineRenderer.enabled = false;
 			}
@@ -208,10 +238,19 @@ public class Gripper2 : MonoBehaviour
 
 	#region 巻き取り関係
 
+	public void GripperEnd()
+	{
+		if (simulate == null) return;
+		simulate.SimulationStop();
+		Destroy(simulate);
+		state = State.TakeUp;
+	}
+
+
 	private void TakeUp()
 	{
 		Vector3 tailPos   = lineRenderer.GetPosition(TAIL_INDEX);
-		Vector3 originPos = Vector3.MoveTowards(transform.position, tailPos, takeupSpeed);
+		Vector3 originPos = Vector3.MoveTowards(transform.position, tailPos, takeupSpeed*Time.deltaTime);
 		lineRenderer.SetPosition(ORIGIN_INDEX, originPos);
 		transform.position = originPos;
 
@@ -225,16 +264,37 @@ public class Gripper2 : MonoBehaviour
 
 	#region レール移動関係
 
-	public void RailMove(RailNode node)
+	public void SetRailNode(RailNode node)
 	{
 		nowMoveRailNode = node;
 	}
 
 	private void RailMove()
 	{
+		Debug.Assert(nowMoveRailNode != null, "不正な値です");
 
+		simulate.SimulationStart();
+		simulate.ReCalcDistance(5);
 
+		Vector3 originPos = transform.position;
+		Vector3 move = Vector3.MoveTowards(originPos, nowMoveRailNode.endPos, railMoveSpeed*Time.deltaTime);
 
+		simulate.originPosition = move;
+		transform.position      = move;
+
+		if (Vector3.Distance(move, nowMoveRailNode.endPos) < 0.05f)
+		{
+			if (nowMoveRailNode.isEndRail)
+			{
+				//Destroy(ropeInst);
+				//lineRenderer.enabled = true;
+				//state = State.TakeUp;
+			}
+			else
+			{
+				nowMoveRailNode = nowMoveRailNode.next;
+			}
+		}
 		//simulate.originPosition
 	}
 

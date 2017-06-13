@@ -72,10 +72,15 @@ class Player : MonoBehaviour
 
     private GameObject bulletInst = null;
 
-    //public bool isRotate;      //回転中かどうか
     float brakeSpeed;
-    float angle;
-    bool  judgeDirection;
+
+	Vector3? syncPos;
+
+#warning いらない変数？
+	float angle;
+
+#warning いらない変数？
+	bool  judgeDirection;
 
 	PlayerState state = PlayerState.NormalMove;
 
@@ -154,9 +159,21 @@ class Player : MonoBehaviour
 		if (Input.GetMouseButtonUp(0))
 		{
 			if (gripperInst == null) return;
-			gripperInst.ChangeState(GripperState.TakeUp);
+			gripperInst.GripperEnd();
+			state = PlayerState.RopeWait;
 		}
     }
+
+	private void LateUpdate()
+	{
+		if (syncPos.HasValue)
+		{
+			Vector3 pos = syncPos.Value;
+			pos.y -= 1.0f;
+			transform.position = pos;
+			syncPos = null;
+		}
+	}
 
 	void NormalMove()
 	{
@@ -178,7 +195,7 @@ class Player : MonoBehaviour
 
 			Vector3 shootDir = ray.direction;
 
-			if (Physics.SphereCast(ray, 0.5f, out RaycastHit hitInfo, ropeDistance, layerMask))
+			if (Physics.SphereCast(ray, 1.0f, out RaycastHit hitInfo, ropeDistance, layerMask))
 			{
 				shootDir = hitInfo.point - transform.position;
 			}
@@ -200,17 +217,7 @@ class Player : MonoBehaviour
 			state = PlayerState.RopeWait;
 		}
 
-		nowGravityPower -= gravity * Time.deltaTime;
-		nowPlayerSpeed = Mathf.Clamp(nowPlayerSpeed, 0, maxSpeed);
-
-		Vector3 translate = moveDirection * nowPlayerSpeed;
-		translate.y = nowGravityPower;
-		characterController.Move(translate * Time.deltaTime);
-
-		if (!moveDirection.IsZero())
-		{
-			transform.rotation = Quaternion.LookRotation(moveDirection);
-		}
+		ApplyTrnasformPosition();
 	}
 
 	void RopeWait()
@@ -233,16 +240,8 @@ class Player : MonoBehaviour
 			//transform.parent = null;
 		}
 
-		nowGravityPower -= gravity * Time.deltaTime;
-		nowPlayerSpeed = Mathf.Clamp(nowPlayerSpeed, 0, maxSpeed);
-
-		Vector3 translate = moveDirection * nowPlayerSpeed;
-		translate.y = nowGravityPower;
-		characterController.Move(translate * Time.deltaTime);
-
-		transform.rotation = Quaternion.LookRotation(moveDirection);
-
 		gripperInst.ApplyTailPosition(transform.position);
+		ApplyTrnasformPosition();
 	}
 
 	void TarzanMove()
@@ -253,6 +252,7 @@ class Player : MonoBehaviour
 
 		if (checkGround.IsGrounded)
 		{
+			gripperInst.ChangeState(GripperState.NoSimulate);
 			GroundMove();
 		}
 		else
@@ -260,24 +260,23 @@ class Player : MonoBehaviour
 			if (isTarzan)
 			{
 				//ターザン移動
-				transform.position = gripperInst.FetchTailPosition();
+				gripperInst.ChangeState(GripperState.TarzanMove);
+				syncPos = gripperInst.FetchTailPosition();
 				return;
 			}
 			else
 			{
+				gripperInst.ChangeState(GripperState.NoSimulate);
 				AirMove();
 			}
 		}
 
+		Vector3 applyPos = transform.position;
+		applyPos.y += 1.0f;
+
 		//ターザン移動中はプレイヤーはロープの動きに移動させるので通常の移動量計算をしない
-		nowGravityPower -= gravity * Time.deltaTime;
-		nowPlayerSpeed = Mathf.Clamp(nowPlayerSpeed, 0, maxSpeed);
-
-		Vector3 translate = moveDirection * nowPlayerSpeed;
-		translate.y = nowGravityPower;
-		characterController.Move(translate * Time.deltaTime);
-
-		transform.rotation = Quaternion.LookRotation(moveDirection);
+		gripperInst.ApplyTailPosition(applyPos);
+		ApplyTrnasformPosition();
 	}
 
 	void RailMove()
@@ -287,6 +286,7 @@ class Player : MonoBehaviour
 
 		if (checkGround.IsGrounded)
 		{
+			gripperInst.ChangeState(GripperState.NoSimulate);
 			GroundMove();
 		}
 		else
@@ -294,13 +294,21 @@ class Player : MonoBehaviour
 			if (isRailMove)
 			{
 				//レール移動
-				
+				gripperInst.ChangeState(GripperState.RailMove);
+				syncPos = gripperInst.FetchTailPosition();
+				return;
 			}
 			else
 			{
+				gripperInst.ChangeState(GripperState.NoSimulate);
 				AirMove();
 			}
 		}
+
+		Vector3 applyPos = transform.position;
+		applyPos.y += 1.0f;
+		gripperInst.ApplyTailPosition(applyPos);
+		ApplyTrnasformPosition();
 	}
 
     void GroundMove()
@@ -473,6 +481,21 @@ class Player : MonoBehaviour
 		previousDir = inputVelocity;
 	}
 
+	private void ApplyTrnasformPosition()
+	{
+		nowGravityPower -= gravity * Time.deltaTime;
+		nowPlayerSpeed = Mathf.Clamp(nowPlayerSpeed, 0, maxSpeed);
+
+		Vector3 translate = moveDirection * nowPlayerSpeed;
+		translate.y = nowGravityPower;
+		characterController.Move(translate * Time.deltaTime);
+
+		if (!moveDirection.IsZero())
+		{
+			transform.rotation = Quaternion.LookRotation(moveDirection);
+		}
+	}
+
     public void Accel(float value)
     {
         MoveSpeed += value * Time.deltaTime;
@@ -555,26 +578,24 @@ class Player : MonoBehaviour
 				if (IsGround)
 				{
 					gripperInst.ChangeState(GripperState.NoSimulate);
+					return;
 				}
-				else
+
+				if (nowGravityPower < 0)
 				{
 					gripperInst.ChangeState(GripperState.TarzanMove);
+					return;
 				}
 			}
 			else
 			{
 				Debug.Log("state change : RailMove");
 				state = PlayerState.RailMove;
-				if (IsGround)
-				{
-					gripperInst.ChangeState(GripperState.NoSimulate);
-				}
-				else
-				{
-					gripperInst.ChangeState(GripperState.RailMove);
-				}
+
+				RailNode node = hitInfo.GetComponent<RailNode>();
+				gripperInst.SetRailNode(node);
+				return;
 			}
-			return;
 		}
 
 		Debug.Log("Rope Takeup");

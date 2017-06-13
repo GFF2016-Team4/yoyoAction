@@ -7,48 +7,22 @@ public class RailNode : MonoBehaviour
 	public RailNode next;
 	public RailNode prev;
 
-	private Vector3 startPos;
-	private Vector3 endPos;
+	public Vector3 startPos { get; private set; }
+	public Vector3 endPos   { get; private set; }
+
+	public Vector3 moveDir     => transform.forward;
+	public bool    isStartRail => prev == null;
+	public bool    isEndRail   => next == null;
 
 	private void Awake()
 	{
-		Vector3 pos = new Vector3()
-		{
-			x = 0.0f,
-			y = 0.0f,
-			z = transform.localScale.z/2
-		};
-		startPos = transform.position - pos;
-		endPos   = transform.position + pos;
-	}
-
-	Vector3 MoveDir()
-	{
-		return transform.forward;
-	}
-
-	bool IsEndRail()
-	{
-		return next == null;
-	}
-
-	bool IsStartRail()
-	{
-		return prev == null;
-	}
-
-	Vector3 StartRailPos()
-	{
-		return new Vector3();
-
-		//return transform.position + new Vector3
+		startPos = transform.position - transform.forward * transform.localScale.z/2;
+		endPos   = transform.position + transform.forward * transform.localScale.z/2;
 	}
 
 	private void OnDrawGizmos()
 	{
-		Gizmos.color = Color.green;
-
-		Vector3 offset = new Vector3(0, 1, 0);
+		Vector3 offset = Vector3.up;
 		Gizmos.DrawLine(startPos+offset, endPos+offset);
 	}
 }

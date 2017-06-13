@@ -72,7 +72,7 @@ public class RailInspector : Editor
     //削除ボタン用
     GUILayoutOption[] option = new GUILayoutOption[]
     {
-        GUILayout.Width(15), 
+        GUILayout.Width(15),
         GUILayout.Height(15)
     };
 
@@ -92,7 +92,7 @@ public class RailInspector : Editor
                     rail.RemovePoint(i);
                     EditorUtility.SetDirty(rail);
                 }
-  
+
                 Vector3 pos = rail.points[i];
                 pos = EditorGUILayout.Vector3Field("Position", pos);
                 if (pos != rail.points[i])
